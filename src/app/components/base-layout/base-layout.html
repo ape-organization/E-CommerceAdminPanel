@@ -64,6 +64,15 @@
       </a>
       <a
         mat-list-item
+        routerLink="/admin/brand"
+        routerLinkActive="active"
+        (click)="closeMobileDrawer(drawer)"
+      >
+<mat-icon matListItemIcon>storefront</mat-icon>
+        <span matListItemTitle class="item">Brands</span>
+      </a>
+      <a
+        mat-list-item
         routerLink="/admin/users"
         routerLinkActive="active"
         (click)="closeMobileDrawer(drawer)"

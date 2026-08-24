@@ -2,6 +2,7 @@
 
   <div class="modal-container">
 
+
     <!-- =========================================
          HEADER
          ========================================= -->
@@ -11,20 +12,35 @@
       <div class="header-title">
 
         <div class="title-icon">
-          <mat-icon>category</mat-icon>
+
+          <mat-icon>
+            verified
+          </mat-icon>
+
         </div>
+
 
         <div>
 
           <h2>
-            {{ data.add ? 'Add New Category' : 'Edit Category' }}
+
+            {{
+              data.add
+                ? 'Add New Brand'
+                : 'Edit Brand'
+            }}
+
           </h2>
 
+
           <p>
-            {{ data.add
-              ? 'Create a new product category'
-              : 'Update category information'
+
+            {{
+              data.add
+                ? 'Create a new cosmetic brand'
+                : 'Update brand information'
             }}
+
           </p>
 
         </div>
@@ -37,9 +53,12 @@
         type="button"
         class="close-button"
         (click)="onCancel()"
-        aria-label="Close"
       >
-        <mat-icon>close</mat-icon>
+
+        <mat-icon>
+          close
+        </mat-icon>
+
       </button>
 
     </div>
@@ -50,7 +69,7 @@
          ========================================= -->
 
     <form
-      [formGroup]="categoryForm"
+      [formGroup]="brandForm"
       (ngSubmit)="onSubmit()"
     >
 
@@ -58,23 +77,32 @@
 
 
         <!-- =====================================
-             IMAGE UPLOAD
+             IMAGE
              ===================================== -->
 
         <div class="image-upload-section">
+
 
           <div
             class="image-preview-wrapper"
             (click)="fileInput.click()"
           >
 
+
+            <!-- Existing / selected image -->
+
             <img
               *ngIf="imagePreview"
               [src]="imagePreview"
-              [alt]="categoryForm.get('name')?.value || 'Category image'"
-              class="category-image-preview"
+              [alt]="
+                brandForm.get('name')?.value ||
+                'Brand image'
+              "
+              class="brand-image-preview"
             />
 
+
+            <!-- Empty -->
 
             <div
               *ngIf="!imagePreview"
@@ -92,7 +120,7 @@
             </div>
 
 
-            <!-- Hover overlay -->
+            <!-- Hover -->
 
             <div
               class="image-hover-overlay"
@@ -122,62 +150,45 @@
           />
 
 
-      
+         
 
         </div>
 
 
         <!-- =====================================
-             CATEGORY NAME
+             NAME
              ===================================== -->
 
-        <mat-form-field appearance="outline">
+        <mat-form-field
+          appearance="outline"
+        >
 
           <mat-label>
-            Category Name
+            Brand Name
           </mat-label>
 
           <mat-icon matPrefix>
-            category
+            verified
           </mat-icon>
 
           <input
             matInput
             formControlName="name"
-            placeholder="Enter category name"
-          >
+            placeholder="Enter brand name"
+          />
+
 
           <mat-error
             *ngIf="
-              categoryForm.get('name')?.hasError('required')
+              brandForm
+                .get('name')
+                ?.hasError('required')
             "
           >
-            Name is required
+
+            Brand name is required
+
           </mat-error>
-
-        </mat-form-field>
-
-
-        <!-- =====================================
-             DESCRIPTION
-             ===================================== -->
-
-        <mat-form-field appearance="outline">
-
-          <mat-label>
-            Description
-          </mat-label>
-
-          <mat-icon matPrefix>
-            description
-          </mat-icon>
-
-          <textarea
-            matInput
-            formControlName="description"
-            placeholder="Enter category description"
-            rows="3"
-          ></textarea>
 
         </mat-form-field>
 
@@ -210,13 +221,16 @@
 
       <div class="modal-actions">
 
+
         <button
           mat-button
           type="button"
           class="cancel-button"
           (click)="onCancel()"
         >
+
           CANCEL
+
         </button>
 
 
@@ -224,16 +238,31 @@
           mat-raised-button
           type="submit"
           class="submit-button"
-          [disabled]="categoryForm.invalid || isSubmitting"
+          [disabled]="
+            brandForm.invalid ||
+            isSubmitting
+          "
         >
 
           <mat-icon>
-            {{ data.add ? 'add' : 'save' }}
+
+            {{
+              data.add
+                ? 'add'
+                : 'save'
+            }}
+
           </mat-icon>
 
-          {{ isSubmitting
-            ? 'SAVING...'
-            : (data.add ? 'CREATE CATEGORY' : 'UPDATE CATEGORY')
+
+          {{
+            isSubmitting
+              ? 'SAVING...'
+              : (
+                  data.add
+                    ? 'CREATE BRAND'
+                    : 'UPDATE BRAND'
+                )
           }}
 
         </button>

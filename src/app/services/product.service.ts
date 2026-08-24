@@ -37,7 +37,7 @@ export interface ProductResponse {
   description: string | null;
 
   price: number;
-
+isInStock: boolean;
   stockQuantity: number;
 
   imageUrl: string | null;

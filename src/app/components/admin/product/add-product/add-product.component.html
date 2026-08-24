@@ -1,6 +1,8 @@
 <div class="product-dialog">
 
-  <!-- ================= HEADER ================= -->
+  <!-- ===================================================== -->
+  <!-- HEADER -->
+  <!-- ===================================================== -->
 
   <div class="dialog-header">
 
@@ -52,85 +54,82 @@
   </div>
 
 
-  <!-- ================= FORM ================= -->
+  <!-- ===================================================== -->
+  <!-- FORM -->
+  <!-- ===================================================== -->
 
   <form
     [formGroup]="productForm"
     (ngSubmit)="save()">
 
 
-    <!-- ================= IMAGE ================= -->
+    <!-- =================================================== -->
+    <!-- IMAGE -->
+    <!-- =================================================== -->
 
-  <div class="image-section">
+    <div class="image-section">
 
-  <div
-    class="image-preview"
-    (click)="fileInput.click()">
+      <div
+        class="image-preview"
+        (click)="fileInput.click()">
 
-    <!-- ================= IMAGE ================= -->
+        <img
+          *ngIf="imagePreview"
+          [src]="imagePreview"
+          alt="Product image"
+          class="preview-image"
+        />
 
-    <img
-      *ngIf="imagePreview"
-      [src]="imagePreview"
-      alt="Product image"
-      class="preview-image"
-    />
+        <div
+          class="image-placeholder"
+          *ngIf="!imagePreview">
+
+          <mat-icon>
+            cloud_upload
+          </mat-icon>
+
+          <span>
+            Upload Image
+          </span>
+
+          <small>
+            JPG, PNG or WEBP
+          </small>
+
+        </div>
 
 
-    <!-- ================= EMPTY STATE ================= -->
+        <div
+          class="upload-overlay"
+          *ngIf="imagePreview">
 
-    <div
-      class="image-placeholder"
-      *ngIf="!imagePreview">
+          <mat-icon>
+            cloud_upload
+          </mat-icon>
 
-      <mat-icon>
-        cloud_upload
-      </mat-icon>
+          <span>
+            Change Image
+          </span>
 
-      <span>
-        Upload Image
-      </span>
+        </div>
 
-      <small>
-        JPG, PNG or WEBP
-      </small>
+      </div>
+
+
+      <input
+        #fileInput
+        type="file"
+        hidden
+        accept="image/png,image/jpeg,image/webp"
+        (change)="onFileSelected($event)"
+      />
 
     </div>
 
 
-    <!-- ================= HOVER ================= -->
-
-    <div
-      class="upload-overlay"
-      *ngIf="imagePreview">
-
-      <mat-icon>
-        cloud_upload
-      </mat-icon>
-
-      <span>
-        Change Image
-      </span>
-
-    </div>
-
-  </div>
-
-
-  <!-- ================= FILE INPUT ================= -->
-
-  <input
-    #fileInput
-    type="file"
-    hidden
-    accept="image/png,image/jpeg,image/webp"
-    (change)="onFileSelected($event)"
-  />
-
-</div>
-
-
-    <!-- ================= BASIC INFORMATION ================= -->
+    <!-- =================================================== -->
+    <!-- BASIC INFORMATION -->
+    <!-- =================================================== -->
 
     <div class="section-heading">
 
@@ -182,7 +181,9 @@
 
         <mat-error
           *ngIf="
-            productForm.get('name')?.hasError('required')
+            productForm
+              .get('name')
+              ?.hasError('required')
           ">
 
           Product name is required.
@@ -191,7 +192,9 @@
 
         <mat-error
           *ngIf="
-            productForm.get('name')?.hasError('maxlength')
+            productForm
+              .get('name')
+              ?.hasError('maxlength')
           ">
 
           Product name is too long.
@@ -229,7 +232,9 @@
 
         <mat-error
           *ngIf="
-            productForm.get('price')?.hasError('required')
+            productForm
+              .get('price')
+              ?.hasError('required')
           ">
 
           Price is required.
@@ -238,7 +243,9 @@
 
         <mat-error
           *ngIf="
-            productForm.get('price')?.hasError('min')
+            productForm
+              .get('price')
+              ?.hasError('min')
           ">
 
           Price cannot be negative.
@@ -248,7 +255,55 @@
       </mat-form-field>
 
 
-      <!-- STOCK -->
+      <!-- DISCOUNT -->
+
+      <mat-form-field
+        appearance="outline">
+
+        <mat-label>
+          Discount Percentage
+        </mat-label>
+
+        <mat-icon matPrefix>
+          percent
+        </mat-icon>
+
+        <input
+          matInput
+          type="number"
+          min="0"
+          max="100"
+          step="1"
+          formControlName="discountPercentage"
+          placeholder="0"
+        />
+
+        <mat-error
+          *ngIf="
+            productForm
+              .get('discountPercentage')
+              ?.hasError('min')
+          ">
+
+          Discount cannot be negative.
+
+        </mat-error>
+
+        <mat-error
+          *ngIf="
+            productForm
+              .get('discountPercentage')
+              ?.hasError('max')
+          ">
+
+          Discount cannot exceed 100%.
+
+        </mat-error>
+
+      </mat-form-field>
+
+
+      <!-- STOCK QUANTITY -->
 
       <mat-form-field
         appearance="outline">
@@ -293,10 +348,139 @@
 
       </mat-form-field>
 
+
+      <!-- ================================================= -->
+      <!-- DISCOUNT PREVIEW -->
+      <!-- ================================================= -->
+
+      <div
+        class="discount-preview"
+        *ngIf="
+          productForm.get('price')?.value > 0 &&
+          productForm.get('discountPercentage')?.value > 0
+        ">
+
+        <div class="discount-preview-icon">
+
+          <mat-icon class="icon">
+            local_offer
+          </mat-icon>
+
+        </div>
+
+
+        <div class="discount-preview-content">
+
+          <span class="discount-preview-label">
+            DISCOUNTED PRICE
+          </span>
+
+
+          <div class="discount-preview-price">
+
+            <span class="old-price">
+              EGP
+              {{
+                productForm.get('price')?.value
+                  | number:'1.2-2'
+              }}
+            </span>
+
+
+            <span class="new-price">
+              EGP
+              {{
+                getDiscountedPrice()
+                  | number:'1.2-2'
+              }}
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
 
 
-    <!-- ================= CLASSIFICATION ================= -->
+    <!-- =================================================== -->
+    <!-- STOCK STATUS -->
+    <!-- =================================================== -->
+
+    <div class="stock-section">
+
+      <div
+        class="stock-status-card"
+        [class.out-of-stock]="
+          !productForm.get('isInStock')?.value
+        ">
+
+
+        <div class="stock-status-info">
+
+          <div class="stock-status-icon">
+
+            <mat-icon>
+
+              {{
+                productForm.get('isInStock')?.value
+                  ? 'check_circle'
+                  : 'cancel'
+              }}
+
+            </mat-icon>
+
+          </div>
+
+
+          <div class="stock-status-text">
+
+            <strong>
+
+              {{
+                productForm.get('isInStock')?.value
+                  ? 'In Stock'
+                  : 'Out of Stock'
+              }}
+
+            </strong>
+
+            <span>
+
+              {{
+                productForm.get('isInStock')?.value
+                  ? 'Product is available for customers'
+                  : 'Product is currently unavailable'
+              }}
+
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <mat-slide-toggle
+          formControlName="isInStock"
+          color="primary">
+
+          {{
+            productForm.get('isInStock')?.value
+              ? 'Available'
+              : 'Unavailable'
+          }}
+
+        </mat-slide-toggle>
+
+      </div>
+
+    </div>
+
+
+    <!-- =================================================== -->
+    <!-- CLASSIFICATION -->
+    <!-- =================================================== -->
 
     <div class="section-heading">
 
@@ -315,7 +499,7 @@
         </h3>
 
         <p>
-          Select the category and subcategories
+          Select the brand, category and subcategories
         </p>
 
       </div>
@@ -326,7 +510,62 @@
     <div class="classification-card">
 
 
+      <!-- ================================================= -->
+      <!-- BRAND -->
+      <!-- ================================================= -->
+
+      <mat-form-field
+        appearance="outline"
+        class="full-width">
+
+        <mat-label>
+          Brand
+        </mat-label>
+
+        <mat-icon matPrefix>
+          business
+        </mat-icon>
+
+        <mat-select
+          formControlName="brandId">
+
+          <mat-option
+            *ngFor="let brand of brands"
+            [value]="brand.id">
+
+            {{ brand.name }}
+
+          </mat-option>
+
+
+          <mat-option
+            *ngIf="brands.length === 0"
+            disabled>
+
+            No brands available.
+
+          </mat-option>
+
+        </mat-select>
+
+
+        <mat-error
+          *ngIf="
+            productForm
+              .get('brandId')
+              ?.hasError('required')
+          ">
+
+          Please select a brand.
+
+        </mat-error>
+
+      </mat-form-field>
+
+
+      <!-- ================================================= -->
       <!-- CATEGORY -->
+      <!-- ================================================= -->
 
       <mat-form-field
         appearance="outline"
@@ -340,14 +579,15 @@
           category
         </mat-icon>
 
+
         <mat-select
           formControlName="categoryId"
-          (selectionChange)="onCategoryChange($event.value)">
+          (selectionChange)="
+            onCategoryChange($event.value)
+          ">
 
           <mat-option
-            *ngFor="
-              let category of categories
-            "
+            *ngFor="let category of categories"
             [value]="category.id">
 
             {{ category.name }}
@@ -355,6 +595,7 @@
           </mat-option>
 
         </mat-select>
+
 
         <mat-error
           *ngIf="
@@ -370,7 +611,9 @@
       </mat-form-field>
 
 
+      <!-- ================================================= -->
       <!-- SUBCATEGORIES -->
+      <!-- ================================================= -->
 
       <mat-form-field
         appearance="outline"
@@ -383,6 +626,7 @@
         <mat-icon matPrefix>
           label
         </mat-icon>
+
 
         <mat-select
           formControlName="subCategoryIds"
@@ -465,7 +709,9 @@
       </mat-form-field>
 
 
+      <!-- ================================================= -->
       <!-- SELECTED SUBCATEGORIES -->
+      <!-- ================================================= -->
 
       <div
         class="selected-subcategories"
@@ -491,9 +737,7 @@
                   ?.value
             ">
 
-            {{
-              getSubCategoryName(id)
-            }}
+            {{ getSubCategoryName(id) }}
 
           </span>
 
@@ -504,7 +748,9 @@
     </div>
 
 
-    <!-- ================= DESCRIPTION ================= -->
+    <!-- =================================================== -->
+    <!-- DESCRIPTION -->
+    <!-- =================================================== -->
 
     <div class="section-heading">
 
@@ -553,7 +799,9 @@
     </mat-form-field>
 
 
-    <!-- ================= ERROR ================= -->
+    <!-- =================================================== -->
+    <!-- ERROR -->
+    <!-- =================================================== -->
 
     <div
       class="error-message"
@@ -570,7 +818,9 @@
     </div>
 
 
-    <!-- ================= ACTIONS ================= -->
+    <!-- =================================================== -->
+    <!-- ACTIONS -->
+    <!-- =================================================== -->
 
     <div class="dialog-actions">
 
@@ -614,15 +864,18 @@
 
 
         <span>
+
           {{
             isSubmitting
               ? 'Saving...'
-              : (
-                  data.isEditing
-                    ? 'Save Changes'
-                    : 'Add Product'
-                )
+              :
+              (
+                data.isEditing
+                  ? 'Save Changes'
+                  : 'Add Product'
+              )
           }}
+
         </span>
 
       </button>

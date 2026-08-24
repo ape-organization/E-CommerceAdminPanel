@@ -1,4 +1,6 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://yourdomain.com/api'
+  apiBaseUrl: 'https://ecommerceapi.ape-org.com/api',
+    imageBaseUrl: 'https://ecommerceapi.ape-org.com'
+
 };

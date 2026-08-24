@@ -1,5 +1,5 @@
 /* =========================================
-   COSMETICS ADMIN - CATEGORY MANAGEMENT
+   COSMETICS ADMIN - BRAND MANAGEMENT
    ========================================= */
 
 :host {
@@ -116,8 +116,6 @@
 
   font-weight: 700;
 
-  letter-spacing: 0.2px;
-
 }
 
 
@@ -137,12 +135,11 @@
    ADD BUTTON
    ========================================= */
 
-.add-category-btn {
+.add-brand-btn {
 
   height: 44px;
 
-  padding:
-    0 20px;
+  padding: 0 20px;
 
   border-radius: 7px;
 
@@ -156,8 +153,6 @@
 
   font-weight: 700;
 
-  letter-spacing: 0.2px;
-
   box-shadow:
     0 4px 12px
     rgba(11, 31, 58, 0.16);
@@ -168,7 +163,7 @@
 }
 
 
-.add-category-btn mat-icon {
+.add-brand-btn mat-icon {
 
   margin-right: 5px;
 
@@ -178,7 +173,7 @@
 }
 
 
-.add-category-btn:hover {
+.add-brand-btn:hover {
 
   background:
     var(--navy-light);
@@ -186,15 +181,11 @@
   transform:
     translateY(-1px);
 
-  box-shadow:
-    0 6px 16px
-    rgba(11, 31, 58, 0.22);
-
 }
 
 
 /* =========================================
-   TABLE CARD
+   TABLE
    ========================================= */
 
 .table-responsive {
@@ -222,7 +213,7 @@ table {
 
   width: 100%;
 
-  min-width: 600px;
+  min-width: 550px;
 
   background:
     var(--white);
@@ -231,7 +222,7 @@ table {
 
 
 /* =========================================
-   TABLE HEADER
+   HEADER
    ========================================= */
 
 .mat-mdc-header-row {
@@ -276,12 +267,12 @@ table {
 
 
 /* =========================================
-   TABLE BODY
+   ROW
    ========================================= */
 
 .mat-mdc-row {
 
-  height: 68px;
+  height: 78px;
 
   transition:
     background-color 0.2s ease;
@@ -310,7 +301,8 @@ table {
 }
 
 
-.mat-mdc-row:last-child .mat-mdc-cell {
+.mat-mdc-row:last-child
+.mat-mdc-cell {
 
   border-bottom: none;
 
@@ -318,10 +310,10 @@ table {
 
 
 /* =========================================
-   CATEGORY NAME
+   BRAND
    ========================================= */
 
-.category-name {
+.brand-name {
 
   font-weight: 600;
 
@@ -331,26 +323,26 @@ table {
 }
 
 
-.category-name-wrapper {
+.brand-wrapper {
 
   display: flex;
 
   align-items: center;
 
-  gap: 12px;
+  gap: 14px;
 
 }
 
 
 /* =========================================
-   CATEGORY IMAGE
+   BRAND IMAGE
    ========================================= */
 
-.category-image-wrapper {
+.brand-image-wrapper {
 
-  width: 42px;
+  width: 50px;
 
-  height: 42px;
+  height: 50px;
 
   flex-shrink: 0;
 
@@ -360,9 +352,9 @@ table {
 
   justify-content: center;
 
-  border-radius: 9px;
-
   overflow: hidden;
+
+  border-radius: 10px;
 
   background:
     #f5f6f8;
@@ -373,76 +365,25 @@ table {
 }
 
 
-.category-image {
+.brand-image {
 
   width: 100%;
 
   height: 100%;
 
-  object-fit: cover;
+  object-fit: contain;
 
   display: block;
 
 }
 
 
-/* =========================================
-   IMAGE FALLBACK
-   ========================================= */
-
-.category-image-placeholder {
-
-  width: 100%;
-
-  height: 100%;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  background:
-    rgba(212, 175, 55, 0.1);
+.brand-placeholder {
 
   color:
-    var(--gold-dark);
+    #a0a7b0;
 
-  font-family:
-    'Material Icons';
-
-  font-size: 20px;
-
-}
-
-
-.category-name-text {
-
-  white-space: nowrap;
-
-  overflow: hidden;
-
-  text-overflow: ellipsis;
-
-}
-
-
-/* =========================================
-   DESCRIPTION
-   ========================================= */
-
-.description {
-
-  color:
-    var(--gray) !important;
-
-  max-width: 450px;
-
-  white-space: nowrap;
-
-  overflow: hidden;
-
-  text-overflow: ellipsis;
+  font-size: 22px;
 
 }
 
@@ -469,13 +410,7 @@ table {
 
 .edit-btn {
 
-  color:
-    var(--navy);
-
   margin-right: 4px;
-
-  transition:
-    all 0.2s ease;
 
 }
 
@@ -511,9 +446,6 @@ table {
 
   color:
     var(--danger);
-
-  transition:
-    all 0.2s ease;
 
 }
 
@@ -555,8 +487,7 @@ table {
 
   .management-container {
 
-    padding:
-      20px 14px;
+    padding: 20px 14px;
 
   }
 
@@ -595,7 +526,7 @@ table {
   }
 
 
-  .add-category-btn {
+  .add-brand-btn {
 
     width: 100%;
 
@@ -603,26 +534,14 @@ table {
 
   }
 
-
-  .table-responsive {
-
-    border-radius: 10px;
-
-  }
-
 }
 
-
-/* =========================================
-   SMALL MOBILE
-   ========================================= */
 
 @media (max-width: 480px) {
 
   .management-container {
 
-    padding:
-      16px 10px;
+    padding: 16px 10px;
 
   }
 
@@ -642,34 +561,18 @@ table {
   }
 
 
-  .mat-mdc-header-cell:first-child {
+  .brand-wrapper {
 
-    padding-left: 16px;
-
-  }
-
-
-  .category-name-wrapper {
-
-    gap: 8px;
+    gap: 9px;
 
   }
 
 
-  .category-image-wrapper {
+  .brand-image-wrapper {
 
-    width: 34px;
+    width: 40px;
 
-    height: 34px;
-
-    border-radius: 7px;
-
-  }
-
-
-  .category-image-placeholder {
-
-    font-size: 16px;
+    height: 40px;
 
   }
 

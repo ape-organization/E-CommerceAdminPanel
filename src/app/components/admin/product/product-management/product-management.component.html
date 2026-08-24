@@ -46,33 +46,28 @@
 
   <!-- ================= SEARCH ================= -->
 
-<!--   <div class="toolbar">
+  <div class="search-wrapper">
 
-    <mat-form-field
-      appearance="outline"
-      class="search-field">
+    <div class="search-box">
 
-      <mat-label>
-        Search products
-      </mat-label>
-
-      <mat-icon matPrefix>
+      <mat-icon class="search-icon">
         search
       </mat-icon>
 
       <input
-        matInput
+        type="text"
         [(ngModel)]="searchTerm"
         (input)="applyFilter()"
-        placeholder="Search by product name..."
+        placeholder="Search products..."
+        aria-label="Search products"
       />
 
       <button
         *ngIf="searchTerm"
-        mat-icon-button
-        matSuffix
         type="button"
-        (click)="clearSearch()">
+        class="clear-search"
+        (click)="clearSearch()"
+        aria-label="Clear search">
 
         <mat-icon>
           close
@@ -80,39 +75,10 @@
 
       </button>
 
-    </mat-form-field>
-
-  </div> -->
-<div class="search-wrapper">
-
-  <div class="search-box">
-
-    <mat-icon class="search-icon">
-      search
-    </mat-icon>
-
-    <input
-      type="text"
-      [(ngModel)]="searchTerm"
-      (input)="applyFilter()"
-      placeholder="Search products..."
-      aria-label="Search products"
-    />
-
-    <button
-      *ngIf="searchTerm"
-      type="button"
-      class="clear-search"
-      (click)="clearSearch()"
-      aria-label="Clear search">
-
-      <mat-icon>close</mat-icon>
-
-    </button>
+    </div>
 
   </div>
 
-</div>
 
   <!-- ================= ERROR ================= -->
 
@@ -148,7 +114,9 @@
     class="loading-container"
     *ngIf="isLoading">
 
-    <mat-spinner diameter="40"></mat-spinner>
+    <mat-spinner
+      diameter="40">
+    </mat-spinner>
 
     <span>
       Loading products...
@@ -215,7 +183,7 @@
       class="products-table">
 
 
-      <!-- IMAGE -->
+      <!-- ================= PRODUCT ================= -->
 
       <ng-container matColumnDef="image">
 
@@ -269,7 +237,38 @@
       </ng-container>
 
 
-      <!-- PRICE -->
+      <!-- ================= BRAND ================= -->
+
+      <ng-container matColumnDef="brand">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef>
+
+          Brand
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let product">
+
+          <div class="brand-cell">
+
+         
+
+            <span>
+              {{ product.brand?.name || 'No Brand' }}
+            </span>
+
+          </div>
+
+        </td>
+
+      </ng-container>
+
+
+      <!-- ================= PRICE ================= -->
 
       <ng-container matColumnDef="price">
 
@@ -286,23 +285,55 @@
           *matCellDef="let product"
           class="price-cell">
 
-          {{ product.price | number:'1.2-2' }}
-          EGP
+          <ng-container
+            *ngIf="product.discountPercentage > 0; else normalPrice">
+
+            <div class="price-wrapper">
+
+              <span class="old-price">
+
+                {{ product.price | number:'1.2-2' }}
+                EGP
+
+              </span>
+
+              <span class="discounted-price">
+
+                {{ getDiscountedPrice(product) | number:'1.2-2' }}
+                EGP
+
+              </span>
+
+            </div>
+
+          </ng-container>
+
+
+          <ng-template #normalPrice>
+
+            <span class="normal-price">
+
+              {{ product.price | number:'1.2-2' }}
+              EGP
+
+            </span>
+
+          </ng-template>
 
         </td>
 
       </ng-container>
 
 
-      <!-- STOCK -->
+      <!-- ================= DISCOUNT ================= -->
 
-      <ng-container matColumnDef="stock">
+      <ng-container matColumnDef="discount">
 
         <th
           mat-header-cell
           *matHeaderCellDef>
 
-          Stock
+          Discount
 
         </th>
 
@@ -311,23 +342,18 @@
           *matCellDef="let product">
 
           <span
-            class="stock-badge"
-            [class.low-stock]="product.stockQuantity <= 5"
-            [class.out-of-stock]="product.stockQuantity === 0">
+            class="discount-badge"
+            [class.no-discount]="
+              !product.discountPercentage ||
+              product.discountPercentage <= 0
+            ">
 
-            <ng-container
-              *ngIf="product.stockQuantity > 0">
 
-              {{ product.stockQuantity }}
-
-            </ng-container>
-
-            <ng-container
-              *ngIf="product.stockQuantity === 0">
-
-              Out of stock
-
-            </ng-container>
+            {{
+              product.discountPercentage > 0
+                ? product.discountPercentage + '%'
+                : 'No Discount'
+            }}
 
           </span>
 
@@ -336,7 +362,71 @@
       </ng-container>
 
 
-      <!-- SUBCATEGORIES -->
+    <!-- ================= STOCK ================= -->
+
+<ng-container matColumnDef="stock">
+
+  <th
+    mat-header-cell
+    *matHeaderCellDef>
+
+    Stock
+
+  </th>
+
+  <td
+    mat-cell
+    *matCellDef="let product">
+
+    <div class="stock-cell">
+
+      <!-- QUANTITY -->
+      <span
+        class="stock-quantity"
+        [class.low-stock]="
+          product.isInStock &&
+          product.stockQuantity <= 5 &&
+          product.stockQuantity > 0
+        "
+        [class.no-stock]="
+          !product.isInStock
+        ">
+
+        {{ product.stockQuantity }}
+
+      </span>
+
+
+      <!-- STATUS -->
+      <span
+        class="stock-status"
+        [class.in-stock]="product.isInStock"
+        [class.out-of-stock]="!product.isInStock">
+
+        <mat-icon>
+          {{
+            product.isInStock
+              ? 'check_circle'
+              : 'cancel'
+          }}
+        </mat-icon>
+
+        {{
+          product.isInStock
+            ? 'In Stock'
+            : 'Out of Stock'
+        }}
+
+      </span>
+
+    </div>
+
+  </td>
+
+</ng-container>
+
+
+      <!-- ================= CLASSIFICATION ================= -->
 
       <ng-container matColumnDef="subCategories">
 
@@ -382,7 +472,7 @@
       </ng-container>
 
 
-      <!-- ACTIONS -->
+      <!-- ================= ACTIONS ================= -->
 
       <ng-container matColumnDef="actions">
 
@@ -432,7 +522,7 @@
       </ng-container>
 
 
-      <!-- HEADER -->
+      <!-- ================= HEADER ================= -->
 
       <tr
         mat-header-row
@@ -440,7 +530,7 @@
       </tr>
 
 
-      <!-- ROWS -->
+      <!-- ================= ROWS ================= -->
 
       <tr
         mat-row

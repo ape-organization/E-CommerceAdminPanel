@@ -1,7 +1,8 @@
 <div class="management-container">
 
+
   <!-- =========================================
-       PAGE HEADER
+       HEADER
        ========================================= -->
 
   <div class="header-actions">
@@ -9,17 +10,17 @@
     <div class="page-heading">
 
       <span class="heading-icon">
-        category
+        verified
       </span>
 
       <div>
 
         <h2>
-          Category Management
+          Brand Management
         </h2>
 
         <p>
-          Manage your product categories
+          Manage your cosmetic brands
         </p>
 
       </div>
@@ -29,15 +30,15 @@
 
     <button
       mat-raised-button
-      class="add-category-btn"
-      (click)="showAddCategory()"
+      class="add-brand-btn"
+      (click)="showAddBrand()"
     >
 
       <mat-icon>
         add
       </mat-icon>
 
-      Add Category
+      Add Brand
 
     </button>
 
@@ -45,7 +46,7 @@
 
 
   <!-- =========================================
-       CATEGORIES TABLE
+       TABLE
        ========================================= -->
 
   <div class="table-responsive">
@@ -57,60 +58,59 @@
 
 
       <!-- =====================================
-           CATEGORY
+           BRAND
            ===================================== -->
 
-      <ng-container matColumnDef="name">
+      <ng-container
+        matColumnDef="name"
+      >
 
         <th
           mat-header-cell
           *matHeaderCellDef
         >
-          Category
+
+          Brand
+
         </th>
 
 
         <td
           mat-cell
-          *matCellDef="let cat"
-          class="category-name"
+          *matCellDef="let brand"
+          class="brand-name"
         >
 
-          <div class="category-name-wrapper">
+          <div class="brand-wrapper">
 
 
-            <!-- CATEGORY IMAGE -->
+            <!-- IMAGE -->
 
-            <div class="category-image-wrapper">
+            <div class="brand-image-wrapper">
 
               <img
-                *ngIf="cat.imageUrl"
-                [src]="getImageUrl(cat.imageUrl)"
-                [alt]="cat.name"
-                class="category-image"
+                *ngIf="brand.imageUrl"
+                [src]="getImageUrl(brand.imageUrl)"
+                [alt]="brand.name"
+                class="brand-image"
               />
 
 
-              <!-- FALLBACK -->
-
-              <span
-                *ngIf="!cat.imageUrl"
-                class="category-image-placeholder"
+              <mat-icon
+                *ngIf="!brand.imageUrl"
+                class="brand-placeholder"
               >
-                category
-              </span>
+                image
+              </mat-icon>
 
             </div>
 
 
-            <!-- CATEGORY NAME -->
+            <!-- NAME -->
 
-            <span class="category-name-text">
-
-              {{ cat.name }}
-
+            <span>
+              {{ brand.name }}
             </span>
-
 
           </div>
 
@@ -119,53 +119,28 @@
       </ng-container>
 
 
-
-      <!-- =====================================
-           DESCRIPTION
-           ===================================== -->
-
-      <ng-container matColumnDef="description">
-
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-        >
-          Description
-        </th>
-
-
-        <td
-          mat-cell
-          *matCellDef="let cat"
-          class="description"
-        >
-
-          {{ cat.description || 'No description available' }}
-
-        </td>
-
-      </ng-container>
-
-
-
       <!-- =====================================
            ACTIONS
            ===================================== -->
 
-      <ng-container matColumnDef="actions">
+      <ng-container
+        matColumnDef="actions"
+      >
 
         <th
           mat-header-cell
           *matHeaderCellDef
           class="actions-header"
         >
+
           Actions
+
         </th>
 
 
         <td
           mat-cell
-          *matCellDef="let cat"
+          *matCellDef="let brand"
           class="actions-cell"
         >
 
@@ -175,8 +150,8 @@
           <button
             mat-icon-button
             class="edit-btn"
-            matTooltip="Edit category"
-            (click)="editCategory(cat)"
+            matTooltip="Edit brand"
+            (click)="editBrand(brand)"
           >
 
             <mat-icon>
@@ -186,14 +161,13 @@
           </button>
 
 
-
           <!-- DELETE -->
 
           <button
             mat-icon-button
             class="delete-btn"
-            matTooltip="Delete category"
-            (click)="deleteCategory(cat.id)"
+            matTooltip="Delete brand"
+            (click)="deleteBrand(brand.id)"
           >
 
             <mat-icon>
@@ -202,15 +176,13 @@
 
           </button>
 
-
         </td>
 
       </ng-container>
 
 
-
       <!-- =====================================
-           TABLE HEADER
+           ROWS
            ===================================== -->
 
       <tr
@@ -218,11 +190,6 @@
         *matHeaderRowDef="displayedColumns"
       ></tr>
 
-
-
-      <!-- =====================================
-           TABLE ROW
-           ===================================== -->
 
       <tr
         mat-row

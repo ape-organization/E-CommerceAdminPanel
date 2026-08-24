@@ -1,12 +1,15 @@
 export interface Product {
-  id: number;
+ id: number;
   name: string;
-  description?: string;
+  description?: string | null;
   price: number;
+  discount?: number | null;
   stockQuantity: number;
-  imageUrl?: string;
-
-  subCategories: SubCategoryResponse[];
+  isInStock: boolean;
+  imageUrl?: string | null;
+  brandId?: number | null;
+  brand?: any | null;
+  subCategories?: SubCategoryResponse[];
 }
 
 export interface SubCategoryResponse {
@@ -17,12 +20,15 @@ export interface SubCategoryResponse {
 }
 
 export interface ProductDto {
-  id?: number;
+ id: number;
   name: string;
-  description?: string;
+  description?: string | null;
   price: number;
+  discount?: number | null;
   stockQuantity: number;
-  imageUrl?: string;
-  image?: File | null;
-  subCategoryIds: number[];
+  isInStock: boolean;
+  imageUrl?: string | null;
+  brandId?: number | null;
+  brand?: any | null;
+  subCategories?: SubCategoryResponse[];
 }

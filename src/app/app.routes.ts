@@ -8,6 +8,7 @@ import { authGuard } from './guards/auth.guard';
 import { BaseLayout } from './components/base-layout/base-layout';
 import { AllSubCategory } from './components/admin/subCategory/all-sub-category/all-sub-category';
 import { Orders } from './components/orders/orders';
+import { BrandManagement } from './components/admin/brand/brand-management/brand-management';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -23,6 +24,8 @@ export const routes: Routes = [
 
       { path: 'products', component: ProductManagementComponent },
       { path: 'categories', component: CategoryManagementComponent },
+            { path: 'brand', component: BrandManagement },
+
        { path: 'subCategories', component: AllSubCategory },
       { path: 'users', component: UserManagementComponent },
       { path: 'orders', component: Orders }

@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectorRef,
   Component,
@@ -9,12 +10,14 @@ import {
 import { FormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
+
 import {
   MatDialog,
   MatDialogModule
 } from '@angular/material/dialog';
 
 import { MatIconModule } from '@angular/material/icon';
+
 import { MatInputModule } from '@angular/material/input';
 
 import {
@@ -28,29 +31,66 @@ import {
 } from '@angular/material/tooltip';
 
 import { ProductService } from '../../../../services/product.service';
-import { AddProductComponent } from '../add-product/add-product.component';
+
+import {
+  AddProductComponent
+} from '../add-product/add-product.component';
+import { environment } from '../../../../../environments/environment';
 
 
 // ============================================================
 // MODELS
 // ============================================================
 
-export interface SubCategory {
-  id: number;
-  name: string;
-  categoryId: number;
-  categoryName?: string;
-}
+export interface Brand {
 
-export interface Product {
   id: number;
+
   name: string;
-  description?: string | null;
-  price: number;
-  stockQuantity: number;
+
   imageUrl?: string | null;
 
+  isDeleted?: boolean;
+
+}
+
+
+export interface SubCategory {
+
+  id: number;
+
+  name: string;
+
+  categoryId: number;
+
+  categoryName?: string;
+
+}
+
+
+export interface Product {
+
+  id: number;
+
+  name: string;
+
+  description?: string | null;
+
+  price: number;
+  isInStock: boolean;
+
+  discountPercentage?: number | null;
+
+  stockQuantity: number;
+
+  imageUrl?: string | null;
+
+  brandId?: number | null;
+
+  brand?: Brand | null;
+
   subCategories: SubCategory[];
+
 }
 
 
@@ -59,21 +99,32 @@ export interface Product {
 // ============================================================
 
 @Component({
-  selector: 'app-product-management',
+
+  selector:
+    'app-product-management',
 
   standalone: true,
 
   imports: [
+
     CommonModule,
+
     FormsModule,
 
     MatButtonModule,
+
     MatDialogModule,
+
     MatIconModule,
+
     MatInputModule,
+
     MatProgressSpinnerModule,
+
     MatTableModule,
+
     MatTooltipModule
+
   ],
 
   templateUrl:
@@ -81,6 +132,7 @@ export interface Product {
 
   styleUrl:
     './product-management.component.scss'
+
 })
 export class ProductManagementComponent
   implements OnInit {
@@ -95,7 +147,10 @@ export class ProductManagementComponent
 
   private readonly dialog =
     inject(MatDialog);
-private readonly cdr = inject(ChangeDetectorRef);
+
+  private readonly cdr =
+    inject(ChangeDetectorRef);
+
 
   // ==========================================================
   // DATA
@@ -106,16 +161,27 @@ private readonly cdr = inject(ChangeDetectorRef);
   filteredProducts: Product[] = [];
 
 
-  // IMPORTANT:
-  // These MUST match matColumnDef values
-  // in the HTML.
-displayedColumns: string[] = [
-  'image',
-  'price',
-  'stock',
-  'subCategories',
-  'actions'
-];
+  // ==========================================================
+  // TABLE COLUMNS
+  // ==========================================================
+
+  displayedColumns: string[] = [
+
+    'image',
+
+    'brand',
+
+    'price',
+
+    'discount',
+
+    'stock',
+
+    'subCategories',
+
+    'actions'
+
+  ];
 
 
   // ==========================================================
@@ -136,6 +202,7 @@ displayedColumns: string[] = [
   ngOnInit(): void {
 
     this.loadProducts();
+
   }
 
 
@@ -143,57 +210,67 @@ displayedColumns: string[] = [
   // LOAD PRODUCTS
   // ==========================================================
 
-loadProducts(): void {
+  loadProducts(): void {
 
-  this.isLoading = true;
-  this.errorMessage = null;
+    this.isLoading = true;
 
-
-  this.productService.getProducts().subscribe({
-
-    next: (products) => {
-
-     
-
-      this.products = Array.isArray(products)
-        ? products
-        : [];
-
-      this.filteredProducts = [...this.products];
-
-    
-
-      this.isLoading = false;
-
-      // Force Angular to refresh the view
-      this.cdr.detectChanges();
-
-    },
-
-    error: (error) => {
-
-      console.error('Error loading products:', error);
-
-      this.products = [];
-      this.filteredProducts = [];
-
-      this.errorMessage =
-        error?.error?.message ||
-        error?.message ||
-        'Failed to load products.';
-
-      this.isLoading = false;
-
-      this.cdr.detectChanges();
-    },
-
-    complete: () => {
+    this.errorMessage = null;
 
 
-    }
+    this.productService
+      .getProducts()
+      .subscribe({
 
-  });
-}
+        next: (products) => {
+
+          this.products =
+            Array.isArray(products)
+              ? products
+              : [];
+console.log(this.products)
+          this.filteredProducts =
+            [...this.products];
+
+
+          this.isLoading =
+            false;
+
+
+          this.cdr.detectChanges();
+
+        },
+
+
+        error: (error) => {
+
+          console.error(
+            'Error loading products:',
+            error
+          );
+
+
+          this.products = [];
+
+          this.filteredProducts = [];
+
+
+          this.errorMessage =
+            error?.error?.message ||
+            error?.message ||
+            'Failed to load products.';
+
+
+          this.isLoading =
+            false;
+
+
+          this.cdr.detectChanges();
+
+        }
+
+      });
+
+  }
 
 
   // ==========================================================
@@ -207,49 +284,74 @@ loadProducts(): void {
         .trim()
         .toLowerCase();
 
+
     if (!term) {
 
-      this.filteredProducts = [
-        ...this.products
-      ];
+      this.filteredProducts =
+        [...this.products];
 
       return;
+
     }
 
+
     this.filteredProducts =
-      this.products.filter(product => {
+      this.products.filter(
+        product => {
 
-        const name =
-          product.name
-            ?.toLowerCase()
-            .includes(term);
-
-        const description =
-          product.description
-            ?.toLowerCase()
-            .includes(term);
-
-        const subCategory =
-          product.subCategories?.some(sc =>
-            sc.name
+          const name =
+            product.name
               ?.toLowerCase()
-              .includes(term)
+              .includes(term);
+
+
+          const description =
+            product.description
+              ?.toLowerCase()
+              .includes(term);
+
+
+          const brand =
+            product.brand?.name
+              ?.toLowerCase()
+              .includes(term);
+
+
+          const subCategory =
+            product.subCategories
+              ?.some(sc =>
+                sc.name
+                  ?.toLowerCase()
+                  .includes(term)
+              );
+
+
+          const category =
+            product.subCategories
+              ?.some(sc =>
+                sc.categoryName
+                  ?.toLowerCase()
+                  .includes(term)
+              );
+
+
+          return !!(
+
+            name ||
+
+            description ||
+
+            brand ||
+
+            subCategory ||
+
+            category
+
           );
 
-        const category =
-          product.subCategories?.some(sc =>
-            sc.categoryName
-              ?.toLowerCase()
-              .includes(term)
-          );
+        }
+      );
 
-        return !!(
-          name ||
-          description ||
-          subCategory ||
-          category
-        );
-      });
   }
 
 
@@ -262,11 +364,38 @@ loadProducts(): void {
     this.searchTerm = '';
 
     this.applyFilter();
+
   }
 
 
   // ==========================================================
-  // ADD
+  // DISCOUNTED PRICE
+  // ==========================================================
+
+  getDiscountedPrice(
+    product: Product
+  ): number {
+
+    const price =
+      Number(product.price) || 0;
+
+
+    const discount =
+      Number(
+        product.discountPercentage
+      ) || 0;
+
+
+    return (
+      price -
+      (price * discount / 100)
+    );
+
+  }
+
+
+  // ==========================================================
+  // ADD PRODUCT
   // ==========================================================
 
   addProduct(): void {
@@ -275,30 +404,42 @@ loadProducts(): void {
       this.dialog.open(
         AddProductComponent,
         {
+
           width: '900px',
+
           maxWidth: '95vw',
+
           maxHeight: '95vh',
 
           data: {
+
             isEditing: false
+
           }
+
         }
       );
 
+
     dialogRef
       .afterClosed()
-      .subscribe(result => {
+      .subscribe(
+        result => {
 
-        if (result) {
-          this.loadProducts();
+          if (result) {
+
+            this.loadProducts();
+
+          }
+
         }
+      );
 
-      });
   }
 
 
   // ==========================================================
-  // EDIT
+  // EDIT PRODUCT
   // ==========================================================
 
   editProduct(
@@ -309,31 +450,44 @@ loadProducts(): void {
       this.dialog.open(
         AddProductComponent,
         {
+
           width: '900px',
+
           maxWidth: '95vw',
+
           maxHeight: '95vh',
 
           data: {
+
             isEditing: true,
+
             product
+
           }
+
         }
       );
 
+
     dialogRef
       .afterClosed()
-      .subscribe(result => {
+      .subscribe(
+        result => {
 
-        if (result) {
-          this.loadProducts();
+          if (result) {
+
+            this.loadProducts();
+
+          }
+
         }
+      );
 
-      });
   }
 
 
   // ==========================================================
-  // DELETE
+  // DELETE PRODUCT
   // ==========================================================
 
   deleteProduct(
@@ -345,9 +499,13 @@ loadProducts(): void {
         'Are you sure you want to delete this product?'
       );
 
+
     if (!confirmed) {
+
       return;
+
     }
+
 
     this.productService
       .deleteProduct(id)
@@ -360,8 +518,11 @@ loadProducts(): void {
               p => p.id !== id
             );
 
+
           this.applyFilter();
+
         },
+
 
         error: (error) => {
 
@@ -370,12 +531,15 @@ loadProducts(): void {
             error
           );
 
+
           this.errorMessage =
             error?.error?.message ??
             'Failed to delete product.';
+
         }
 
       });
+
   }
 
 
@@ -390,16 +554,29 @@ loadProducts(): void {
     if (!imageUrl) {
 
       return 'assets/images/product-placeholder.png';
+
     }
 
+
     if (
-      imageUrl.startsWith('http://') ||
-      imageUrl.startsWith('https://')
+
+      imageUrl.startsWith(
+        'http://'
+      ) ||
+
+      imageUrl.startsWith(
+        'https://'
+      )
+
     ) {
 
       return imageUrl;
+
     }
 
-    return `https://localhost:7256${imageUrl}`;
+
+    return `${environment.imageBaseUrl}${imageUrl}`;
+
   }
+
 }
