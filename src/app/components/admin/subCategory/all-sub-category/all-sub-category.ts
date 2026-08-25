@@ -179,7 +179,6 @@ private readonly cdr = inject(ChangeDetectorRef);
 
     dialogRef.afterClosed()
       .subscribe((result) => {
-console.log(result)
         if (!result) {
           return;
         }

@@ -341,10 +341,10 @@ export class AddCategoryComponent
 
 
         if (!res) {
-
-          throw new Error(
+this.errorMessage = 'Category update failed'
+         /*  throw new Error(
             'Category update failed'
-          );
+          ); */
 
         }
 
@@ -366,10 +366,10 @@ export class AddCategoryComponent
 
 
         if (!res) {
-
-          throw new Error(
+this.errorMessage = 'Category creation failed'
+         /*  throw new Error(
             'Category creation failed'
-          );
+          ); */
 
         }
 
@@ -387,10 +387,7 @@ export class AddCategoryComponent
 
     } catch (error) {
 
-      console.error(
-        'Category save error:',
-        error
-      );
+    
 
 
       this.errorMessage =

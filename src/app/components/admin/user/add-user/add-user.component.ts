@@ -69,7 +69,7 @@ async onSubmit() {
 
     const res = await firstValueFrom(request);
     if (!res) {
-     this.errorMessage = res?.message || 'Something went wrong';
+     this.errorMessage = 'Something went wrong';
      this.cdr.detectChanges();
         return;
     }

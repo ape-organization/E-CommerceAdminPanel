@@ -372,10 +372,11 @@ export class AddBrand
 
 
         if (!response) {
-
-          throw new Error(
+ this.errorMessage =
+      'Brand update failed';
+         /*  throw new Error(
             'Brand update failed'
-          );
+          ); */
 
         }
 
@@ -399,10 +400,10 @@ export class AddBrand
 
 
         if (!response) {
-
-          throw new Error(
+this.errorMessage ='Brand creation failed'
+          /* throw new Error(
             'Brand creation failed'
-          );
+          ); */
 
         }
 
@@ -422,10 +423,7 @@ export class AddBrand
 
     catch (error) {
 
-      console.error(
-        'Brand save error:',
-        error
-      );
+    
 
 
       this.errorMessage =

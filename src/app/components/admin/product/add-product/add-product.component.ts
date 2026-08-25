@@ -318,14 +318,9 @@ export class AddProductComponent implements OnInit {
 
         error: (error) => {
 
-          console.error(
-            'Failed to load brands:',
-            error
-          );
+        
 
-          this.errorMessage =
-            error?.error?.message ??
-            'Failed to load brands.';
+          this.errorMessage = 'Failed to load brands.';
 
           this.cdr.detectChanges();
         }
@@ -371,14 +366,8 @@ export class AddProductComponent implements OnInit {
 
         error: (error) => {
 
-          console.error(
-            'Failed to load categories:',
-            error
-          );
-
-          this.errorMessage =
-            error?.error?.message ??
-            'Failed to load categories.';
+        
+          this.errorMessage = 'Failed to load categories.';
 
           this.cdr.detectChanges();
         }
@@ -446,20 +435,14 @@ export class AddProductComponent implements OnInit {
 
         error: (error) => {
 
-          console.error(
-            'Failed to load subcategories:',
-            error
-          );
-
+        
           this.filteredSubCategories = [];
 
           this.productForm
             .get('subCategoryIds')
             ?.setValue([]);
 
-          this.errorMessage =
-            error?.error?.message ??
-            'Failed to load subcategories.';
+          this.errorMessage = 'Failed to load subcategories.';
 
           this.cdr.detectChanges();
         }
@@ -1098,14 +1081,7 @@ export class AddProductComponent implements OnInit {
 
           error: (error) => {
 
-            console.error(
-              'Create product error:',
-              error
-            );
-
-            this.errorMessage =
-              error?.error?.message ??
-              'Failed to create product.';
+            this.errorMessage = 'Failed to create product.';
 
             this.isSubmitting =
               false;
@@ -1158,14 +1134,8 @@ export class AddProductComponent implements OnInit {
 
         error: (error) => {
 
-          console.error(
-            'Update product error:',
-            error
-          );
-
-          this.errorMessage =
-            error?.error?.message ??
-            'Failed to update product.';
+        
+          this.errorMessage =  'Failed to update product.';
 
           this.isSubmitting =
             false;
