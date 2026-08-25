@@ -10,6 +10,7 @@ import {
 import {
   Observable
 } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 
 // ============================================================
@@ -59,7 +60,7 @@ export class ProductService {
     inject(HttpClient);
 
   private readonly apiUrl =
-    'https://localhost:7256/api/Products';
+    environment.apiBaseUrl+'/Products';
 
 
   // ==========================================================

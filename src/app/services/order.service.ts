@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { Order } from '../components/orders/orders';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class OrderService {
   private readonly http = inject(HttpClient);
 
   private readonly apiUrl =
-    'https://localhost:7256/api/orders';
+    environment.apiBaseUrl+'/orders';
 
 
   getOrders(): Observable<Order[]> {
