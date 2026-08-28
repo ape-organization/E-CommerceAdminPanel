@@ -1,16 +1,4 @@
-export interface Product {
- id: number;
-  name: string;
-  description?: string | null;
-  price: number;
-  discount?: number | null;
-  stockQuantity: number;
-  isInStock: boolean;
-  imageUrl?: string | null;
-  brandId?: number | null;
-  brand?: any | null;
-  subCategories?: SubCategoryResponse[];
-}
+import { Brand } from "./Brand.model";
 
 export interface SubCategoryResponse {
   id: number;
@@ -19,16 +7,17 @@ export interface SubCategoryResponse {
   categoryName: string;
 }
 
-export interface ProductDto {
- id: number;
+export interface Product {
+id: number;
   name: string;
   description?: string | null;
   price: number;
-  discount?: number | null;
-  stockQuantity: number;
   isInStock: boolean;
+  discountPercentage?: number | null;
+  stockQuantity: number;
   imageUrl?: string | null;
   brandId?: number | null;
-  brand?: any | null;
-  subCategories?: SubCategoryResponse[];
+  brand?: Brand | null;
+  subCategories: SubCategoryResponse[];
 }
+

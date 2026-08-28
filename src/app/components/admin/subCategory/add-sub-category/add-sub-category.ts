@@ -1,5 +1,13 @@
+import {
+  Component,
+  Inject,
+  OnInit,
+  inject,
+  signal
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
-import { Component, Inject, inject } from '@angular/core';
+
 import {
   FormBuilder,
   ReactiveFormsModule,
@@ -18,8 +26,32 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
+import { Category } from '../../../../models/category.model';
+import { SubCategory } from '../../../../models/subCategory.model';
+
+
+// ============================================================
+// DIALOG DATA
+// ============================================================
+
+export interface AddSubCategoryDialogData {
+
+  isEditing: boolean;
+
+  categories: Category[];
+
+  subcategory: SubCategory | null;
+
+}
+
+
+// ============================================================
+// COMPONENT
+// ============================================================
+
 @Component({
   selector: 'app-add-sub-category',
+
   standalone: true,
 
   imports: [
@@ -35,70 +67,172 @@ import { MatSelectModule } from '@angular/material/select';
   ],
 
   templateUrl: './add-sub-category.html',
+
   styleUrl: './add-sub-category.scss'
 })
-export class AddSubCategory {
+export class AddSubCategory implements OnInit {
 
-  private readonly fb = inject(FormBuilder);
+
+  // ==========================================================
+  // SERVICES
+  // ==========================================================
+
+  private readonly fb =
+    inject(FormBuilder);
 
   private readonly dialogRef =
     inject(MatDialogRef<AddSubCategory>);
 
-  readonly form = this.fb.group({
 
-    categoryId: [
-      null as number | null,
-      Validators.required
-    ],
+  // ==========================================================
+  // SIGNALS
+  // ==========================================================
 
-    name: [
-      '',
-      [
-        Validators.required,
-        Validators.minLength(2),
-        Validators.maxLength(100)
+  readonly saving =
+    signal(false);
+
+
+  // ==========================================================
+  // FORM
+  // ==========================================================
+
+  readonly form =
+    this.fb.group({
+
+      categoryId: [
+        null as number | null,
+        Validators.required
+      ],
+
+      name: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(100)
+        ]
+      ],
+
+      description: [
+        '',
+        Validators.maxLength(500)
       ]
-    ],
 
-    description: [
-      '',
-      Validators.maxLength(500)
-    ]
+    });
 
-  });
 
+  // ==========================================================
+  // CONSTRUCTOR DATA
+  // ==========================================================
 
   constructor(
+
     @Inject(MAT_DIALOG_DATA)
-    public data: any
-  ) {
-    const subcategory = this.data?.subcategory;
 
-    if (subcategory) {
+    public readonly data:
+      AddSubCategoryDialogData
 
-      this.form.patchValue({
+  ) {}
 
-        categoryId:
-          subcategory.categoryId ?? null,
 
-        name:
-          subcategory.name ?? '',
+  // ==========================================================
+  // COMPUTED-STYLE GETTERS
+  // ==========================================================
 
-        description:
-          subcategory.description ?? ''
+  get isEditing(): boolean {
+    return this.data?.isEditing === true;
+  }
 
-      });
 
-    }
+  get dialogTitle(): string {
+
+    return this.isEditing
+      ? 'Edit Subcategory'
+      : 'Add Subcategory';
 
   }
 
 
-  // =========================================================
+  get dialogDescription(): string {
+
+    return this.isEditing
+      ? 'Update the subcategory information.'
+      : 'Create a new subcategory.';
+
+  }
+
+
+  get submitText(): string {
+
+    return this.isEditing
+      ? 'UPDATE SUBCATEGORY'
+      : 'ADD SUBCATEGORY';
+
+  }
+
+
+  get submitIcon(): string {
+
+    return this.isEditing
+      ? 'save'
+      : 'add';
+
+  }
+
+
+  // ==========================================================
+  // INIT
+  // ==========================================================
+
+  ngOnInit(): void {
+
+    const subcategory =
+      this.data?.subcategory;
+
+
+    if (!subcategory) {
+      return;
+    }
+
+
+    // ========================================================
+    // EDIT MODE
+    // ========================================================
+
+    this.form.patchValue({
+
+      categoryId:
+        subcategory.categoryId ?? null,
+
+      name:
+        subcategory.name ?? '',
+
+      description:
+        subcategory.description ?? ''
+
+    });
+
+  }
+
+
+  // ==========================================================
   // SAVE
-  // =========================================================
+  // ==========================================================
 
   save(): void {
+
+    // --------------------------------------------------------
+    // PREVENT DUPLICATE SUBMISSION
+    // --------------------------------------------------------
+
+    if (this.saving()) {
+      return;
+    }
+
+
+    // --------------------------------------------------------
+    // VALIDATION
+    // --------------------------------------------------------
 
     if (this.form.invalid) {
 
@@ -108,14 +242,32 @@ export class AddSubCategory {
     }
 
 
-    const value = this.form.getRawValue();
+    // --------------------------------------------------------
+    // START SAVING
+    // --------------------------------------------------------
 
+    this.saving.set(true);
+
+
+    // --------------------------------------------------------
+    // FORM VALUE
+    // --------------------------------------------------------
+
+    const value =
+      this.form.getRawValue();
+
+
+    // --------------------------------------------------------
+    // PAYLOAD
+    // --------------------------------------------------------
 
     const payload = {
 
-      categoryId: value.categoryId!,
+      categoryId:
+        Number(value.categoryId),
 
-      name: value.name!.trim(),
+      name:
+        value.name?.trim() ?? '',
 
       description:
         value.description?.trim() || null
@@ -123,18 +275,9 @@ export class AddSubCategory {
     };
 
 
-    /*
-      Do NOT call the API here.
-
-      The parent component will receive this object
-      and call:
-
-      POST  /api/SubCategory
-
-      or
-
-      PUT   /api/SubCategory/{id}
-    */
+    // --------------------------------------------------------
+    // RETURN TO PARENT
+    // --------------------------------------------------------
 
     this.dialogRef.close({
 
@@ -147,11 +290,16 @@ export class AddSubCategory {
   }
 
 
-  // =========================================================
+  // ==========================================================
   // CANCEL
-  // =========================================================
+  // ==========================================================
 
   cancel(): void {
+
+    if (this.saving()) {
+      return;
+    }
+
 
     this.dialogRef.close({
 

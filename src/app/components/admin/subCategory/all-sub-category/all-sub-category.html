@@ -1,28 +1,42 @@
 <div class="management-container">
 
-  <!-- Page Header -->
-  <div class="header-actions">
+  <!-- =====================================================
+       HEADER
+       ===================================================== -->
+
+  <header class="header-actions">
 
     <div class="page-heading">
 
-      <span class="heading-icon">
-        account_tree
-      </span>
+      <div class="heading-icon">
+
+        <mat-icon>
+          account_tree
+        </mat-icon>
+
+      </div>
 
       <div>
-        <h2>Subcategory Management</h2>
+
+        <h2>
+          Subcategory Management
+        </h2>
 
         <p>
-          Manage your product subcategories
+          Manage your store subcategories
         </p>
+
       </div>
 
     </div>
 
 
+    <!-- ADD -->
+
     <button
       mat-raised-button
       class="add-category-btn"
+      type="button"
       (click)="showAddSubcategory()"
     >
 
@@ -34,27 +48,34 @@
 
     </button>
 
-  </div>
+  </header>
 
 
-  <!-- Subcategories Table -->
+  <!-- =====================================================
+       TABLE
+       ===================================================== -->
+
   <div class="table-responsive">
 
     <table
       mat-table
-      [dataSource]="dataSource"
-      class="subcategory-table"
+      [dataSource]="paginatedSubcategories()"
     >
 
 
-      <!-- Subcategory Name -->
+      <!-- =================================================
+           SUBCATEGORY
+           ================================================= -->
+
       <ng-container matColumnDef="name">
 
         <th
           mat-header-cell
           *matHeaderCellDef
         >
-          Subcategory Name
+
+          Subcategory
+
         </th>
 
 
@@ -64,16 +85,21 @@
           class="category-name"
         >
 
-          <div
-            class="category-name-wrapper"
-          >
+          <div class="category-name-wrapper">
 
-            <span class="category-icon">
-              category
-            </span>
+            <div class="category-icon">
 
-            <span>
+              <mat-icon>
+                account_tree
+              </mat-icon>
+
+            </div>
+
+
+            <span class="category-name-text">
+
               {{ subcategory.name }}
+
             </span>
 
           </div>
@@ -83,14 +109,19 @@
       </ng-container>
 
 
-      <!-- Parent Category -->
+      <!-- =================================================
+           CATEGORY
+           ================================================= -->
+
       <ng-container matColumnDef="category">
 
         <th
           mat-header-cell
           *matHeaderCellDef
         >
+
           Category
+
         </th>
 
 
@@ -102,9 +133,14 @@
 
           <span class="parent-category">
 
+            <mat-icon>
+              category
+            </mat-icon>
+
             {{
-              subcategory.categoryName ||
-              getCategoryName(subcategory.categoryId)
+              getCategoryName(
+                subcategory.categoryId
+              )
             }}
 
           </span>
@@ -114,36 +150,12 @@
       </ng-container>
 
 
-      <!-- Description -->
-      <ng-container
-        matColumnDef="description"
-      >
-
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-        >
-          Description
-        </th>
 
 
-        <td
-          mat-cell
-          *matCellDef="let subcategory"
-          class="description"
-        >
+      <!-- =================================================
+           ACTIONS
+           ================================================= -->
 
-          {{
-            subcategory.description ||
-            'No description available'
-          }}
-
-        </td>
-
-      </ng-container>
-
-
-      <!-- Actions -->
       <ng-container matColumnDef="actions">
 
         <th
@@ -151,7 +163,9 @@
           *matHeaderCellDef
           class="actions-header"
         >
+
           Actions
+
         </th>
 
 
@@ -161,10 +175,12 @@
           class="actions-cell"
         >
 
+          <!-- EDIT -->
+
           <button
             mat-icon-button
             class="edit-btn"
-            matTooltip="Edit subcategory"
+            type="button"
             (click)="editSubcategory(subcategory)"
           >
 
@@ -175,10 +191,12 @@
           </button>
 
 
+          <!-- DELETE -->
+
           <button
             mat-icon-button
             class="delete-btn"
-            matTooltip="Delete subcategory"
+            type="button"
             (click)="deleteSubcategory(subcategory.id)"
           >
 
@@ -193,24 +211,42 @@
       </ng-container>
 
 
-      <!-- Header -->
+      <!-- =================================================
+           HEADER / ROWS
+           ================================================= -->
+
       <tr
         mat-header-row
         *matHeaderRowDef="displayedColumns"
-      ></tr>
+      >
+      </tr>
 
 
-      <!-- Rows -->
       <tr
         mat-row
         *matRowDef="
           let row;
           columns: displayedColumns;
         "
-      ></tr>
-
+      >
+      </tr>
 
     </table>
+
+
+    <!-- =================================================
+         PAGINATION
+         ================================================= -->
+
+    <mat-paginator
+      [length]="subcategories().length"
+      [pageIndex]="pageIndex()"
+      [pageSize]="pageSize()"
+      [pageSizeOptions]="[5, 10, 25, 50]"
+      showFirstLastButtons
+      (page)="onPageChange($event)"
+    >
+    </mat-paginator>
 
   </div>
 

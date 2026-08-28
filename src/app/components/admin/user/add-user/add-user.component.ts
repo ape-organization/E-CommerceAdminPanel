@@ -1,90 +1,149 @@
-import { Component, EventEmitter, Input, Output, inject, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  Component,
+  Inject,
+  OnInit,
+  inject
+} from '@angular/core';
 
-import { User } from '../../../../models/user.model';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators
+} from '@angular/forms';
+
+import {
+  MAT_DIALOG_DATA,
+  MatDialogRef
+} from '@angular/material/dialog';
+
 import { SharedModule } from '../../../../shared/shared.module';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UserService } from '../../../../services/user.service';
-import { firstValueFrom } from 'rxjs';
+import { User } from '../../../../models/user.model';
+
+
+interface AddUserDialogData {
+  add: boolean;
+  user?: User;
+}
+
 
 @Component({
   selector: 'app-add-user',
   standalone: true,
-  imports: [
- SharedModule
-  ],
+  imports: [SharedModule],
   templateUrl: './add-user.component.html',
   styleUrl: './add-user.component.scss'
 })
 export class AddUserComponent implements OnInit {
-  private fb = inject(FormBuilder);
-  private userService = inject(UserService);
 
- 
+  private readonly fb = inject(FormBuilder);
+  private readonly userService = inject(UserService);
 
-  roles: string[] = ['Admin', 'Client'];
+  userForm!: FormGroup;
+
+  editUser: User | null = null;
+
   hidePassword = true;
-editUser:any=null
-showError=false;
-errorMessage: string | null = null;
-userForm!: FormGroup;
+
+  errorMessage = '';
+
+
   constructor(
-    private dialogRef:MatDialogRef<AddUserComponent>,
-   @Inject(MAT_DIALOG_DATA) public data: any,
-   private cdr: ChangeDetectorRef
-  ) {
-   
+    private readonly dialogRef: MatDialogRef<AddUserComponent>,
+    @Inject(MAT_DIALOG_DATA)
+    public readonly data: AddUserDialogData
+  ) {}
+
+
+  ngOnInit(): void {
+
+    this.editUser = this.data.user ?? null;
+
+    this.userForm = this.fb.group({
+      name: [
+        this.editUser?.name ?? '',
+        Validators.required
+      ],
+
+      email: [
+        this.editUser?.email ?? '',
+        [
+          Validators.required,
+          Validators.email
+        ]
+      ],
+
+      password: [
+        '',
+        this.editUser
+          ? []
+          : [
+              Validators.required,
+              Validators.minLength(6)
+            ]
+      ],
+
+      role: [
+        this.editUser?.role ?? 'Admin',
+        this.editUser
+          ? []
+          : Validators.required
+      ]
+    });
   }
 
- ngOnInit() {
-  const isEdit = !!this.data.user; // true if editing
- this.editUser = this.data.user || null;
-  this.userForm = this.fb.group({
-    name: [isEdit ? this.data.user.name : '', Validators.required],
-    email: [isEdit ? this.data.user.email : '', [Validators.required, Validators.email]],
-    password: [
-      '',
-      isEdit ? [] : [Validators.required, Validators.minLength(6)]
-    ],
-    role: [
-      isEdit ? this.data.user.role : 'Admin',
-      isEdit ? [] : [Validators.required]
-    ]
-  });
-}
 
+  onSubmit(): void {
 
-
-async onSubmit() {
-  if (this.userForm.invalid) return;
-
-  const userData = { ...this.editUser, ...this.userForm.value };
-
-  try {
-    const request = this.data.add
-      ? this.userService.addUser(userData)
-      : this.userService.updateUser(userData.id, userData);
-
-
-    const res = await firstValueFrom(request);
-    if (!res) {
-     this.errorMessage = 'Something went wrong';
-     this.cdr.detectChanges();
-        return;
+    if (this.userForm.invalid) {
+      this.userForm.markAllAsTouched();
+      return;
     }
 
-    this.dialogRef.close({ status: true });
+    const userData = {
+      ...this.editUser,
+      ...this.userForm.value
+    };
 
-  } catch (err) {
-   this.errorMessage = 'Something went wrong';
-   this.cdr.detectChanges();
-        return;
+    const request = this.data.add
+      ? this.userService.addUser(userData)
+      : this.userService.updateUser(
+          userData.id,
+          userData
+        );
+
+    request.subscribe({
+      next: response => {
+
+        if (!response) {
+          this.errorMessage = 'Something went wrong.';
+          return;
+        }
+
+        this.dialogRef.close({
+          status: true
+        });
+      },
+
+      error: error => {
+
+        console.error(
+          'User operation failed:',
+          error
+        );
+
+        this.errorMessage =
+          error?.error?.message ||
+          'Something went wrong.';
+      }
+    });
   }
-}
 
 
-  onCancel() {
-   this.dialogRef.close({status:false})
+  onCancel(): void {
+
+    this.dialogRef.close({
+      status: false
+    });
   }
 }

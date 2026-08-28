@@ -1,45 +1,607 @@
 
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
-@use '@angular/material' as mat;
+/* ============================================================
+   GLOBAL APPLICATION STYLES
+   ============================================================ */
+
+:root {
+
+  /* ==========================================================
+     BRAND COLORS
+     ========================================================== */
+
+  --color-primary: #3A2721;
+  --color-primary-light: #5A4036;
+  --color-primary-dark: #281A16;
+
+  --color-accent: #B88A5A;
+  --color-accent-light: #D8B98A;
+
+  --color-sale: #A65D4D;
+
+  /* ==========================================================
+     BACKGROUNDS
+     ========================================================== */
+
+  --color-background: #FAF7F2;
+  --color-surface: #FFFFFF;
+  --color-surface-soft: #F4ECE5;
+
+  /* ==========================================================
+     TEXT
+     ========================================================== */
+
+  --color-text: #2E2521;
+  --color-text-secondary: #756A63;
+  --color-text-light: #A69A91;
+
+  /* ==========================================================
+     BORDERS
+     ========================================================== */
+
+  --color-border: #E7DED6;
+  --color-border-light: #EFE8E2;
+
+  /* ==========================================================
+     STATUS
+     ========================================================== */
+
+  --color-success: #587A62;
+  --color-error: #A65D4D;
+  --color-warning: #B88A5A;
+
+  /* ==========================================================
+     SHADOWS
+     ========================================================== */
+
+  --shadow-sm:
+    0 2px 8px rgba(58, 39, 33, 0.06);
+
+  --shadow-md:
+    0 8px 25px rgba(58, 39, 33, 0.10);
+
+  --shadow-lg:
+    0 18px 45px rgba(58, 39, 33, 0.16);
+
+  /* ==========================================================
+     RADIUS
+     ========================================================== */
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  //==============================================
+  // font family 
+  //==============================================
+--font-body: 'Montserrat', sans-serif;
+ --font-heading: 'Playfair Display', serif;
+
+}
+
+/*===================================================
+paganiation
+==================================================*/
+
+/* =========================================================
+   GLOBAL PAGINATOR
+   ========================================================= */
+
+.mat-mdc-paginator {
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+}
+
+
+/* =========================================================
+   ITEMS PER PAGE FIELD
+   ========================================================= */
+
+.mat-mdc-paginator .mat-mdc-form-field {
+  margin: 0 4px;
+}
+
+
+/* BORDER
+   Angular Material MDC uses these 3 elements
+*/
+
+.mat-mdc-paginator
+.mat-mdc-form-field
+.mdc-notched-outline__leading,
+
+.mat-mdc-paginator
+.mat-mdc-form-field
+.mdc-notched-outline__notch,
+
+.mat-mdc-paginator
+.mat-mdc-form-field
+.mdc-notched-outline__trailing {
+
+  border:
+    none !important;
+}
+
+
+/* =========================================================
+   HOVER
+   ========================================================= */
+
+.mat-mdc-paginator
+.mat-mdc-form-field:hover
+.mdc-notched-outline__leading,
+
+.mat-mdc-paginator
+.mat-mdc-form-field:hover
+.mdc-notched-outline__notch,
+
+.mat-mdc-paginator
+.mat-mdc-form-field:hover
+.mdc-notched-outline__trailing {
+
+  border-color:
+    var(--color-accent) !important;
+}
+
+
+/* =========================================================
+   FOCUS
+   ========================================================= */
+
+.mat-mdc-paginator
+.mat-mdc-form-field.mat-focused
+.mdc-notched-outline__leading,
+
+.mat-mdc-paginator
+.mat-mdc-form-field.mat-focused
+.mdc-notched-outline__notch,
+
+.mat-mdc-paginator
+.mat-mdc-form-field.mat-focused
+.mdc-notched-outline__trailing {
+
+  border-color:
+    var(--color-accent) !important;
+}
+
+
+//////////////////////////////////////////////////
+/*================================================
+error section
+===================================================*/
+.error
+{
+  color: var(--color-error);
+}
+/* ============================================================
+   RESET
+   ============================================================ */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 
 html {
-  height: 100%;
-  @include mat.theme((
-    color: (
-      primary: mat.$azure-palette,
-      tertiary: mat.$blue-palette,
-    ),
-    typography: Roboto,
-    density: 0,
-  ));
+  scroll-behavior: smooth;
 }
+
 
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
-  margin: 0;
-  height: 100%;
+  min-height: 100vh;
+  font-family: var(--font-body);
+  line-height: 1.6;
+  color: var(--color-text);
+  background: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+}
+/* ======================================================
+  heads 
+========================================================*/ 
+.section-heading h2,
+.page-title,
+.hero-title {
+  font-family: var(--font-heading);
+}
+button,
+input,
+select,
+textarea,
+.mat-mdc-button,
+.mat-mdc-raised-button,
+.mat-mdc-menu-item {
+  font-family: var(--font-body) !important;
+}
+/*===================================================
+drop down menu 
+=======================================================*/
+.mat-mdc-select-panel {
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
 }
 
-.table-responsive {
+.mat-mdc-option {
+  min-height: 44px !important;
+
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+
+  background: var(--color-surface) !important;
+  color: var(--color-text) !important;
+}
+
+.mat-mdc-option:hover,
+.mat-mdc-option.mat-mdc-option-active {
+  background: var(--color-surface-soft) !important;
+}
+
+.mat-mdc-option.mdc-list-item--selected {
+  background: var(--color-surface-soft) !important;
+
+}
+
+.mat-mdc-option.mdc-list-item--selected
+.mdc-list-item__primary-text {
+  color: var(--color-primary) !important;
+  font-weight: 600;
+
+}
+/* ============================================================
+   PRODUCT SELECT LABELS
+   ============================================================ */
+
+.mat-mdc-form-field:has(.mat-mdc-select) .mat-mdc-floating-label {
+  color: var(--color-text-secondary) !important;
+}
+
+.mat-mdc-form-field:has(.mat-mdc-select).mat-focused
+  .mat-mdc-floating-label {
+  color: var(--color-accent) !important;
+}
+/* ============================================================
+   SELECT VALUE
+   ============================================================ */
+
+.mat-mdc-form-field .mat-mdc-select-value {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+/* ============================================================
+   BUTTONS / INPUTS
+   ============================================================ */
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+
+/* ============================================================
+   LINKS
+   ============================================================ */
+
+a {
+  color: inherit;
+}
+
+
+/* ============================================================
+   APP CONTENT
+   ============================================================ */
+
+.app-content {
+  min-height:
+    calc(100vh - 76px - 250px);
+}
+
+
+/* ============================================================
+   COMMON ANIMATIONS
+   ============================================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-15px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* ============================================================
+   MODALS
+   ============================================================ */
+
+.modal-overlay {
+  animation:
+    fadeIn
+    0.25s
+    ease-out;
+}
+
+
+.modal-content {
+  animation:
+    slideIn
+    0.25s
+    ease-out;
+}
+
+
+/* ============================================================
+   WHATSAPP
+   ============================================================ */
+
+.whatsapp {
+  position: fixed;
+
+  right: 20px;
+  bottom: 80px;
+
+  width: 58px;
+  height: 58px;
+
+  z-index: 9999;
+}
+
+
+.whatsapp img {
   width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  height: 100%;
+
+  object-fit: cover;
+
+  border-radius: 50%;
+
+  box-shadow:
+    0 5px 16px
+    rgba(0, 0, 0, 0.20);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-/* You can add global styles to this file, and also import other style files */
+
+.whatsapp img:hover {
+  transform: scale(1.08);
+
+  box-shadow:
+    0 8px 22px
+    rgba(0, 0, 0, 0.25);
+}
+
+
+/* ============================================================
+   MOBILE PAGE SPACE
+   ============================================================ */
+
+@media (max-width: 991px) {
+
+  .app-content {
+    padding-bottom: 90px;
+  }
+
+}
+
+
+@media (max-width: 480px) {
+
+  .whatsapp {
+    right: 15px;
+    bottom: 85px;
+
+    width: 52px;
+    height: 52px;
+  }
+
+}
+/* ============================================================
+   GLOBAL SECTION HEADING
+   ============================================================ */
+
+.section-heading {
+  text-align: center;
+  margin-bottom: 42px;
+}
+
+.section-small-title {
+  display: block;
+
+  color: var(--color-accent);
+
+  font-size: 11px;
+  font-weight: 700;
+
+  letter-spacing: 3px;
+}
+
+.section-heading h2 {
+  margin: 8px 0;
+
+  color: var(--color-primary);
+
+  font-size: 34px;
+  font-weight: 600;
+
+  line-height: 1.2;
+}
+
+.section-heading p {
+  margin: 10px 0 0;
+
+  color: var(--color-text-secondary);
+
+  font-size: 14px;
+}
+
+.title-line {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  color: var(--color-accent);
+}
+
+.title-line::before,
+.title-line::after {
+  content: '';
+
+  width: 45px;
+  height: 1px;
+
+  background: var(--color-accent);
+}
+
+.title-line span {
+  font-size: 14px;
+}
+
+
+/* ============================================================
+   GLOBAL CAROUSEL ARROW
+   ============================================================ */
+
+.carousel-arrow {
+  flex: 0 0 auto;
+
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+
+  background: var(--color-surface);
+
+  color: var(--color-primary);
+
+  cursor: pointer;
+
+  box-shadow: var(--shadow-sm);
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.carousel-arrow:hover {
+  background: var(--color-accent);
+
+  border-color: var(--color-accent);
+
+  color: var(--color-surface);
+
+  transform: scale(1.05);
+}
+
+.carousel-arrow mat-icon {
+  width: 23px;
+  height: 23px;
+
+  font-size: 23px;
+}
+
+
+/* ============================================================
+   GLOBAL HORIZONTAL TRACK
+   ============================================================ */
+
+.horizontal-track {
+  display: flex;
+
+  overflow-x: auto;
+
+  scroll-behavior: smooth;
+
+  scrollbar-width: none;
+}
+
+.horizontal-track::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* ============================================================
+   GLOBAL LOADING
+   ============================================================ */
+
+.content-loading {
+  min-height: 180px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  color: var(--color-text-secondary);
+
+  font-size: 14px;
+}
+
+.content-loading span {
+  color: var(--color-accent);
+
+  font-size: 20px;
+
+  animation:
+    spin 1.2s linear infinite;
+}
+
+
+/* ============================================================
+   GLOBAL IMAGE
+   ============================================================ */
+
+.image-cover {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}

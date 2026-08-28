@@ -1,11 +1,17 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal
+} from '@angular/core';
 
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTableModule } from '@angular/material/table';
 
 import { CategoryService } from '../../../../services/category.service';
 import { SubCategoryService } from '../../../../services/sub-category.service';
@@ -17,58 +23,101 @@ import { ConfirmDeleteComponent } from '../../../../shared/confirm-delete/confir
 import { Category } from '../../../../models/category.model';
 import { SubCategory } from '../../../../models/subCategory.model';
 
+
 @Component({
   selector: 'app-all-sub-category',
   standalone: true,
-  imports: [
-    CommonModule,
 
-    MatButtonModule,
-    MatDialogModule,
+  imports: [
+    MatPaginatorModule,
     MatIconModule,
-    MatTableModule,
-    MatTooltipModule
+    MatButtonModule,
+    MatTooltipModule,
+    MatTableModule
   ],
+
   templateUrl: './all-sub-category.html',
+
   styleUrl: './all-sub-category.scss'
 })
 export class AllSubCategory implements OnInit {
 
-  private readonly dialog = inject(MatDialog);
-  private readonly categoryService = inject(CategoryService);
-  private readonly subCategoryService = inject(SubCategoryService);
-private readonly cdr = inject(ChangeDetectorRef);
+  // ==========================================================
+  // SERVICES
+  // ==========================================================
 
-  // =========================================================
+  private readonly dialog =
+    inject(MatDialog);
+
+  private readonly categoryService =
+    inject(CategoryService);
+
+  private readonly subCategoryService =
+    inject(SubCategoryService);
+
+
+  // ==========================================================
+  // DATA
+  // ==========================================================
+
+  readonly categories =
+    signal<Category[]>([]);
+
+  readonly subcategories =
+    signal<SubCategory[]>([]);
+
+
+  // ==========================================================
+  // PAGINATION
+  // ==========================================================
+
+  readonly pageIndex =
+    signal(0);
+
+  readonly pageSize =
+    signal(10);
+
+
+  readonly paginatedSubcategories =
+    computed(() => {
+
+      const subcategories =
+        this.subcategories();
+
+      const start =
+        this.pageIndex() * this.pageSize();
+
+      return subcategories.slice(
+        start,
+        start + this.pageSize()
+      );
+
+    });
+
+
+  // ==========================================================
+  // ERROR
+  // ==========================================================
+
+  readonly errorMessage =
+    signal<string | null>(null);
+
+
+  // ==========================================================
   // TABLE
-  // =========================================================
+  // ==========================================================
 
-  displayedColumns: string[] = [
+  readonly displayedColumns = [
     'name',
     'category',
-    'description',
+   
     'actions'
   ];
 
-  dataSource = new MatTableDataSource<SubCategory>([]);
 
-
-  // =========================================================
-  // DATA
-  // =========================================================
-
-  categories: Category[] = [];
-
-  subcategories: SubCategory[] = [];
-
-  loading = false;
-
-  errorMessage: string | null = null;
-
-
-  // =========================================================
+  // ==========================================================
   // INIT
-  // =========================================================
+  // ==========================================================
 
   ngOnInit(): void {
 
@@ -79,32 +128,33 @@ private readonly cdr = inject(ChangeDetectorRef);
   }
 
 
-  // =========================================================
+  // ==========================================================
   // LOAD CATEGORIES
-  // =========================================================
+  // ==========================================================
 
   loadCategories(): void {
 
-    this.categoryService.getCategories()
+    this.categoryService
+      .getCategories()
       .subscribe({
 
-        next: (categories) => {
-          this.categories = categories;
- // Tell Angular that the async data has changed
-        this.cdr.detectChanges();
+        next: categories => {
+
+          this.categories.set(
+            Array.isArray(categories)
+              ? categories
+              : []
+          );
+
         },
 
-        error: (error) => {
+        error: error => {
 
           console.error(
             'Error loading categories:',
             error
           );
 
-          this.errorMessage =
-            'Failed to load categories.';
- // Tell Angular that the async data has changed
-        this.cdr.detectChanges();
         }
 
       });
@@ -112,40 +162,41 @@ private readonly cdr = inject(ChangeDetectorRef);
   }
 
 
-  // =========================================================
+  // ==========================================================
   // LOAD SUBCATEGORIES
-  // =========================================================
+  // ==========================================================
 
   loadSubcategories(): void {
 
-    this.loading = true;
-
-    this.errorMessage = null;
-
-    this.subCategoryService.getAll()
+    this.subCategoryService
+      .getAll()
       .subscribe({
 
-        next: (subcategories) => {
+        next: subcategories => {
 
-          this.subcategories = subcategories;
+          this.subcategories.set(
+            Array.isArray(subcategories)
+              ? subcategories
+              : []
+          );
 
-          this.dataSource.data = subcategories;
-
-          this.loading = false;
+          this.pageIndex.set(0);
 
         },
 
-        error: (error) => {
+        error: error => {
 
           console.error(
             'Error loading subcategories:',
             error
           );
 
-          this.errorMessage =
-            'Failed to load subcategories.';
+          this.subcategories.set([]);
 
-          this.loading = false;
+          this.errorMessage.set(
+            error?.error?.message ??
+            'Failed to load subcategories.'
+          );
 
         }
 
@@ -154,56 +205,137 @@ private readonly cdr = inject(ChangeDetectorRef);
   }
 
 
-  // =========================================================
-  // ADD SUBCATEGORY
-  // =========================================================
+  // ==========================================================
+  // PAGINATION
+  // ==========================================================
+
+  onPageChange(event: PageEvent): void {
+
+    this.pageIndex.set(
+      event.pageIndex
+    );
+
+    this.pageSize.set(
+      event.pageSize
+    );
+
+  }
+
+
+  // ==========================================================
+  // ADD
+  // ==========================================================
 
   showAddSubcategory(): void {
 
-    const dialogRef = this.dialog.open(
-      AddSubCategory,
-      {
-        width: '500px',
-        maxWidth: '95vw',
-
-        data: {
-          categories: this.categories,
-
-          subcategory: null,
-
-          isEditing: false
-        }
-      }
+    this.openSubcategoryDialog(
+      true
     );
 
+  }
 
-    dialogRef.afterClosed()
-      .subscribe((result) => {
-        if (!result) {
+
+  // ==========================================================
+  // EDIT
+  // ==========================================================
+
+  editSubcategory(
+    subcategory: SubCategory
+  ): void {
+
+    this.openSubcategoryDialog(
+      false,
+      subcategory
+    );
+
+  }
+
+
+  // ==========================================================
+  // DIALOG
+  // ==========================================================
+
+  private openSubcategoryDialog(
+    add: boolean,
+    subcategory: SubCategory | null = null
+  ): void {
+
+    this.dialog
+      .open(
+        AddSubCategory,
+        {
+
+          width: '500px',
+
+          maxWidth: '95vw',
+
+          disableClose: true,
+
+          data: {
+
+            subcategory,
+
+            isEditing: !add,
+
+            categories:
+              this.categories()
+
+          }
+
+        }
+      )
+      .afterClosed()
+      .subscribe(result => {
+
+        if (!result?.status) {
           return;
         }
 
-        this.createSubcategory(result);
+
+        if (add) {
+
+          this.createSubcategory(
+            result.data
+          );
+
+        } else if (subcategory) {
+
+          this.updateSubcategory(
+            subcategory.id,
+            result.data
+          );
+
+        }
 
       });
 
   }
 
 
-  // =========================================================
+  // ==========================================================
   // CREATE
-  // POST
-  // api/SubCategory
-  // =========================================================
+  // ==========================================================
 
-  createSubcategory(info: any): void {
-console.log(info)
+  createSubcategory(
+    data: {
+      categoryId: number;
+      name: string;
+   
+    }
+  ): void {
+
+    this.errorMessage.set(null);
+
     const request = {
-      categoryId:info. data.categoryId,
-      name:info. data.name,
-      description:info. data.description
+
+      categoryId:
+        data.categoryId,
+
+      name:
+        data.name
+
     };
-console.log(request)
+
 
     this.subCategoryService
       .create(request)
@@ -211,21 +343,21 @@ console.log(request)
 
         next: () => {
 
-          // Reload from database
           this.loadSubcategories();
 
         },
 
-        error: (error) => {
+        error: error => {
 
           console.error(
             'Error creating subcategory:',
             error
           );
 
-          this.errorMessage =
+          this.errorMessage.set(
             error?.error?.message ??
-            'Failed to create subcategory.';
+            'Failed to create subcategory.'
+          );
 
         }
 
@@ -234,65 +366,31 @@ console.log(request)
   }
 
 
-  // =========================================================
-  // EDIT SUBCATEGORY
-  // =========================================================
-
-  editSubcategory(
-    subcategory: SubCategory
-  ): void {
-
-    const dialogRef = this.dialog.open(
-      AddSubCategory,
-      {
-        width: '500px',
-        maxWidth: '95vw',
-
-        data: {
-
-          categories: this.categories,
-
-          subcategory: subcategory,
-
-          isEditing: true
-
-        }
-      }
-    );
-
-
-    dialogRef.afterClosed()
-      .subscribe((result) => {
-
-        if (!result) {
-          return;
-        }
-
-        this.updateSubcategory(
-          subcategory.id,
-          result
-        );
-
-      });
-
-  }
-
-
-  // =========================================================
+  // ==========================================================
   // UPDATE
-  // PUT
-  // api/SubCategory/{id}
-  // =========================================================
+  // ==========================================================
 
   updateSubcategory(
+
     id: number,
-    info: any
+
+    data: {
+      categoryId: number;
+      name: string;
+    }
+
   ): void {
 
+    this.errorMessage.set(null);
+
     const request = {
-      categoryId:info. data.categoryId,
-      name:info. data.name,
-      description:info. data.description
+
+      categoryId:
+        data.categoryId,
+
+      name:
+        data.name
+
     };
 
 
@@ -302,21 +400,21 @@ console.log(request)
 
         next: () => {
 
-          // Reload from database
           this.loadSubcategories();
 
         },
 
-        error: (error) => {
+        error: error => {
 
           console.error(
             'Error updating subcategory:',
             error
           );
 
-          this.errorMessage =
+          this.errorMessage.set(
             error?.error?.message ??
-            'Failed to update subcategory.';
+            'Failed to update subcategory.'
+          );
 
         }
 
@@ -325,28 +423,24 @@ console.log(request)
   }
 
 
-  // =========================================================
+  // ==========================================================
   // DELETE
-  // DELETE
-  // api/SubCategory/{id}
-  // =========================================================
+  // ==========================================================
 
   deleteSubcategory(
     id: number
   ): void {
 
-    const dialogRef =
-      this.dialog.open(
+    this.dialog
+      .open(
         ConfirmDeleteComponent,
         {
           data:
             'Are you sure you want to delete this subcategory?'
         }
-      );
-
-
-    dialogRef.afterClosed()
-      .subscribe((result: any) => {
+      )
+      .afterClosed()
+      .subscribe(result => {
 
         if (!result?.status) {
           return;
@@ -359,21 +453,29 @@ console.log(request)
 
             next: () => {
 
-              // Reload from database
-              this.loadSubcategories();
+              this.subcategories.update(
+                subcategories =>
+                  subcategories.filter(
+                    subcategory =>
+                      subcategory.id !== id
+                  )
+              );
+
+              this.fixPageAfterDelete();
 
             },
 
-            error: (error) => {
+            error: error => {
 
               console.error(
                 'Error deleting subcategory:',
                 error
               );
 
-              this.errorMessage =
+              this.errorMessage.set(
                 error?.error?.message ??
-                'Failed to delete subcategory.';
+                'Failed to delete subcategory.'
+              );
 
             }
 
@@ -384,19 +486,46 @@ console.log(request)
   }
 
 
-  // =========================================================
+  // ==========================================================
+  // KEEP PAGINATION VALID AFTER DELETE
+  // ==========================================================
+
+  private fixPageAfterDelete(): void {
+
+    const lastPage =
+      Math.max(
+        0,
+        Math.ceil(
+          this.subcategories().length /
+          this.pageSize()
+        ) - 1
+      );
+
+
+    this.pageIndex.set(
+      Math.min(
+        this.pageIndex(),
+        lastPage
+      )
+    );
+
+  }
+
+
+  // ==========================================================
   // CATEGORY NAME
-  // =========================================================
+  // ==========================================================
 
   getCategoryName(
     categoryId: number
   ): string {
 
     return (
-      this.categories.find(
+      this.categories().find(
         category =>
           category.id === categoryId
-      )?.name ?? 'Unknown'
+      )?.name
+      ?? 'Unknown'
     );
 
   }

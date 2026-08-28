@@ -1,4 +1,3 @@
-
 <div class="management-container">
 
   <!-- Header -->
@@ -20,6 +19,7 @@
     <button
       mat-raised-button
       class="add-button"
+      type="button"
       (click)="showAddUser()"
     >
       <mat-icon>person_add</mat-icon>
@@ -32,8 +32,10 @@
   <!-- Users Table -->
   <div class="table-responsive">
 
-    <table mat-table [dataSource]="dataSource">
-
+    <table
+      mat-table
+      [dataSource]="dataSource()"
+    >
 
       <!-- Username -->
       <ng-container matColumnDef="username">
@@ -42,18 +44,17 @@
           User
         </th>
 
-        <td mat-cell *matCellDef="let u"
-        >
+        <td mat-cell *matCellDef="let user">
 
-          <div class="user-info" >
+          <div class="user-info">
 
             <div class="user-avatar">
               <mat-icon>person</mat-icon>
             </div>
 
-            <div class="user-name">
-              {{ u.name }}
-            </div>
+            <span class="user-name">
+              {{ user.name }}
+            </span>
 
           </div>
 
@@ -69,14 +70,14 @@
           Email
         </th>
 
-        <td mat-cell *matCellDef="let u">
+        <td mat-cell *matCellDef="let user">
 
           <div class="email-cell">
 
             <mat-icon>email</mat-icon>
 
             <span>
-              {{ u.email }}
+              {{ user.email }}
             </span>
 
           </div>
@@ -93,25 +94,26 @@
           Actions
         </th>
 
-        <td mat-cell *matCellDef="let u">
+        <td mat-cell *matCellDef="let user">
 
           <div class="action-buttons">
 
             <button
               mat-icon-button
+              type="button"
               class="edit-button"
-              (click)="editUser(u)"
               matTooltip="Edit User"
+              (click)="editUser(user)"
             >
               <mat-icon>edit</mat-icon>
             </button>
 
-
             <button
               mat-icon-button
+              type="button"
               class="delete-button"
-              (click)="deleteUser(u)"
               matTooltip="Delete User"
+              (click)="deleteUser(user)"
             >
               <mat-icon>delete</mat-icon>
             </button>
@@ -133,7 +135,7 @@
         mat-row
         *matRowDef="
           let row;
-          columns: displayedColumns;
+          columns: displayedColumns
         "
       ></tr>
 

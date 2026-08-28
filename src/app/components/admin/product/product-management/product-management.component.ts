@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 
 import {
-  ChangeDetectorRef,
   Component,
   OnInit,
-  inject
+  computed,
+  inject,
+  signal
 } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
@@ -18,80 +19,21 @@ import {
 
 import { MatIconModule } from '@angular/material/icon';
 
-import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
-import {
-  MatProgressSpinnerModule
-} from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { MatTableModule } from '@angular/material/table';
 
-import {
-  MatTooltipModule
-} from '@angular/material/tooltip';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ProductService } from '../../../../services/product.service';
 
-import {
-  AddProductComponent
-} from '../add-product/add-product.component';
+import { AddProductComponent } from '../add-product/add-product.component';
+
 import { environment } from '../../../../../environments/environment';
-
-
-// ============================================================
-// MODELS
-// ============================================================
-
-export interface Brand {
-
-  id: number;
-
-  name: string;
-
-  imageUrl?: string | null;
-
-  isDeleted?: boolean;
-
-}
-
-
-export interface SubCategory {
-
-  id: number;
-
-  name: string;
-
-  categoryId: number;
-
-  categoryName?: string;
-
-}
-
-
-export interface Product {
-
-  id: number;
-
-  name: string;
-
-  description?: string | null;
-
-  price: number;
-  isInStock: boolean;
-
-  discountPercentage?: number | null;
-
-  stockQuantity: number;
-
-  imageUrl?: string | null;
-
-  brandId?: number | null;
-
-  brand?: Brand | null;
-
-  subCategories: SubCategory[];
-
-}
+import { ConfirmDeleteComponent } from '../../../../shared/confirm-delete/confirm-delete.component';
+import { Product } from '../../../../models/product.model';
 
 
 // ============================================================
@@ -99,100 +41,130 @@ export interface Product {
 // ============================================================
 
 @Component({
-
-  selector:
-    'app-product-management',
-
+  selector: 'app-product-management',
   standalone: true,
 
   imports: [
-
     CommonModule,
-
     FormsModule,
-
     MatButtonModule,
-
     MatDialogModule,
-
     MatIconModule,
-
-    MatInputModule,
-
+    MatPaginatorModule,
     MatProgressSpinnerModule,
-
     MatTableModule,
-
     MatTooltipModule
-
   ],
 
-  templateUrl:
-    './product-management.component.html',
-
-  styleUrl:
-    './product-management.component.scss'
-
+  templateUrl: './product-management.component.html',
+  styleUrl: './product-management.component.scss'
 })
-export class ProductManagementComponent
-  implements OnInit {
+export class ProductManagementComponent implements OnInit {
 
-
-  // ==========================================================
-  // SERVICES
-  // ==========================================================
-
-  private readonly productService =
-    inject(ProductService);
-
-  private readonly dialog =
-    inject(MatDialog);
-
-  private readonly cdr =
-    inject(ChangeDetectorRef);
+  private readonly productService = inject(ProductService);
+  private readonly dialog = inject(MatDialog);
 
 
   // ==========================================================
   // DATA
   // ==========================================================
 
-  products: Product[] = [];
+  readonly products = signal<Product[]>([]);
 
-  filteredProducts: Product[] = [];
+  readonly searchTerm = signal('');
+
+  readonly isLoading = signal(false);
+
+  readonly errorMessage = signal<string | null>(null);
+
+
+  // ==========================================================
+  // PAGINATION
+  // ==========================================================
+
+  readonly pageIndex = signal(0);
+
+  readonly pageSize = signal(10);
+
+
+  // ==========================================================
+  // FILTERED PRODUCTS
+  // ==========================================================
+
+  readonly filteredProducts = computed(() => {
+
+    const term = this.searchTerm()
+      .trim()
+      .toLowerCase();
+
+    if (!term) {
+      return this.products();
+    }
+
+    return this.products().filter(product => {
+
+      const name = product.name
+        ?.toLowerCase()
+        .includes(term);
+
+      const description = product.description
+        ?.toLowerCase()
+        .includes(term);
+
+      const brand = product.brand?.name
+        ?.toLowerCase()
+        .includes(term);
+
+      const subCategory = product.subCategories?.some(
+        sc => sc.name?.toLowerCase().includes(term)
+      );
+
+      const category = product.subCategories?.some(
+        sc => sc.categoryName?.toLowerCase().includes(term)
+      );
+
+      return !!(
+        name ||
+        description ||
+        brand ||
+        subCategory ||
+        category
+      );
+    });
+  });
+
+
+  // ==========================================================
+  // PAGINATED PRODUCTS
+  // ==========================================================
+
+  readonly paginatedProducts = computed(() => {
+
+    const products = this.filteredProducts();
+
+    const start =
+      this.pageIndex() * this.pageSize();
+
+    return products.slice(
+      start,
+      start + this.pageSize()
+    );
+  });
 
 
   // ==========================================================
   // TABLE COLUMNS
   // ==========================================================
 
-  displayedColumns: string[] = [
-
+  readonly displayedColumns = [
     'image',
-
     'brand',
-
     'price',
-
     'discount',
-
     'stock',
-
     'subCategories',
-
     'actions'
-
   ];
-
-
-  // ==========================================================
-  // UI STATE
-  // ==========================================================
-
-  searchTerm = '';
-
-  isLoading = false;
-
-  errorMessage: string | null = null;
 
 
   // ==========================================================
@@ -200,76 +172,54 @@ export class ProductManagementComponent
   // ==========================================================
 
   ngOnInit(): void {
-
     this.loadProducts();
-
   }
 
 
   // ==========================================================
-  // LOAD PRODUCTS
+  // LOAD
   // ==========================================================
 
   loadProducts(): void {
 
-    this.isLoading = true;
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
 
-    this.errorMessage = null;
+    this.productService.getProducts().subscribe({
 
+      next: products => {
 
-    this.productService
-      .getProducts()
-      .subscribe({
+        this.products.set(
+          Array.isArray(products)
+            ? products
+            : []
+        );
 
-        next: (products) => {
+        this.pageIndex.set(0);
+        this.isLoading.set(false);
 
-          this.products =
-            Array.isArray(products)
-              ? products
-              : [];
-console.log(this.products)
-          this.filteredProducts =
-            [...this.products];
+      },
 
+      error: error => {
 
-          this.isLoading =
-            false;
+        console.error(
+          'Error loading products:',
+          error
+        );
 
+        this.products.set([]);
 
-          this.cdr.detectChanges();
+        this.errorMessage.set(
+          error?.error?.message ||
+          error?.message ||
+          'Failed to load products.'
+        );
 
-        },
+        this.isLoading.set(false);
 
+      }
 
-        error: (error) => {
-
-          console.error(
-            'Error loading products:',
-            error
-          );
-
-
-          this.products = [];
-
-          this.filteredProducts = [];
-
-
-          this.errorMessage =
-            error?.error?.message ||
-            error?.message ||
-            'Failed to load products.';
-
-
-          this.isLoading =
-            false;
-
-
-          this.cdr.detectChanges();
-
-        }
-
-      });
-
+    });
   }
 
 
@@ -277,234 +227,113 @@ console.log(this.products)
   // SEARCH
   // ==========================================================
 
-  applyFilter(): void {
+  onSearch(value: string): void {
 
-    const term =
-      this.searchTerm
-        .trim()
-        .toLowerCase();
+    this.searchTerm.set(value);
 
-
-    if (!term) {
-
-      this.filteredProducts =
-        [...this.products];
-
-      return;
-
-    }
-
-
-    this.filteredProducts =
-      this.products.filter(
-        product => {
-
-          const name =
-            product.name
-              ?.toLowerCase()
-              .includes(term);
-
-
-          const description =
-            product.description
-              ?.toLowerCase()
-              .includes(term);
-
-
-          const brand =
-            product.brand?.name
-              ?.toLowerCase()
-              .includes(term);
-
-
-          const subCategory =
-            product.subCategories
-              ?.some(sc =>
-                sc.name
-                  ?.toLowerCase()
-                  .includes(term)
-              );
-
-
-          const category =
-            product.subCategories
-              ?.some(sc =>
-                sc.categoryName
-                  ?.toLowerCase()
-                  .includes(term)
-              );
-
-
-          return !!(
-
-            name ||
-
-            description ||
-
-            brand ||
-
-            subCategory ||
-
-            category
-
-          );
-
-        }
-      );
-
+    this.pageIndex.set(0);
   }
 
-
-  // ==========================================================
-  // CLEAR SEARCH
-  // ==========================================================
 
   clearSearch(): void {
 
-    this.searchTerm = '';
+    this.searchTerm.set('');
 
-    this.applyFilter();
-
+    this.pageIndex.set(0);
   }
 
 
   // ==========================================================
-  // DISCOUNTED PRICE
+  // PAGINATION
   // ==========================================================
 
-  getDiscountedPrice(
-    product: Product
-  ): number {
+  onPageChange(event: PageEvent): void {
 
-    const price =
-      Number(product.price) || 0;
+    this.pageIndex.set(event.pageIndex);
 
+    this.pageSize.set(event.pageSize);
+  }
+
+
+  // ==========================================================
+  // PRICE
+  // ==========================================================
+
+  getDiscountedPrice(product: Product): number {
+
+    const price = Number(product.price) || 0;
 
     const discount =
-      Number(
-        product.discountPercentage
-      ) || 0;
+      Number(product.discountPercentage) || 0;
 
-
-    return (
-      price -
-      (price * discount / 100)
-    );
-
+    return price - (price * discount / 100);
   }
 
 
   // ==========================================================
-  // ADD PRODUCT
+  // ADD
   // ==========================================================
 
   addProduct(): void {
 
-    const dialogRef =
-      this.dialog.open(
-        AddProductComponent,
-        {
-
-          width: '900px',
-
-          maxWidth: '95vw',
-
-          maxHeight: '95vh',
-
-          data: {
-
-            isEditing: false
-
-          }
-
-        }
-      );
-
-
-    dialogRef
-      .afterClosed()
-      .subscribe(
-        result => {
-
-          if (result) {
-
-            this.loadProducts();
-
-          }
-
-        }
-      );
-
+    this.openProductDialog(false);
   }
 
 
   // ==========================================================
-  // EDIT PRODUCT
+  // EDIT
   // ==========================================================
 
-  editProduct(
-    product: Product
+  editProduct(product: Product): void {
+
+    this.openProductDialog(true, product);
+  }
+
+
+  private openProductDialog(
+    isEditing: boolean,
+    product?: Product
   ): void {
 
-    const dialogRef =
-      this.dialog.open(
-        AddProductComponent,
-        {
+    this.dialog.open(
+      AddProductComponent,
+      {
+        width: '900px',
+        maxWidth: '95vw',
+        maxHeight: '95vh',
 
-          width: '900px',
-
-          maxWidth: '95vw',
-
-          maxHeight: '95vh',
-
-          data: {
-
-            isEditing: true,
-
-            product
-
-          }
-
+        data: {
+          isEditing,
+          product
         }
-      );
+      }
+    )
+    .afterClosed()
+    .subscribe(result => {
 
+      if (result) {
+        this.loadProducts();
+      }
 
-    dialogRef
-      .afterClosed()
-      .subscribe(
-        result => {
-
-          if (result) {
-
-            this.loadProducts();
-
-          }
-
-        }
-      );
-
+    });
   }
 
 
   // ==========================================================
-  // DELETE PRODUCT
+  // DELETE
   // ==========================================================
 
-  deleteProduct(
-    id: number
-  ): void {
-
-    const confirmed =
-      confirm(
-        'Are you sure you want to delete this product?'
-      );
-
-
-    if (!confirmed) {
-
-      return;
-
-    }
+  deleteProduct(id: number): void {
+  this.dialog
+      .open(ConfirmDeleteComponent, {
+        data: 'Are you sure you want to delete this product?'
+      })
+      .afterClosed()
+      .subscribe(result => {
+   
+        if (!result?.status) {
+          return;
+        }
 
 
     this.productService
@@ -513,38 +342,49 @@ console.log(this.products)
 
         next: () => {
 
-          this.products =
-            this.products.filter(
-              p => p.id !== id
-            );
+          this.products.update(
+            products =>
+              products.filter(
+                product => product.id !== id
+              )
+          );
 
-
-          this.applyFilter();
+          this.pageIndex.set(
+            Math.min(
+              this.pageIndex(),
+              Math.max(
+                0,
+                Math.ceil(
+                  this.filteredProducts().length /
+                  this.pageSize()
+                ) - 1
+              )
+            )
+          );
 
         },
 
-
-        error: (error) => {
+        error: error => {
 
           console.error(
             'Error deleting product:',
             error
           );
 
-
-          this.errorMessage =
+          this.errorMessage.set(
             error?.error?.message ??
-            'Failed to delete product.';
+            'Failed to delete product.'
+          );
 
         }
 
       });
-
+      })
   }
 
 
   // ==========================================================
-  // IMAGE URL
+  // IMAGE
   // ==========================================================
 
   getImageUrl(
@@ -552,31 +392,16 @@ console.log(this.products)
   ): string {
 
     if (!imageUrl) {
-
       return 'assets/images/product-placeholder.png';
-
     }
-
 
     if (
-
-      imageUrl.startsWith(
-        'http://'
-      ) ||
-
-      imageUrl.startsWith(
-        'https://'
-      )
-
+      imageUrl.startsWith('http://') ||
+      imageUrl.startsWith('https://')
     ) {
-
       return imageUrl;
-
     }
 
-
     return `${environment.imageBaseUrl}${imageUrl}`;
-
   }
-
 }

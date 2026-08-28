@@ -1,116 +1,80 @@
 <div class="management-container">
 
-  <!-- =========================================
-       PAGE HEADER
-       ========================================= -->
-
-  <div class="header-actions">
+  <!-- HEADER -->
+  <header class="header-actions">
 
     <div class="page-heading">
 
-      <span class="heading-icon">
-        category
-      </span>
+      <div class="heading-icon">
+        <mat-icon>category</mat-icon>
+      </div>
 
       <div>
-
-        <h2>
-          Category Management
-        </h2>
-
-        <p>
-          Manage your product categories
-        </p>
-
+        <h2>Category Management</h2>
+        <p>Manage your product categories</p>
       </div>
 
     </div>
 
-
     <button
       mat-raised-button
       class="add-category-btn"
-      (click)="showAddCategory()"
-    >
+      type="button"
+      (click)="showAddCategory()">
 
-      <mat-icon>
-        add
-      </mat-icon>
+      <mat-icon>add</mat-icon>
 
       Add Category
 
     </button>
 
-  </div>
+  </header>
 
 
-  <!-- =========================================
-       CATEGORIES TABLE
-       ========================================= -->
-
+  <!-- TABLE -->
   <div class="table-responsive">
 
     <table
       mat-table
-      [dataSource]="dataSource"
-    >
+      [dataSource]="paginatedCategories()">
 
 
-      <!-- =====================================
-           CATEGORY
-           ===================================== -->
-
+      <!-- CATEGORY -->
       <ng-container matColumnDef="name">
 
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-        >
+        <th mat-header-cell *matHeaderCellDef>
           Category
         </th>
 
-
         <td
           mat-cell
-          *matCellDef="let cat"
-          class="category-name"
-        >
+          *matCellDef="let category"
+          class="category-name">
 
           <div class="category-name-wrapper">
 
-
-            <!-- CATEGORY IMAGE -->
-
             <div class="category-image-wrapper">
 
-              <img
-                *ngIf="cat.imageUrl"
-                [src]="getImageUrl(cat.imageUrl)"
-                [alt]="cat.name"
-                class="category-image"
-              />
+              @if (category.imageUrl) {
 
+                <img
+                  class="category-image"
+                  [src]="getImageUrl(category.imageUrl)"
+                  [alt]="category.name">
 
-              <!-- FALLBACK -->
+              } @else {
 
-              <span
-                *ngIf="!cat.imageUrl"
-                class="category-image-placeholder"
-              >
-                category
-              </span>
+                <mat-icon class="category-image-placeholder">
+                  category
+                </mat-icon>
+
+              }
 
             </div>
 
-
-            <!-- CATEGORY NAME -->
-
             <span class="category-name-text">
-
-              {{ cat.name }}
-
+              {{ category.name }}
             </span>
-
 
           </div>
 
@@ -119,121 +83,95 @@
       </ng-container>
 
 
-
-      <!-- =====================================
-           DESCRIPTION
-           ===================================== -->
-
+      <!-- DESCRIPTION -->
       <ng-container matColumnDef="description">
 
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-        >
+        <th mat-header-cell *matHeaderCellDef>
           Description
         </th>
 
-
         <td
           mat-cell
-          *matCellDef="let cat"
-          class="description"
-        >
+          *matCellDef="let category"
+          class="description">
 
-          {{ cat.description || 'No description available' }}
+          {{ category.description || 'No description available' }}
 
         </td>
 
       </ng-container>
 
 
-
-      <!-- =====================================
-           ACTIONS
-           ===================================== -->
-
+      <!-- ACTIONS -->
       <ng-container matColumnDef="actions">
 
         <th
           mat-header-cell
           *matHeaderCellDef
-          class="actions-header"
-        >
-          Actions
-        </th>
+          class="actions-header">
 
+          Actions
+
+        </th>
 
         <td
           mat-cell
-          *matCellDef="let cat"
-          class="actions-cell"
-        >
-
-
-          <!-- EDIT -->
+          *matCellDef="let category"
+          class="actions-cell">
 
           <button
             mat-icon-button
             class="edit-btn"
+            type="button"
             matTooltip="Edit category"
-            (click)="editCategory(cat)"
-          >
+            (click)="editCategory(category)">
 
-            <mat-icon>
-              edit
-            </mat-icon>
+            <mat-icon>edit</mat-icon>
 
           </button>
-
-
-
-          <!-- DELETE -->
 
           <button
             mat-icon-button
             class="delete-btn"
+            type="button"
             matTooltip="Delete category"
-            (click)="deleteCategory(cat.id)"
-          >
+            (click)="deleteCategory(category.id)">
 
-            <mat-icon>
-              delete
-            </mat-icon>
+            <mat-icon>delete</mat-icon>
 
           </button>
-
 
         </td>
 
       </ng-container>
 
 
-
-      <!-- =====================================
-           TABLE HEADER
-           ===================================== -->
-
+      <!-- ROWS -->
       <tr
         mat-header-row
-        *matHeaderRowDef="displayedColumns"
-      ></tr>
-
-
-
-      <!-- =====================================
-           TABLE ROW
-           ===================================== -->
+        *matHeaderRowDef="displayedColumns">
+      </tr>
 
       <tr
         mat-row
         *matRowDef="
           let row;
           columns: displayedColumns;
-        "
-      ></tr>
-
+        ">
+      </tr>
 
     </table>
+
+
+    <!-- PAGINATION -->
+    <mat-paginator
+      [length]="categories().length"
+      [pageIndex]="pageIndex()"
+      [pageSize]="pageSize()"
+      [pageSizeOptions]="[5, 10, 25, 50]"
+      showFirstLastButtons
+      (page)="onPageChange($event)">
+    </mat-paginator>
 
   </div>
 

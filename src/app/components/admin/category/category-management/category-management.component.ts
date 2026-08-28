@@ -1,9 +1,14 @@
 import {
   Component,
   OnInit,
+  computed,
   inject,
   signal
 } from '@angular/core';
+
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+
+import { MatDialog } from '@angular/material/dialog';
 
 import { CategoryService } from '../../../../services/category.service';
 
@@ -13,91 +18,90 @@ import { SharedModule } from '../../../../shared/shared.module';
 
 import { AddCategoryComponent } from '../add-category/add-category.component';
 
-import { MatTableDataSource } from '@angular/material/table';
-
 import { ConfirmDeleteComponent } from '../../../../shared/confirm-delete/confirm-delete.component';
 
-import { MatDialog } from '@angular/material/dialog';
 import { environment } from '../../../../../environments/environment';
 
 
 @Component({
   selector: 'app-category-management',
-
   standalone: true,
 
   imports: [
-    SharedModule
+    SharedModule,
+    MatPaginatorModule
   ],
 
-  templateUrl:
-    './category-management.component.html',
+  templateUrl: './category-management.component.html',
 
-  styleUrl:
-    './category-management.component.scss'
+  styleUrl: './category-management.component.scss'
 })
-export class CategoryManagementComponent
-  implements OnInit {
+export class CategoryManagementComponent implements OnInit {
 
-
-  /* =========================================
-     SERVICES
-     ========================================= */
-
-  private categoryService =
+  private readonly categoryService =
     inject(CategoryService);
 
+  private readonly dialog =
+    inject(MatDialog);
 
-  /* =========================================
-     DATA
-     ========================================= */
 
-  categories =
+  // ==========================================================
+  // DATA
+  // ==========================================================
+
+  readonly categories =
     signal<Category[]>([]);
 
 
-  dataSource =
-    new MatTableDataSource<Category>();
+  // ==========================================================
+  // PAGINATION
+  // ==========================================================
+
+  readonly pageIndex =
+    signal(0);
+
+  readonly pageSize =
+    signal(10);
 
 
-  displayedColumns: string[] = [
+  readonly paginatedCategories = computed(() => {
+
+    const categories = this.categories();
+
+    const start =
+      this.pageIndex() * this.pageSize();
+
+    return categories.slice(
+      start,
+      start + this.pageSize()
+    );
+
+  });
+
+
+  // ==========================================================
+  // TABLE
+  // ==========================================================
+
+  readonly displayedColumns = [
     'name',
     'description',
     'actions'
   ];
 
 
-  /* =========================================
-     CATEGORY STATE
-     ========================================= */
-
-  categoryToEdit:
-    Category | null = null;
-
-
-  /* =========================================
-     CONSTRUCTOR
-     ========================================= */
-
-  constructor(
-    private dialog: MatDialog
-  ) {}
-
-
-  /* =========================================
-     INIT
-     ========================================= */
+  // ==========================================================
+  // INIT
+  // ==========================================================
 
   ngOnInit(): void {
-
     this.loadCategories();
-
   }
 
 
-  /* =========================================
-     LOAD CATEGORIES
-     ========================================= */
+  // ==========================================================
+  // LOAD
+  // ==========================================================
 
   loadCategories(): void {
 
@@ -105,24 +109,19 @@ export class CategoryManagementComponent
       .getCategories()
       .subscribe({
 
-        next: (cats: Category[]) => {
+        next: categories => {
 
-          /*
-           * Update signal
-           */
+          this.categories.set(
+            Array.isArray(categories)
+              ? categories
+              : []
+          );
 
-          this.categories.set(cats);
-
-
-          /*
-           * Update table
-           */
-
-          this.dataSource.data = cats;
+          this.pageIndex.set(0);
 
         },
 
-        error: (error) => {
+        error: error => {
 
           console.error(
             'Error loading categories:',
@@ -132,106 +131,56 @@ export class CategoryManagementComponent
         }
 
       });
-
   }
 
 
-  /* =========================================
-     ADD CATEGORY
-     ========================================= */
+  // ==========================================================
+  // PAGINATION
+  // ==========================================================
+
+  onPageChange(event: PageEvent): void {
+
+    this.pageIndex.set(
+      event.pageIndex
+    );
+
+    this.pageSize.set(
+      event.pageSize
+    );
+  }
+
+
+  // ==========================================================
+  // ADD
+  // ==========================================================
 
   showAddCategory(): void {
 
-    /*
-     * Clear edit state
-     */
-
-    this.categoryToEdit = null;
-
-
-    /*
-     * Open dialog
-     */
-
-    this.dialog
-      .open(
-        AddCategoryComponent,
-        {
-
-          width: '500px',
-
-          maxWidth: '95vw',
-
-          disableClose: true,
-
-          data: {
-
-            category: null,
-
-            add: true,
-
-            categories:
-              this.categories()
-
-          }
-
-        }
-      )
-      .afterClosed()
-      .subscribe((res: any) => {
-
-        /*
-         * Dialog returns:
-         *
-         * { status: true }
-         *
-         * when category was successfully
-         * created.
-         */
-
-        if (!res || !res.status) {
-
-          return;
-
-        }
-
-
-        /*
-         * Reload categories
-         */
-
-        this.loadCategories();
-
-
-        /*
-         * Clear state
-         */
-
-        this.closeAddCategory();
-
-      });
-
+    this.openCategoryDialog(
+      true
+    );
   }
 
 
-  /* =========================================
-     EDIT CATEGORY
-     ========================================= */
+  // ==========================================================
+  // EDIT
+  // ==========================================================
 
   editCategory(
     category: Category
   ): void {
 
-    /*
-     * Save category being edited
-     */
+    this.openCategoryDialog(
+      false,
+      category
+    );
+  }
 
-    this.categoryToEdit = category;
 
-
-    /*
-     * Open dialog
-     */
+  private openCategoryDialog(
+    add: boolean,
+    category: Category | null = null
+  ): void {
 
     this.dialog
       .open(
@@ -245,54 +194,27 @@ export class CategoryManagementComponent
           disableClose: true,
 
           data: {
-
-            category:
-              this.categoryToEdit,
-
-            add: false,
-
-            categories:
-              this.categories()
-
+            category,
+            add,
+            categories: this.categories()
           }
 
         }
       )
       .afterClosed()
-      .subscribe((res: any) => {
+      .subscribe(result => {
 
-        /*
-         * Successful update
-         */
-
-        if (!res || !res.status) {
-
-          return;
-
+        if (result?.status) {
+          this.loadCategories();
         }
 
-
-        /*
-         * Reload table
-         */
-
-        this.loadCategories();
-
-
-        /*
-         * Clear edit state
-         */
-
-        this.closeAddCategory();
-
       });
-
   }
 
 
-  /* =========================================
-     DELETE CATEGORY
-     ========================================= */
+  // ==========================================================
+  // DELETE
+  // ==========================================================
 
   deleteCategory(
     id: number
@@ -302,29 +224,16 @@ export class CategoryManagementComponent
       .open(
         ConfirmDeleteComponent,
         {
-
           data:
             'Are you sure you want to delete this category?'
-
         }
       )
       .afterClosed()
-      .subscribe((res: any) => {
+      .subscribe(result => {
 
-        /*
-         * User cancelled
-         */
-
-        if (!res || !res.status) {
-
+        if (!result?.status) {
           return;
-
         }
-
-
-        /*
-         * Delete category
-         */
 
         this.categoryService
           .deleteCategory(id)
@@ -332,15 +241,19 @@ export class CategoryManagementComponent
 
             next: () => {
 
-              /*
-               * Reload categories
-               */
+              this.categories.update(
+                categories =>
+                  categories.filter(
+                    category =>
+                      category.id !== id
+                  )
+              );
 
-              this.loadCategories();
+              this.fixPageAfterDelete();
 
             },
 
-            error: (error) => {
+            error: error => {
 
               console.error(
                 'Error deleting category:',
@@ -352,21 +265,34 @@ export class CategoryManagementComponent
           });
 
       });
-
   }
 
 
-  /* =========================================
-     CLOSE
-     ========================================= */
+  // ==========================================================
+  // KEEP PAGINATION VALID AFTER DELETE
+  // ==========================================================
 
-  closeAddCategory(): void {
+  private fixPageAfterDelete(): void {
 
-    this.categoryToEdit = null;
+    const lastPage = Math.max(
+      0,
+      Math.ceil(
+        this.categories().length /
+        this.pageSize()
+      ) - 1
+    );
 
+    this.pageIndex.set(
+      Math.min(
+        this.pageIndex(),
+        lastPage
+      )
+    );
   }
- // ==========================================================
-  // IMAGE URL
+
+
+  // ==========================================================
+  // IMAGE
   // ==========================================================
 
   getImageUrl(
@@ -374,29 +300,17 @@ export class CategoryManagementComponent
   ): string {
 
     if (!imageUrl) {
-
       return 'assets/images/product-placeholder.png';
-
     }
-
 
     if (
-
-      imageUrl.startsWith(
-        'http://'
-      ) ||
-
-      imageUrl.startsWith(
-        'https://'
-      )
-
+      imageUrl.startsWith('http://') ||
+      imageUrl.startsWith('https://')
     ) {
-
       return imageUrl;
-
     }
 
-    return environment.imageBaseUrl+imageUrl;
-
+    return `${environment.imageBaseUrl}${imageUrl}`;
   }
+
 }

@@ -2,29 +2,31 @@
 
   <div class="modal-container">
 
-    <!-- =========================================
+    <!-- =====================================================
          HEADER
-         ========================================= -->
+         ===================================================== -->
 
     <div class="modal-header">
 
       <div class="header-title">
 
         <div class="title-icon">
-          <mat-icon>category</mat-icon>
+
+          <mat-icon>
+            category
+          </mat-icon>
+
         </div>
+
 
         <div>
 
           <h2>
-            {{ data.add ? 'Add New Category' : 'Edit Category' }}
+            {{ dialogTitle() }}
           </h2>
 
           <p>
-            {{ data.add
-              ? 'Create a new product category'
-              : 'Update category information'
-            }}
+            {{ dialogDescription() }}
           </p>
 
         </div>
@@ -37,17 +39,22 @@
         type="button"
         class="close-button"
         (click)="onCancel()"
+        [disabled]="isSubmitting()"
         aria-label="Close"
       >
-        <mat-icon>close</mat-icon>
+
+        <mat-icon>
+          close
+        </mat-icon>
+
       </button>
 
     </div>
 
 
-    <!-- =========================================
+    <!-- =====================================================
          FORM
-         ========================================= -->
+         ===================================================== -->
 
     <form
       [formGroup]="categoryForm"
@@ -57,9 +64,9 @@
       <div class="form-content">
 
 
-        <!-- =====================================
-             IMAGE UPLOAD
-             ===================================== -->
+        <!-- =================================================
+             IMAGE
+             ================================================= -->
 
         <div class="image-upload-section">
 
@@ -68,35 +75,38 @@
             (click)="fileInput.click()"
           >
 
-            <img
-              *ngIf="imagePreview"
-              [src]="imagePreview"
-              [alt]="categoryForm.get('name')?.value || 'Category image'"
-              class="category-image-preview"
-            />
+            @if (imagePreview()) {
+
+              <img
+                [src]="imagePreview()"
+                [alt]="
+                  categoryForm.get('name')?.value ||
+                  'Category image'
+                "
+                class="category-image-preview"
+              />
+
+            }
 
 
-            <div
-              *ngIf="!imagePreview"
-              class="image-placeholder"
-            >
+            @if (!imagePreview()) {
 
-              <mat-icon>
-                cloud_upload
-              </mat-icon>
+              <div class="image-placeholder">
 
-              <span>
-                Choose Image
-              </span>
+                <mat-icon>
+                  cloud_upload
+                </mat-icon>
 
-            </div>
+                <span>
+                  Choose Image
+                </span>
+
+              </div>
+
+            }
 
 
-            <!-- Hover overlay -->
-
-            <div
-              class="image-hover-overlay"
-            >
+            <div class="image-hover-overlay">
 
               <mat-icon>
                 photo_camera
@@ -111,8 +121,6 @@
           </div>
 
 
-          <!-- Hidden file input -->
-
           <input
             #fileInput
             type="file"
@@ -122,91 +130,98 @@
           />
 
 
-      
+         
 
         </div>
 
 
-        <!-- =====================================
+        <!-- =================================================
              CATEGORY NAME
-             ===================================== -->
+             ================================================= -->
 
-        <mat-form-field appearance="outline">
-
-          <mat-label>
-            Category Name
-          </mat-label>
-
-          <mat-icon matPrefix>
+        <mat-form-field
+          appearance="outline"
+        >
+    <mat-icon matPrefix class="icon">
             category
           </mat-icon>
+        
 
+        
           <input
             matInput
             formControlName="name"
             placeholder="Enter category name"
-          >
+          />
 
-          <mat-error
-            *ngIf="
-              categoryForm.get('name')?.hasError('required')
-            "
-          >
-            Name is required
-          </mat-error>
+
+          @if (
+            categoryForm
+              .get('name')
+              ?.hasError('required')
+          ) {
+
+            <mat-error class="error">
+              Name is required
+            </mat-error>
+
+          }
 
         </mat-form-field>
 
 
-        <!-- =====================================
+        <!-- =================================================
              DESCRIPTION
-             ===================================== -->
+             ================================================= -->
 
-        <mat-form-field appearance="outline">
-
-          <mat-label>
-            Description
-          </mat-label>
-
-          <mat-icon matPrefix>
+        <mat-form-field
+          appearance="outline"
+         
+        >
+    <mat-icon matPrefix class="icon">
             description
           </mat-icon>
+
+
+        
+          
 
           <textarea
             matInput
             formControlName="description"
             placeholder="Enter category description"
-            rows="3"
+            rows="2"
           ></textarea>
 
         </mat-form-field>
 
 
-        <!-- =====================================
+        <!-- =================================================
              ERROR
-             ===================================== -->
+             ================================================= -->
 
-        <div
-          *ngIf="errorMessage"
-          class="error-message"
-        >
+        @if (errorMessage()) {
 
-          <mat-icon>
-            error_outline
-          </mat-icon>
+          <div class="error-message">
 
-          <span>
-            {{ errorMessage }}
-          </span>
+            <mat-icon>
+              error_outline
+            </mat-icon>
 
-        </div>
+            <span>
+              {{ errorMessage() }}
+            </span>
+
+          </div>
+
+        }
 
       </div>
 
 
-      <!-- =========================================
+      <!-- =====================================================
            ACTIONS
-           ========================================= -->
+           ===================================================== -->
 
       <div class="modal-actions">
 
@@ -215,8 +230,11 @@
           type="button"
           class="cancel-button"
           (click)="onCancel()"
+          [disabled]="isSubmitting()"
         >
+
           CANCEL
+
         </button>
 
 
@@ -224,17 +242,17 @@
           mat-raised-button
           type="submit"
           class="submit-button"
-          [disabled]="categoryForm.invalid || isSubmitting"
+          [disabled]="
+            categoryForm.invalid ||
+            isSubmitting()
+          "
         >
 
           <mat-icon>
-            {{ data.add ? 'add' : 'save' }}
+            {{ submitIcon() }}
           </mat-icon>
 
-          {{ isSubmitting
-            ? 'SAVING...'
-            : (data.add ? 'CREATE CATEGORY' : 'UPDATE CATEGORY')
-          }}
+          {{ submitText() }}
 
         </button>
 

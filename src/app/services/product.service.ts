@@ -11,40 +11,8 @@ import {
   Observable
 } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Product } from '../models/product.model';
 
-
-// ============================================================
-// MODELS
-// ============================================================
-
-export interface SubCategoryResponse {
-
-  id: number;
-
-  name: string;
-
-  categoryId: number;
-
-  categoryName: string;
-}
-
-
-export interface ProductResponse {
-
-  id: number;
-
-  name: string;
-
-  description: string | null;
-
-  price: number;
-isInStock: boolean;
-  stockQuantity: number;
-
-  imageUrl: string | null;
-
-  subCategories: SubCategoryResponse[];
-}
 
 
 // ============================================================
@@ -68,9 +36,9 @@ export class ProductService {
   // ==========================================================
 
   getProducts():
-    Observable<ProductResponse[]> {
+    Observable<Product[]> {
 
-    return this.http.get<ProductResponse[]>(
+    return this.http.get<Product[]>(
       this.apiUrl
     );
   }
@@ -82,9 +50,9 @@ export class ProductService {
 
   getProduct(
     id: number
-  ): Observable<ProductResponse> {
+  ): Observable<Product> {
 
-    return this.http.get<ProductResponse>(
+    return this.http.get<Product>(
       `${this.apiUrl}/${id}`
     );
   }
@@ -96,9 +64,9 @@ export class ProductService {
 
   createProduct(
     formData: FormData
-  ): Observable<ProductResponse> {
+  ): Observable<Product> {
 
-    return this.http.post<ProductResponse>(
+    return this.http.post<Product>(
       this.apiUrl,
       formData
     );

@@ -1,676 +1,367 @@
-/* =========================================
-   COSMETICS ADMIN - CATEGORY MANAGEMENT
-   ========================================= */
-
 :host {
-
-  --navy: #0b1f3a;
-  --navy-light: #132f52;
-  --navy-dark: #071529;
-
-  --gold: #d4af37;
-  --gold-light: #e6c85c;
-  --gold-dark: #b8941f;
-
-  --white: #ffffff;
-
-  --gray: #69727d;
-  --gray-light: #f5f6f8;
-
-  --border: #e3e6ea;
-
-  --danger: #b33a3a;
-
+  display: block;
+  width: 100%;
 }
-
-
-/* =========================================
-   CONTAINER
-   ========================================= */
 
 .management-container {
-
   width: 100%;
-
   max-width: 1000px;
-
   margin: 0 auto;
-
   padding: 28px;
-
-  box-sizing: border-box;
-
 }
 
 
-/* =========================================
-   HEADER
-   ========================================= */
+// ============================================================
+// HEADER
+// ============================================================
 
 .header-actions {
-
   display: flex;
-
   align-items: center;
-
   justify-content: space-between;
-
   gap: 20px;
-
   margin-bottom: 28px;
-
 }
-
 
 .page-heading {
-
   display: flex;
-
   align-items: center;
-
   gap: 14px;
-
 }
-
 
 .heading-icon {
-
   width: 44px;
-
   height: 44px;
 
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  border-radius: 10px;
-
-  background:
-    rgba(212, 175, 55, 0.12);
-
-  border:
-    1px solid
-    rgba(212, 175, 55, 0.3);
-
-  color:
-    var(--gold-dark);
-
-  font-family:
-    'Material Icons';
-
-  font-size: 22px;
-
-}
-
-
-.page-heading h2 {
-
-  margin: 0;
-
-  color:
-    var(--navy);
-
-  font-size: 1.35rem;
-
-  font-weight: 700;
-
-  letter-spacing: 0.2px;
-
-}
-
-
-.page-heading p {
-
-  margin: 4px 0 0;
-
-  color:
-    var(--gray);
-
-  font-size: 0.78rem;
-
-}
-
-
-/* =========================================
-   ADD BUTTON
-   ========================================= */
-
-.add-category-btn {
-
-  height: 44px;
-
-  padding:
-    0 20px;
-
-  border-radius: 7px;
-
-  background:
-    var(--navy);
-
-  color:
-    var(--white);
-
-  font-size: 0.78rem;
-
-  font-weight: 700;
-
-  letter-spacing: 0.2px;
-
-  box-shadow:
-    0 4px 12px
-    rgba(11, 31, 58, 0.16);
-
-  transition:
-    all 0.2s ease;
-
-}
-
-
-.add-category-btn mat-icon {
-
-  margin-right: 5px;
-
-  color:
-    var(--gold);
-
-}
-
-
-.add-category-btn:hover {
-
-  background:
-    var(--navy-light);
-
-  transform:
-    translateY(-1px);
-
-  box-shadow:
-    0 6px 16px
-    rgba(11, 31, 58, 0.22);
-
-}
-
-
-/* =========================================
-   TABLE CARD
-   ========================================= */
-
-.table-responsive {
-
-  width: 100%;
-
-  overflow-x: auto;
-
-  background:
-    var(--white);
-
-  border:
-    1px solid var(--border);
-
-  border-radius: 12px;
-
-  box-shadow:
-    0 5px 20px
-    rgba(11, 31, 58, 0.07);
-
-}
-
-
-table {
-
-  width: 100%;
-
-  min-width: 600px;
-
-  background:
-    var(--white);
-
-}
-
-
-/* =========================================
-   TABLE HEADER
-   ========================================= */
-
-.mat-mdc-header-row {
-
-  height: 54px;
-
-  background:
-    #f8f9fb;
-
-}
-
-
-.mat-mdc-header-cell {
-
-  color:
-    #6d7685 !important;
-
-  font-size: 0.72rem;
-
-  font-weight: 700;
-
-  letter-spacing: 0.5px;
-
-  border-bottom:
-    2px solid #f8f9fb;
-
-}
-
-
-.mat-mdc-header-cell:first-child {
-
-  padding-left: 24px;
-
-}
-
-
-.mat-mdc-header-cell:last-child {
-
-  padding-right: 24px;
-
-}
-
-
-/* =========================================
-   TABLE BODY
-   ========================================= */
-
-.mat-mdc-row {
-
-  height: 68px;
-
-  transition:
-    background-color 0.2s ease;
-
-}
-
-
-.mat-mdc-row:hover {
-
-  background:
-    #faf9f5;
-
-}
-
-
-.mat-mdc-cell {
-
-  color:
-    #3e4650;
-
-  font-size: 0.82rem;
-
-  border-bottom:
-    1px solid var(--border);
-
-}
-
-
-.mat-mdc-row:last-child .mat-mdc-cell {
-
-  border-bottom: none;
-
-}
-
-
-/* =========================================
-   CATEGORY NAME
-   ========================================= */
-
-.category-name {
-
-  font-weight: 600;
-
-  color:
-    var(--navy) !important;
-
-}
-
-
-.category-name-wrapper {
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 12px;
-
-}
-
-
-/* =========================================
-   CATEGORY IMAGE
-   ========================================= */
-
-.category-image-wrapper {
-
-  width: 42px;
-
-  height: 42px;
-
+  display: grid;
+  place-items: center;
   flex-shrink: 0;
 
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  color: var(--color-accent);
+
+  mat-icon {
+    font-size: 22px;
+  }
+}
+
+.page-heading h2 {
+  margin: 0;
+
+  color: var(--color-primary);
+
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+.page-heading p {
+  margin: 4px 0 0;
+
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+
+// ============================================================
+// ADD BUTTON
+// ============================================================
+
+.add-category-btn {
+  height: 44px;
+  padding: 0 20px;
+
+  background: var(--color-primary) !important;
+  color: var(--color-surface) !important;
+
+  border-radius: var(--radius-md) !important;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  box-shadow: var(--shadow-sm);
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+
+  mat-icon {
+    color: var(--color-accent-light);
+  }
+}
+
+
+// ============================================================
+// TABLE
+// ============================================================
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-sm);
+}
+
+table {
+  width: 100%;
+  min-width: 600px;
+  background: var(--color-surface);
+}
+
+
+// ============================================================
+// TABLE HEADER / BODY
+// ============================================================
+
+:host ::ng-deep {
+
+  .mat-mdc-header-row {
+    height: 54px;
+    background: var(--color-surface-soft);
+  }
+
+  .mat-mdc-header-cell {
+    padding: 0 16px;
+
+    color: var(--color-text-secondary) !important;
+
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .mat-mdc-header-cell:first-child {
+    padding-left: 24px;
+  }
+
+  .mat-mdc-header-cell:last-child {
+    padding-right: 24px;
+  }
+
+  .mat-mdc-row {
+    min-height: 68px;
+
+    transition: background .15s ease;
+
+    &:hover {
+      background: var(--color-surface-soft);
+    }
+
+    &:last-child .mat-mdc-cell {
+      border-bottom: 0;
+    }
+  }
+
+  .mat-mdc-cell {
+    padding: 10px 16px;
+
+    color: var(--color-text);
+    font-size: 12px;
+
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  mat-paginator {
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
+
+    border-top: 1px solid var(--color-border-light);
+  }
+}
+
+
+// ============================================================
+// CATEGORY
+// ============================================================
+
+.category-name {
+  color: var(--color-primary) !important;
+  font-weight: 600;
+}
+
+.category-name-wrapper {
   display: flex;
-
   align-items: center;
+  gap: 12px;
+}
 
-  justify-content: center;
+.category-image-wrapper {
+  width: 42px;
+  height: 42px;
 
-  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
 
   overflow: hidden;
 
-  background:
-    #f5f6f8;
-
-  border:
-    1px solid var(--border);
-
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
 }
-
 
 .category-image {
-
   width: 100%;
-
   height: 100%;
-
-  object-fit: cover;
-
   display: block;
-
+  object-fit: cover;
 }
-
-
-/* =========================================
-   IMAGE FALLBACK
-   ========================================= */
 
 .category-image-placeholder {
-
-  width: 100%;
-
-  height: 100%;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  background:
-    rgba(212, 175, 55, 0.1);
-
-  color:
-    var(--gold-dark);
-
-  font-family:
-    'Material Icons';
+  color: var(--color-accent);
 
   font-size: 20px;
-
 }
-
 
 .category-name-text {
-
-  white-space: nowrap;
-
   overflow: hidden;
-
   text-overflow: ellipsis;
-
+  white-space: nowrap;
 }
 
 
-/* =========================================
-   DESCRIPTION
-   ========================================= */
+// ============================================================
+// DESCRIPTION
+// ============================================================
 
 .description {
-
-  color:
-    var(--gray) !important;
-
   max-width: 450px;
 
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 
-  overflow: hidden;
-
-  text-overflow: ellipsis;
-
+  color: var(--color-text-secondary) !important;
 }
 
 
-/* =========================================
-   ACTIONS
-   ========================================= */
+// ============================================================
+// ACTIONS
+// ============================================================
 
-.actions-header {
-
-  text-align: center;
-
+.actions-header,
+.actions-cell {
+  text-align: center !important;
 }
-
 
 .actions-cell {
-
-  text-align: center;
-
   white-space: nowrap;
-
 }
 
+.edit-btn,
+.delete-btn {
+  margin: 0 2px;
+  border-radius: var(--radius-sm) !important;
+
+  transition: .2s ease;
+}
 
 .edit-btn {
+  color: var(--color-accent) !important;
 
-  color:
-    var(--navy);
-
-  margin-right: 4px;
-
-  transition:
-    all 0.2s ease;
-
+  &:hover {
+    background: var(--color-surface-soft) !important;
+    transform: translateY(-1px);
+  }
 }
-
-
-.edit-btn mat-icon {
-
-  color:
-    var(--gold-dark);
-
-  transition:
-    color 0.2s ease;
-
-}
-
-
-.edit-btn:hover {
-
-  background:
-    rgba(212, 175, 55, 0.1);
-
-}
-
-
-.edit-btn:hover mat-icon {
-
-  color:
-    var(--gold);
-
-}
-
 
 .delete-btn {
+  color: var(--color-error) !important;
 
-  color:
-    var(--danger);
+  &:hover {
+    background: color-mix(
+      in srgb,
+      var(--color-error) 8%,
+      var(--color-surface)
+    ) !important;
 
-  transition:
-    all 0.2s ease;
-
+    transform: translateY(-1px);
+  }
 }
 
 
-.delete-btn:hover {
-
-  background:
-    rgba(179, 58, 58, 0.08);
-
-}
-
-
-.delete-btn mat-icon {
-
-  color:
-    var(--danger);
-
-}
-
-
-/* =========================================
-   TABLE
-   ========================================= */
-
-.mat-mdc-table {
-
-  border-radius: 12px;
-
-  overflow: hidden;
-
-}
-
-
-/* =========================================
-   RESPONSIVE
-   ========================================= */
+// ============================================================
+// RESPONSIVE
+// ============================================================
 
 @media (max-width: 700px) {
 
   .management-container {
-
-    padding:
-      20px 14px;
-
+    padding: 20px 14px;
   }
-
 
   .header-actions {
-
     align-items: stretch;
-
     flex-direction: column;
-
     margin-bottom: 20px;
-
   }
-
-
-  .page-heading {
-
-    gap: 10px;
-
-  }
-
-
-  .heading-icon {
-
-    width: 40px;
-
-    height: 40px;
-
-  }
-
-
-  .page-heading h2 {
-
-    font-size: 1.15rem;
-
-  }
-
 
   .add-category-btn {
-
     width: 100%;
-
-    justify-content: center;
-
   }
-
-
-  .table-responsive {
-
-    border-radius: 10px;
-
-  }
-
 }
-
-
-/* =========================================
-   SMALL MOBILE
-   ========================================= */
 
 @media (max-width: 480px) {
 
   .management-container {
-
-    padding:
-      16px 10px;
-
+    padding: 16px 10px;
   }
 
+  .page-heading {
+    gap: 10px;
+  }
+
+  .heading-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .page-heading h2 {
+    font-size: 1.15rem;
+  }
 
   .page-heading p {
-
-    font-size: 0.7rem;
-
+    font-size: 11px;
   }
 
+  :host ::ng-deep {
 
-  .mat-mdc-cell,
-  .mat-mdc-header-cell {
+    .mat-mdc-cell,
+    .mat-mdc-header-cell {
+      font-size: 11px;
+    }
 
-    font-size: 0.72rem;
-
+    .mat-mdc-header-cell:first-child {
+      padding-left: 16px;
+    }
   }
-
-
-  .mat-mdc-header-cell:first-child {
-
-    padding-left: 16px;
-
-  }
-
 
   .category-name-wrapper {
-
     gap: 8px;
-
   }
-
 
   .category-image-wrapper {
-
     width: 34px;
-
     height: 34px;
-
-    border-radius: 7px;
-
   }
-
 
   .category-image-placeholder {
-
     font-size: 16px;
-
   }
-
 }

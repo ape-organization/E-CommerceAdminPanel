@@ -2,7 +2,6 @@
 
   <div class="modal-container">
 
-
     <!-- =========================================
          HEADER
          ========================================= -->
@@ -19,28 +18,22 @@
 
         </div>
 
-
         <div>
 
           <h2>
-
             {{
               data.add
                 ? 'Add New Brand'
                 : 'Edit Brand'
             }}
-
           </h2>
 
-
           <p>
-
             {{
               data.add
                 ? 'Create a new cosmetic brand'
                 : 'Update brand information'
             }}
-
           </p>
 
         </div>
@@ -53,6 +46,7 @@
         type="button"
         class="close-button"
         (click)="onCancel()"
+        aria-label="Close"
       >
 
         <mat-icon>
@@ -82,18 +76,16 @@
 
         <div class="image-upload-section">
 
-
           <div
             class="image-preview-wrapper"
             (click)="fileInput.click()"
           >
 
-
             <!-- Existing / selected image -->
 
             <img
-              *ngIf="imagePreview"
-              [src]="imagePreview"
+              *ngIf="imagePreview()"
+              [src]="imagePreview()"
               [alt]="
                 brandForm.get('name')?.value ||
                 'Brand image'
@@ -105,7 +97,7 @@
             <!-- Empty -->
 
             <div
-              *ngIf="!imagePreview"
+              *ngIf="!imagePreview()"
               class="image-placeholder"
             >
 
@@ -122,9 +114,7 @@
 
             <!-- Hover -->
 
-            <div
-              class="image-hover-overlay"
-            >
+            <div class="image-hover-overlay">
 
               <mat-icon>
                 photo_camera
@@ -149,9 +139,6 @@
             (change)="onImageSelected($event)"
           />
 
-
-         
-
         </div>
 
 
@@ -159,15 +146,11 @@
              NAME
              ===================================== -->
 
-        <mat-form-field
-          appearance="outline"
-        >
+        <mat-form-field appearance="outline">
 
-          <mat-label>
-            Brand Name
-          </mat-label>
+          
 
-          <mat-icon matPrefix>
+          <mat-icon matPrefix class="icon">
             verified
           </mat-icon>
 
@@ -179,6 +162,7 @@
 
 
           <mat-error
+           class="error"
             *ngIf="
               brandForm
                 .get('name')
@@ -198,7 +182,7 @@
              ===================================== -->
 
         <div
-          *ngIf="errorMessage"
+          *ngIf="errorMessage()"
           class="error-message"
         >
 
@@ -207,7 +191,7 @@
           </mat-icon>
 
           <span>
-            {{ errorMessage }}
+            {{ errorMessage() }}
           </span>
 
         </div>
@@ -220,7 +204,6 @@
            ========================================= -->
 
       <div class="modal-actions">
-
 
         <button
           mat-button
@@ -240,7 +223,7 @@
           class="submit-button"
           [disabled]="
             brandForm.invalid ||
-            isSubmitting
+            isSubmitting()
           "
         >
 
@@ -256,7 +239,7 @@
 
 
           {{
-            isSubmitting
+            isSubmitting()
               ? 'SAVING...'
               : (
                   data.add

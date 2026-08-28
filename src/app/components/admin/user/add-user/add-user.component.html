@@ -1,10 +1,8 @@
-
 <div class="modal-overlay">
-
   <div class="modal-container">
 
     <!-- Header -->
-    <div class="modal-header">
+    <header class="modal-header">
 
       <div class="header-title">
 
@@ -29,29 +27,30 @@
 
       </div>
 
-
       <button
         mat-icon-button
         type="button"
         class="close-button"
-        (click)="onCancel()"
         aria-label="Close"
+        (click)="onCancel()"
       >
         <mat-icon>close</mat-icon>
       </button>
 
-    </div>
+    </header>
 
 
     <!-- Form -->
-    <form [formGroup]="userForm">
+    <form
+      [formGroup]="userForm"
+      (ngSubmit)="onSubmit()"
+    >
 
       <div class="form-content">
 
         <!-- Username -->
         <mat-form-field appearance="outline">
-
-          <mat-label>Username</mat-label>
+          <!-- <mat-label>Username</mat-label> -->
 
           <mat-icon matPrefix>
             person
@@ -61,21 +60,19 @@
             matInput
             formControlName="name"
             placeholder="Enter username"
-          >
+          />
 
-          <mat-error
-            *ngIf="userForm.get('name')?.hasError('required')"
+          <mat-error *ngIf="userForm.get('name')?.hasError('required')"
+          class="error"
           >
             Username is required
           </mat-error>
-
         </mat-form-field>
 
 
         <!-- Email -->
         <mat-form-field appearance="outline">
-
-          <mat-label>Email Address</mat-label>
+         <!--  <mat-label>Email Address</mat-label> -->
 
           <mat-icon matPrefix>
             email
@@ -86,30 +83,24 @@
             type="email"
             formControlName="email"
             placeholder="example@email.com"
-          >
+          />
 
-          <mat-error
-            *ngIf="userForm.get('email')?.hasError('required')"
-          >
+          <mat-error *ngIf="userForm.get('email')?.hasError('required')"class="error">
             Email is required
           </mat-error>
 
-          <mat-error
-            *ngIf="userForm.get('email')?.hasError('email')"
-          >
+          <mat-error *ngIf="userForm.get('email')?.hasError('email')"class="error">
             Invalid email format
           </mat-error>
-
         </mat-form-field>
 
 
         <!-- Password -->
         <mat-form-field
-          appearance="outline"
           *ngIf="!editUser"
+          appearance="outline"
         >
-
-          <mat-label>Password</mat-label>
+          <!-- <mat-label>Password</mat-label> -->
 
           <mat-icon matPrefix>
             lock
@@ -120,37 +111,28 @@
             [type]="hidePassword ? 'password' : 'text'"
             formControlName="password"
             placeholder="Enter password"
-          >
+          />
 
           <button
             mat-icon-button
             matSuffix
             type="button"
             class="password-toggle"
+            [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'"
             (click)="hidePassword = !hidePassword"
-            [attr.aria-label]="
-              hidePassword
-                ? 'Show password'
-                : 'Hide password'
-            "
           >
             <mat-icon>
               {{ hidePassword ? 'visibility_off' : 'visibility' }}
             </mat-icon>
           </button>
 
-          <mat-error
-            *ngIf="userForm.get('password')?.hasError('required')"
-          >
+          <mat-error *ngIf="userForm.get('password')?.hasError('required')"class="error">
             Password is required
           </mat-error>
 
-          <mat-error
-            *ngIf="userForm.get('password')?.hasError('minlength')"
-          >
+          <mat-error *ngIf="userForm.get('password')?.hasError('minlength')"class="error">
             Password must be at least 6 characters
           </mat-error>
-
         </mat-form-field>
 
       </div>
@@ -178,21 +160,17 @@
           CANCEL
         </button>
 
-
         <button
           mat-raised-button
           type="submit"
           class="submit-button"
           [disabled]="userForm.invalid"
-          (click)="onSubmit()"
         >
-
           <mat-icon>
             {{ editUser ? 'save' : 'person_add' }}
           </mat-icon>
 
           {{ editUser ? 'UPDATE USER' : 'CREATE USER' }}
-
         </button>
 
       </div>
@@ -200,5 +178,4 @@
     </form>
 
   </div>
-
 </div>

@@ -1,24 +1,7 @@
 /* =========================================
    COSMETICS BRAND MODAL
+   Uses global application variables
    ========================================= */
-
-:host {
-
-  --navy: #0b1f3a;
-  --navy-light: #132f52;
-
-  --gold: #d4af37;
-  --gold-light: #e6c85c;
-  --gold-dark: #b8941f;
-
-  --white: #ffffff;
-
-  --gray: #69727d;
-  --border: #e1e4e8;
-
-  --danger: #b33a3a;
-
-}
 
 
 /* =========================================
@@ -41,11 +24,10 @@
   display: flex;
 
   align-items: center;
-
   justify-content: center;
 
   background:
-    rgba(7, 21, 41, 0.72);
+    rgba(58, 39, 33, 0.72);
 
   backdrop-filter:
     blur(5px);
@@ -53,7 +35,9 @@
   z-index: 1100;
 
   animation:
-    overlay-fade 0.25s ease;
+    fadeIn
+    0.25s
+    ease;
 
 }
 
@@ -73,18 +57,20 @@
   box-sizing: border-box;
 
   background:
-    var(--white);
+    var(--color-surface);
 
-  border-radius: 14px;
+  border-radius:
+    var(--radius-lg);
 
   box-shadow:
-    0 20px 60px
-    rgba(0, 0, 0, 0.25);
+    var(--shadow-lg);
 
   overflow-y: auto;
 
   animation:
-    modal-slide-in 0.3s ease-out;
+    slideIn
+    0.3s
+    ease-out;
 
 }
 
@@ -104,7 +90,8 @@
   padding: 20px 24px;
 
   border-bottom:
-    1px solid var(--border);
+    1px solid
+    var(--color-border);
 
 }
 
@@ -123,28 +110,27 @@
 .title-icon {
 
   width: 42px;
-
   height: 42px;
 
   display: flex;
 
   align-items: center;
-
   justify-content: center;
 
   flex-shrink: 0;
 
-  border-radius: 10px;
+  border-radius:
+    var(--radius-md);
 
   background:
-    rgba(212, 175, 55, 0.12);
+    rgba(184, 138, 90, 0.12);
 
   border:
     1px solid
-    rgba(212, 175, 55, 0.3);
+    rgba(184, 138, 90, 0.30);
 
   color:
-    var(--gold-dark);
+    var(--color-accent);
 
 }
 
@@ -154,7 +140,6 @@
   font-size: 21px;
 
   width: 21px;
-
   height: 21px;
 
 }
@@ -165,11 +150,14 @@
   margin: 0;
 
   color:
-    var(--navy);
+    var(--color-primary);
+
+  font-family:
+    var(--font-heading);
 
   font-size: 1.15rem;
 
-  font-weight: 700;
+  font-weight: 600;
 
 }
 
@@ -179,7 +167,7 @@
   margin: 3px 0 0;
 
   color:
-    var(--gray);
+    var(--color-text-secondary);
 
   font-size: 0.72rem;
 
@@ -193,7 +181,11 @@
 .close-button {
 
   color:
-    var(--gray);
+    var(--color-text-secondary);
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 
 }
 
@@ -201,10 +193,10 @@
 .close-button:hover {
 
   color:
-    var(--navy);
+    var(--color-primary);
 
   background:
-    rgba(11, 31, 58, 0.06);
+    var(--color-surface-soft);
 
 }
 
@@ -246,7 +238,9 @@ form {
 .image-upload-section {
 
   display: flex;
-justify-content: center;
+
+  justify-content: center;
+
   align-items: center;
 
   gap: 18px;
@@ -254,12 +248,14 @@ justify-content: center;
   padding: 14px;
 
   background:
-    #fafbfc;
+    var(--color-surface-soft);
 
   border:
-    1px solid var(--border);
+    1px solid
+    var(--color-border);
 
-  border-radius: 10px;
+  border-radius:
+    var(--radius-md);
 
 }
 
@@ -281,18 +277,19 @@ justify-content: center;
   display: flex;
 
   align-items: center;
-
   justify-content: center;
 
   overflow: hidden;
 
-  border-radius: 12px;
+  border-radius:
+    var(--radius-md);
 
   background:
-    #f1f3f5;
+    var(--color-background);
 
   border:
-    1px solid var(--border);
+    1px solid
+    var(--color-border);
 
   cursor: pointer;
 
@@ -302,7 +299,6 @@ justify-content: center;
 .brand-image-preview {
 
   width: 100%;
-
   height: 100%;
 
   object-fit: contain;
@@ -312,10 +308,13 @@ justify-content: center;
 }
 
 
+/* =========================================
+   IMAGE PLACEHOLDER
+   ========================================= */
+
 .image-placeholder {
 
   width: 100%;
-
   height: 100%;
 
   display: flex;
@@ -323,13 +322,12 @@ justify-content: center;
   flex-direction: column;
 
   align-items: center;
-
   justify-content: center;
 
   gap: 6px;
 
   color:
-    var(--gray);
+    var(--color-text-secondary);
 
 }
 
@@ -337,10 +335,12 @@ justify-content: center;
 .image-placeholder mat-icon {
 
   width: 30px;
-
   height: 30px;
 
   font-size: 30px;
+
+  color:
+    var(--color-accent);
 
 }
 
@@ -355,7 +355,7 @@ justify-content: center;
 
 
 /* =========================================
-   HOVER
+   IMAGE HOVER
    ========================================= */
 
 .image-hover-overlay {
@@ -369,16 +369,15 @@ justify-content: center;
   flex-direction: column;
 
   align-items: center;
-
   justify-content: center;
 
   gap: 4px;
 
   background:
-    rgba(11, 31, 58, 0.72);
+    rgba(58, 39, 33, 0.78);
 
   color:
-    var(--white);
+    var(--color-surface);
 
   opacity: 0;
 
@@ -387,11 +386,18 @@ justify-content: center;
 
 }
 
-
+.icon
+{
+  padding: 15px;
+}
+.error
+{
+  color: var( --color-error);
+}
 .image-hover-overlay mat-icon {
 
   color:
-    var(--gold);
+    var(--color-accent-light);
 
 }
 
@@ -414,98 +420,6 @@ justify-content: center;
 
 
 /* =========================================
-   IMAGE INFO
-   ========================================= */
-
-.image-upload-info {
-
-  display: flex;
-
-  flex-direction: column;
-
-  align-items: flex-start;
-
-  gap: 4px;
-
-}
-
-
-.image-title {
-
-  color:
-    var(--navy);
-
-  font-size: 0.82rem;
-
-  font-weight: 700;
-
-}
-
-
-.image-description {
-
-  color:
-    var(--gray);
-
-  font-size: 0.68rem;
-
-}
-
-
-.image-format {
-
-  color:
-    #9299a2;
-
-  font-size: 0.62rem;
-
-}
-
-
-/* =========================================
-   CHOOSE BUTTON
-   ========================================= */
-
-.choose-image-button {
-
-  height: 34px;
-
-  margin-top: 5px;
-
-  padding: 0 12px;
-
-  border-radius: 6px;
-
-  border-color:
-    var(--gold-dark) !important;
-
-  color:
-    var(--navy) !important;
-
-  font-size: 0.68rem;
-
-  font-weight: 700;
-
-}
-
-
-.choose-image-button mat-icon {
-
-  color:
-    var(--gold-dark);
-
-  font-size: 17px;
-
-  width: 17px;
-
-  height: 17px;
-
-  margin-right: 4px;
-
-}
-
-
-/* =========================================
    MATERIAL FOCUS
    ========================================= */
 
@@ -522,7 +436,7 @@ justify-content: center;
 .mdc-notched-outline__trailing {
 
   border-color:
-    var(--gold) !important;
+    var(--color-accent) !important;
 
 }
 
@@ -532,7 +446,7 @@ justify-content: center;
 .mat-mdc-floating-label {
 
   color:
-    var(--gold-dark) !important;
+    var(--color-accent) !important;
 
 }
 
@@ -551,17 +465,18 @@ justify-content: center;
 
   padding: 10px 12px;
 
-  border-radius: 7px;
+  border-radius:
+    var(--radius-sm);
 
   background:
-    rgba(179, 58, 58, 0.08);
+    rgba(166, 93, 77, 0.08);
 
   border:
     1px solid
-    rgba(179, 58, 58, 0.2);
+    rgba(166, 93, 77, 0.20);
 
   color:
-    var(--danger);
+    var(--color-error);
 
   font-size: 0.72rem;
 
@@ -573,7 +488,6 @@ justify-content: center;
   font-size: 18px;
 
   width: 18px;
-
   height: 18px;
 
 }
@@ -598,7 +512,8 @@ justify-content: center;
   padding-top: 20px;
 
   border-top:
-    1px solid var(--border);
+    1px solid
+    var(--color-border);
 
 }
 
@@ -609,7 +524,8 @@ justify-content: center;
 
   height: 42px;
 
-  border-radius: 6px;
+  border-radius:
+    var(--radius-sm);
 
   font-size: 0.72rem;
 
@@ -620,10 +536,14 @@ justify-content: center;
 }
 
 
+/* =========================================
+   CANCEL
+   ========================================= */
+
 .cancel-button {
 
   color:
-    var(--gray);
+    var(--color-text-secondary);
 
 }
 
@@ -631,13 +551,17 @@ justify-content: center;
 .cancel-button:hover {
 
   background:
-    #f3f4f6;
+    var(--color-surface-soft);
 
   color:
-    var(--navy);
+    var(--color-primary);
 
 }
 
+
+/* =========================================
+   SUBMIT
+   ========================================= */
 
 .submit-button {
 
@@ -646,19 +570,23 @@ justify-content: center;
   display: flex;
 
   align-items: center;
-
   justify-content: center;
 
   gap: 5px;
 
   background:
-    var(--navy);
+    var(--color-primary);
 
   color:
-    var(--white);
+    var(--color-surface);
+
+  box-shadow:
+    var(--shadow-sm);
 
   transition:
-    all 0.2s ease;
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 
 }
 
@@ -666,12 +594,11 @@ justify-content: center;
 .submit-button mat-icon {
 
   color:
-    var(--gold);
+    var(--color-accent-light);
 
   font-size: 18px;
 
   width: 18px;
-
   height: 18px;
 
 }
@@ -680,10 +607,13 @@ justify-content: center;
 .submit-button:not(:disabled):hover {
 
   background:
-    var(--navy-light);
+    var(--color-primary-light);
 
   transform:
     translateY(-1px);
+
+  box-shadow:
+    var(--shadow-md);
 
 }
 
@@ -692,47 +622,8 @@ justify-content: center;
 
   opacity: 0.5;
 
-}
-
-
-/* =========================================
-   ANIMATION
-   ========================================= */
-
-@keyframes overlay-fade {
-
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-
-}
-
-
-@keyframes modal-slide-in {
-
-  from {
-
-    opacity: 0;
-
-    transform:
-      translateY(-25px)
-      scale(0.98);
-
-  }
-
-  to {
-
-    opacity: 1;
-
-    transform:
-      translateY(0)
-      scale(1);
-
-  }
+  box-shadow:
+    none;
 
 }
 
@@ -754,7 +645,8 @@ justify-content: center;
 
     max-height: 94vh;
 
-    border-radius: 12px;
+    border-radius:
+      var(--radius-md);
 
   }
 
@@ -776,7 +668,6 @@ justify-content: center;
   .title-icon {
 
     width: 38px;
-
     height: 38px;
 
   }
@@ -808,7 +699,6 @@ justify-content: center;
   .image-preview-wrapper {
 
     width: 82px;
-
     height: 82px;
 
   }

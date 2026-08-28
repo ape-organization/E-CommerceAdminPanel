@@ -1,9 +1,9 @@
 import {
-  ChangeDetectorRef,
   Component,
   Inject,
   OnInit,
-  inject
+  inject,
+  signal
 } from '@angular/core';
 
 import {
@@ -53,40 +53,28 @@ import {
   standalone: true,
 
   imports: [
-
     CommonModule,
-
     ReactiveFormsModule,
-
     MatButtonModule,
-
     MatFormFieldModule,
-
     MatInputModule,
-
     MatIconModule
-
   ],
 
-  templateUrl:
-    './add-brand.html',
+  templateUrl: './add-brand.html',
 
-  styleUrl:
-    './add-brand.scss'
+  styleUrl: './add-brand.scss'
 })
-export class AddBrand
-  implements OnInit {
-
+export class AddBrand implements OnInit {
 
   // =====================================================
   // SERVICES
   // =====================================================
 
-  private fb =
+  private readonly fb =
     inject(FormBuilder);
 
-
-  private brandService =
+  private readonly brandService =
     inject(BrandService);
 
 
@@ -94,32 +82,24 @@ export class AddBrand
   // FORM
   // =====================================================
 
-  brandForm:
-    FormGroup;
+  brandForm: FormGroup;
 
 
   // =====================================================
-  // IMAGE
+  // SIGNAL STATE
   // =====================================================
 
-  imagePreview:
-    string | null = null;
+  readonly imagePreview =
+    signal<string | null>(null);
 
+  readonly selectedImage =
+    signal<File | null>(null);
 
-  selectedImage:
-    File | null = null;
+  readonly errorMessage =
+    signal<string | null>(null);
 
-
-  // =====================================================
-  // STATE
-  // =====================================================
-
-  errorMessage:
-    string | null = null;
-
-
-  isSubmitting =
-    false;
+  readonly isSubmitting =
+    signal(false);
 
 
   // =====================================================
@@ -128,14 +108,11 @@ export class AddBrand
 
   constructor(
 
-    private dialogRef:
+    private readonly dialogRef:
       MatDialogRef<AddBrand>,
 
     @Inject(MAT_DIALOG_DATA)
-    public data: any,
-
-    private cdr:
-      ChangeDetectorRef
+    public readonly data: any
 
   ) {
 
@@ -159,8 +136,8 @@ export class AddBrand
   ngOnInit(): void {
 
     if (
-      !this.data.add &&
-      this.data.brand
+      !this.data?.add &&
+      this.data?.brand
     ) {
 
       this.brandForm.patchValue({
@@ -171,12 +148,11 @@ export class AddBrand
       });
 
 
-      /*
-       * Existing image
-       */
+      // Existing image
 
-      this.imagePreview =
-        this.data.brand.imageUrl || null;
+      this.imagePreview.set(
+        this.data.brand.imageUrl || null
+      );
 
     }
 
@@ -209,16 +185,17 @@ export class AddBrand
       input.files[0];
 
 
-    // -----------------------------------------------
-    // Validate image
-    // -----------------------------------------------
+    // ===================================================
+    // VALIDATE TYPE
+    // ===================================================
 
     if (
       !file.type.startsWith('image/')
     ) {
 
-      this.errorMessage =
-        'Please select a valid image file.';
+      this.errorMessage.set(
+        'Please select a valid image file.'
+      );
 
       input.value = '';
 
@@ -227,9 +204,9 @@ export class AddBrand
     }
 
 
-    // -----------------------------------------------
-    // Maximum 5 MB
-    // -----------------------------------------------
+    // ===================================================
+    // VALIDATE SIZE
+    // ===================================================
 
     const maxSize =
       5 * 1024 * 1024;
@@ -239,8 +216,9 @@ export class AddBrand
       file.size > maxSize
     ) {
 
-      this.errorMessage =
-        'Image size must be less than 5 MB.';
+      this.errorMessage.set(
+        'Image size must be less than 5 MB.'
+      );
 
       input.value = '';
 
@@ -249,21 +227,18 @@ export class AddBrand
     }
 
 
-    // -----------------------------------------------
-    // Save file
-    // -----------------------------------------------
+    // ===================================================
+    // SAVE SELECTED FILE
+    // ===================================================
 
-    this.selectedImage =
-      file;
+    this.selectedImage.set(file);
 
-
-    this.errorMessage =
-      null;
+    this.errorMessage.set(null);
 
 
-    // -----------------------------------------------
-    // Preview
-    // -----------------------------------------------
+    // ===================================================
+    // CREATE PREVIEW
+    // ===================================================
 
     const reader =
       new FileReader();
@@ -271,10 +246,9 @@ export class AddBrand
 
     reader.onload = () => {
 
-      this.imagePreview =
-        reader.result as string;
-
-      this.cdr.detectChanges();
+      this.imagePreview.set(
+        reader.result as string
+      );
 
     };
 
@@ -290,9 +264,11 @@ export class AddBrand
 
   async onSubmit(): Promise<void> {
 
+    // Prevent duplicate submission
+
     if (
       this.brandForm.invalid ||
-      this.isSubmitting
+      this.isSubmitting()
     ) {
 
       this.brandForm.markAllAsTouched();
@@ -302,55 +278,53 @@ export class AddBrand
     }
 
 
-    this.errorMessage =
-      null;
+    this.errorMessage.set(null);
 
-    this.isSubmitting =
-      true;
+    this.isSubmitting.set(true);
 
 
     try {
 
-      // -----------------------------------------------
-      // FormData
-      // -----------------------------------------------
+      // =================================================
+      // FORM DATA
+      // =================================================
 
       const formData =
         new FormData();
 
 
-      // -----------------------------------------------
-      // Name
-      // -----------------------------------------------
+      // =================================================
+      // NAME
+      // =================================================
 
       formData.append(
         'Name',
-        this.brandForm.value.name
+        this.brandForm.get('name')?.value
       );
 
 
-      // -----------------------------------------------
-      // Image
-      // -----------------------------------------------
+      // =================================================
+      // IMAGE
+      // =================================================
 
-      if (this.selectedImage) {
+      const image =
+        this.selectedImage();
+
+
+      if (image) {
 
         formData.append(
-
           'Image',
-
-          this.selectedImage,
-
-          this.selectedImage.name
-
+          image,
+          image.name
         );
 
       }
 
 
-      // -----------------------------------------------
+      // =================================================
       // UPDATE
-      // -----------------------------------------------
+      // =================================================
 
       if (
         !this.data.add &&
@@ -361,31 +335,31 @@ export class AddBrand
           await firstValueFrom(
 
             this.brandService.updateBrand(
-
               this.data.brand.id,
-
               formData
-
             )
 
           );
 
 
         if (!response) {
- this.errorMessage =
-      'Brand update failed';
-         /*  throw new Error(
-            'Brand update failed'
-          ); */
+
+          this.errorMessage.set(
+            'Brand update failed.'
+          );
+
+          this.isSubmitting.set(false);
+
+          return;
 
         }
 
       }
 
 
-      // -----------------------------------------------
+      // =================================================
       // CREATE
-      // -----------------------------------------------
+      // =================================================
 
       else {
 
@@ -400,22 +374,28 @@ export class AddBrand
 
 
         if (!response) {
-this.errorMessage ='Brand creation failed'
-          /* throw new Error(
-            'Brand creation failed'
-          ); */
+
+          this.errorMessage.set(
+            'Brand creation failed.'
+          );
+
+          this.isSubmitting.set(false);
+
+          return;
 
         }
 
       }
 
 
-      // -----------------------------------------------
+      // =================================================
       // SUCCESS
-      // -----------------------------------------------
+      // =================================================
 
       this.dialogRef.close({
+
         status: true
+
       });
 
     }
@@ -423,18 +403,18 @@ this.errorMessage ='Brand creation failed'
 
     catch (error) {
 
-    
+      console.error(
+        'Error saving brand:',
+        error
+      );
 
 
-      this.errorMessage =
-        'Something went wrong while saving the brand.';
+      this.errorMessage.set(
+        'Something went wrong while saving the brand.'
+      );
 
 
-      this.isSubmitting =
-        false;
-
-
-      this.cdr.detectChanges();
+      this.isSubmitting.set(false);
 
     }
 
@@ -448,7 +428,9 @@ this.errorMessage ='Brand creation failed'
   onCancel(): void {
 
     this.dialogRef.close({
+
       status: false
+
     });
 
   }

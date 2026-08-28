@@ -1,102 +1,581 @@
-.dialog-container {
-  padding: 25px;
-  min-width: 420px;
-}
+/* =========================================================
+   SUBCATEGORY MODAL
+   ========================================================= */
 
 
-/* Header */
+/* =========================================================
+   OVERLAY
+   ========================================================= */
 
-.dialog-header {
+.modal-overlay {
+
+  position: fixed;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  padding: 20px;
+
+  box-sizing: border-box;
+
   display: flex;
 
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
 
-  justify-content: space-between;
+  background:
+    rgba(58, 39, 33, 0.62);
 
-  margin-bottom: 25px;
+  backdrop-filter:
+    blur(5px);
+
+  z-index: 1100;
+
+  animation:
+    overlay-fade 0.25s ease;
 }
 
 
-.dialog-label {
-  color: #c9a45c;
+/* =========================================================
+   MODAL
+   ========================================================= */
 
-  font-size: 10px;
+.modal-container {
 
-  font-weight: 700;
-
-  letter-spacing: 1.4px;
-}
-
-
-.dialog-header h2 {
-  margin: 5px 0 0;
-
-  color: #172033;
-
-  font-size: 21px;
-
-  font-weight: 650;
-}
-
-
-/* Form */
-
-.full-width {
   width: 100%;
 
-  margin-bottom: 8px;
+  max-width: 500px;
+
+  max-height: 90vh;
+
+  box-sizing: border-box;
+
+  overflow-y: auto;
+
+  background:
+    var(--color-surface);
+
+  border:
+    1px solid
+    var(--color-border);
+
+  border-radius:
+    var(--radius-lg);
+
+  box-shadow:
+    var(--shadow-lg);
+
+  animation:
+    modal-slide-in 0.3s ease-out;
 }
 
 
-/* Actions */
+/* =========================================================
+   HEADER
+   ========================================================= */
 
-.dialog-actions {
+.modal-header {
+
   display: flex;
-
-  justify-content: flex-end;
 
   align-items: center;
 
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding:
+    20px 24px;
+
+  border-bottom:
+    1px solid
+    var(--color-border);
+}
+
+
+.header-title {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+
+.title-icon {
+
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius:
+    var(--radius-md);
+
+  background:
+    rgba(184, 138, 90, 0.12);
+
+  border:
+    1px solid
+    rgba(184, 138, 90, 0.30);
+
+  color:
+    var(--color-accent);
+}
+
+
+.title-icon mat-icon {
+
+  width: 21px;
+  height: 21px;
+
+  font-size: 21px;
+}
+
+
+.modal-header h2 {
+
+  margin: 0;
+
+  color:
+    var(--color-primary);
+
+  font-family:
+    var(--font-heading);
+
+  font-size:
+    1.15rem;
+
+  font-weight:
+    600;
+
+  line-height:
+    1.3;
+}
+
+
+.modal-header p {
+
+  margin:
+    3px 0 0;
+
+  color:
+    var(--color-text-secondary);
+
+  font-size:
+    0.72rem;
+}
+
+
+/* =========================================================
+   CLOSE
+   ========================================================= */
+
+.close-button {
+
+  flex-shrink: 0;
+
+  color:
+    var(--color-text-secondary);
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+
+.close-button:hover:not(:disabled) {
+
+  color:
+    var(--color-primary);
+
+  background:
+    rgba(58, 39, 33, 0.06);
+}
+
+
+.close-button:disabled {
+
+  opacity: 0.5;
+}
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+form {
+
+  padding:
+    24px;
+}
+
+
+.form-content {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 16px;
+}
+
+
+/* =========================================================
+   MATERIAL FORM FIELDS
+   ========================================================= */
+
+::ng-deep
+.mat-mdc-form-field {
+
+  width: 100%;
+}
+
+
+::ng-deep
+.mat-mdc-form-field
+.mat-mdc-form-field-icon-prefix {
+
+  color:
+    var(--color-text-secondary);
+}
+
+
+::ng-deep
+.mat-mdc-form-field.mat-focused
+.mdc-notched-outline__leading,
+
+::ng-deep
+.mat-mdc-form-field.mat-focused
+.mdc-notched-outline__notch,
+
+::ng-deep
+.mat-mdc-form-field.mat-focused
+.mdc-notched-outline__trailing {
+
+  border-color:
+    var(--color-accent) !important;
+}
+
+
+::ng-deep
+.mat-mdc-form-field.mat-focused
+.mat-mdc-floating-label {
+
+  color:
+    var(--color-accent) !important;
+}
+
+
+/* =========================================================
+   INPUT / SELECT
+   ========================================================= */
+
+::ng-deep
+.mat-mdc-input-element {
+
+  color:
+    var(--color-text);
+}
+
+
+::ng-deep
+.mat-mdc-select {
+
+  color:
+    var(--color-text);
+}
+
+
+::ng-deep
+.mat-mdc-option {
+
+  font-family:
+    var(--font-body);
+}
+
+
+::ng-deep
+.mat-mdc-option:hover {
+
+  background:
+    var(--color-surface-soft) !important;
+}
+
+
+::ng-deep
+.mat-mdc-option.mdc-list-item--selected {
+
+  background:
+    var(--color-surface-soft) !important;
+}
+
+
+::ng-deep
+.mat-mdc-option.mdc-list-item--selected
+.mdc-list-item__primary-text {
+
+  color:
+    var(--color-primary);
+}
+
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.modal-actions {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-end;
+
   gap: 10px;
 
-  margin-top: 12px;
+  margin-top: 8px;
+
+  padding-top: 20px;
+
+  border-top:
+    1px solid
+    var(--color-border);
 }
 
 
-.cancel-btn {
-  color: #70798a !important;
+.modal-actions button {
+
+  min-width: 110px;
+
+  height: 42px;
+
+  border-radius:
+    var(--radius-sm);
+
+  font-size:
+    0.72rem;
+
+  font-weight: 700;
+
+  letter-spacing:
+    0.3px;
 }
 
 
-.save-btn {
-  background: #0b1f3a !important;
+/* =========================================================
+   CANCEL
+   ========================================================= */
 
-  color: white !important;
+.cancel-button {
 
-  border-radius: 7px !important;
+  color:
+    var(--color-text-secondary);
 
-  min-height: 42px;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 
-.save-btn mat-icon {
-  font-size: 18px;
+.cancel-button:hover:not(:disabled) {
+
+  background:
+    var(--color-surface-soft);
+
+  color:
+    var(--color-primary);
+}
+
+
+/* =========================================================
+   SUBMIT
+   ========================================================= */
+
+.submit-button {
+
+  min-width:
+    155px !important;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 5px;
+
+  background:
+    var(--color-primary) !important;
+
+  color:
+    var(--color-surface) !important;
+
+  box-shadow:
+    var(--shadow-sm);
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.submit-button mat-icon {
 
   width: 18px;
   height: 18px;
+
+  font-size: 18px;
+
+  color:
+    var(--color-accent-light);
 }
 
 
-/* Mobile */
+.submit-button:not(:disabled):hover {
+
+  background:
+    var(--color-primary-light) !important;
+
+  transform:
+    translateY(-1px);
+
+  box-shadow:
+    var(--shadow-md);
+}
+
+
+.submit-button:disabled {
+
+  opacity:
+    0.5;
+
+  box-shadow:
+    none;
+}
+
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes overlay-fade {
+
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+
+@keyframes modal-slide-in {
+
+  from {
+
+    opacity: 0;
+
+    transform:
+      translateY(-25px)
+      scale(0.98);
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
 
 @media (max-width: 500px) {
 
-  .dialog-container {
-    min-width: auto;
+  .modal-overlay {
 
-    width: auto;
+    padding:
+      12px;
+  }
 
-    padding: 20px;
+
+  .modal-container {
+
+    max-height:
+      94vh;
+
+    border-radius:
+      var(--radius-md);
+  }
+
+
+  .modal-header {
+
+    padding:
+      16px;
+  }
+
+
+  form {
+
+    padding:
+      20px 16px;
+  }
+
+
+  .title-icon {
+
+    width: 38px;
+    height: 38px;
+  }
+
+
+  .modal-header h2 {
+
+    font-size:
+      1rem;
+  }
+
+
+  .modal-header p {
+
+    font-size:
+      0.65rem;
+  }
+
+
+  .modal-actions {
+
+    flex-direction:
+      column-reverse;
+
+    align-items:
+      stretch;
+  }
+
+
+  .modal-actions button {
+
+    width:
+      100%;
   }
 
 }
+.icon{padding: 10px;}
+.error{color: var(--color-error);}

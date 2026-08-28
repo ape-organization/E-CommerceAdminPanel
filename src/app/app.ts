@@ -13,10 +13,12 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
 import { CartService } from './services/cart.service';
 import { AuthService } from './services/auth.service';
+import { FooterComponent } from './shared/footer/footer.component';
 
 @Component({
   selector: 'app-root',
   imports: [
+    FooterComponent,
     RouterOutlet, 
     RouterModule, 
     MatToolbarModule, 

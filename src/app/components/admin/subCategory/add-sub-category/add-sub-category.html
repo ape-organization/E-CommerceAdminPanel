@@ -1,186 +1,256 @@
-<div class="dialog-container">
+<div class="modal-overlay">
 
-  <!-- HEADER -->
-  <div class="dialog-header">
+  <div class="modal-container">
 
-    <div>
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
 
-      <span class="dialog-label">
-        {{ data?.isEditing ? 'EDIT' : 'NEW' }}
-      </span>
+    <div class="modal-header">
 
-      <h2>
-        {{
-          data?.isEditing
-            ? 'Edit Subcategory'
-            : 'Add Subcategory'
-        }}
-      </h2>
+      <div class="header-title">
 
-    </div>
+        <div class="title-icon">
 
-    <button
-      mat-icon-button
-      type="button"
-      mat-dialog-close
-      aria-label="Close">
+          <mat-icon>
+            account_tree
+          </mat-icon>
 
-      <mat-icon>
-        close
-      </mat-icon>
-
-    </button>
-
-  </div>
+        </div>
 
 
-  <!-- FORM -->
-  <form
-    [formGroup]="form"
-    (ngSubmit)="save()"
-  >
+        <div>
 
-    <!-- CATEGORY -->
-    <mat-form-field
-      appearance="outline"
-      class="full-width">
+          <h2>
+            {{ dialogTitle }}
+          </h2>
 
-      <mat-label>
-        Category
-      </mat-label>
+          <p>
+            {{ dialogDescription }}
+          </p>
 
-      <mat-select
-        formControlName="categoryId">
+        </div>
 
-        <mat-option
-          *ngFor="let category of data?.categories || []"
-          [value]="category.id">
-
-          {{ category.name }}
-
-        </mat-option>
-
-      </mat-select>
-
-      <mat-error
-        *ngIf="
-          form.get('categoryId')?.hasError('required')
-        ">
-
-        Please select a category.
-
-      </mat-error>
-
-    </mat-form-field>
+      </div>
 
 
-    <!-- NAME -->
-    <mat-form-field
-      appearance="outline"
-      class="full-width">
-
-      <mat-label>
-        Subcategory Name
-      </mat-label>
-
-      <input
-        matInput
-        formControlName="name"
-        placeholder="e.g. Face Creams"
-      />
-
-      <mat-error
-        *ngIf="
-          form.get('name')?.hasError('required')
-        ">
-
-        Subcategory name is required.
-
-      </mat-error>
-
-      <mat-error
-        *ngIf="
-          form.get('name')?.hasError('minlength')
-        ">
-
-        Name must contain at least 2 characters.
-
-      </mat-error>
-
-      <mat-error
-        *ngIf="
-          form.get('name')?.hasError('maxlength')
-        ">
-
-        Name cannot exceed 100 characters.
-
-      </mat-error>
-
-    </mat-form-field>
-
-
-    <!-- DESCRIPTION -->
-    <mat-form-field
-      appearance="outline"
-      class="full-width">
-
-      <mat-label>
-        Description
-      </mat-label>
-
-      <textarea
-        matInput
-        formControlName="description"
-        rows="4"
-        placeholder="Describe this subcategory..."
-      ></textarea>
-
-      <mat-error
-        *ngIf="
-          form.get('description')?.hasError('maxlength')
-        ">
-
-        Description cannot exceed 500 characters.
-
-      </mat-error>
-
-    </mat-form-field>
-
-
-    <!-- ACTIONS -->
-    <div class="dialog-actions">
+      <!-- ===================================================
+           CLOSE
+           =================================================== -->
 
       <button
+        mat-icon-button
         type="button"
-        mat-button
-        class="cancel-btn"
-        (click)="cancel()">
-
-        Cancel
-
-      </button>
-
-
-      <button
-        type="submit"
-        mat-raised-button
-        class="save-btn"
-        [disabled]="form.invalid">
+        class="close-button"
+        (click)="cancel()"
+        [disabled]="saving()"
+        aria-label="Close"
+      >
 
         <mat-icon>
-          {{ data?.isEditing ? 'save' : 'add' }}
+          close
         </mat-icon>
-
-        {{
-          data?.isEditing
-            ? 'Save Changes'
-            : 'Add Subcategory'
-        }}
 
       </button>
 
     </div>
 
-  </form>
+
+    <!-- =====================================================
+         FORM
+         ===================================================== -->
+
+    <form
+      [formGroup]="form"
+      (ngSubmit)="save()"
+    >
+
+      <div class="form-content">
+
+
+        <!-- =================================================
+             CATEGORY
+             ================================================= -->
+
+        <mat-form-field
+          appearance="outline"
+        >
+
+          <mat-label class="icon">
+            Category
+          </mat-label>
+
+          <mat-icon matPrefix class="icon">
+            category
+          </mat-icon>
+
+          <mat-select
+            formControlName="categoryId"
+          >
+
+            @for (
+              category of data.categories;
+              track category.id
+            ) {
+
+              <mat-option
+                [value]="category.id"
+              >
+
+                {{ category.name }}
+
+              </mat-option>
+
+            }
+
+
+            @if (
+              !data.categories ||
+              data.categories.length === 0
+            ) {
+
+              <mat-option disabled>
+
+                No categories available.
+
+              </mat-option>
+
+            }
+
+          </mat-select>
+
+
+          @if (
+            form.get('categoryId')?.hasError('required') &&
+            form.get('categoryId')?.touched
+          ) {
+
+            <mat-error class="error">
+
+              Please select a category.
+
+            </mat-error>
+
+          }
+
+        </mat-form-field>
+
+
+        <!-- =================================================
+             NAME
+             ================================================= -->
+
+        <mat-form-field
+          appearance="outline"
+        >
+
+
+          <mat-icon matPrefix class="icon">
+            label
+          </mat-icon>
+
+          <input
+            matInput
+            formControlName="name"
+            placeholder="Enter subcategory name"
+            maxlength="100"
+          />
+
+
+
+
+          @if (
+            form.get('name')?.hasError('required') &&
+            form.get('name')?.touched
+          ) {
+
+            <mat-error class="error">
+
+              Subcategory name is required.
+
+            </mat-error>
+
+          }
+
+
+          @if (
+            form.get('name')?.hasError('minlength') &&
+            form.get('name')?.touched
+          ) {
+
+            <mat-error class="error">
+
+              Name must contain at least 2 characters.
+
+            </mat-error>
+
+          }
+
+
+          @if (
+            form.get('name')?.hasError('maxlength') &&
+            form.get('name')?.touched
+          ) {
+
+            <mat-error class="error">
+
+              Name cannot exceed 100 characters.
+
+            </mat-error>
+
+          }
+
+        </mat-form-field>
+
+
+      </div>
+
+
+      <!-- =====================================================
+           ACTIONS
+           ===================================================== -->
+
+      <div class="modal-actions">
+
+        <!-- CANCEL -->
+
+        <button
+          mat-button
+          type="button"
+          class="cancel-button"
+          (click)="cancel()"
+          [disabled]="saving()"
+        >
+
+          CANCEL
+
+        </button>
+
+
+        <!-- SUBMIT -->
+
+        <button
+          mat-raised-button
+          type="submit"
+          class="submit-button"
+          [disabled]="
+            form.invalid ||
+            saving()
+          "
+        >
+
+          <mat-icon>
+            {{ submitIcon }}
+          </mat-icon>
+
+          {{ submitText }}
+
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
 
 </div>

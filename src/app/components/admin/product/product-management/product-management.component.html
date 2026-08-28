@@ -1,8 +1,7 @@
-<div class="product-management-container">
+<div class="product-management">
 
-  <!-- ================= HEADER ================= -->
-
-  <div class="page-header">
+  <!-- HEADER -->
+  <header class="page-header">
 
     <div class="page-heading">
 
@@ -11,13 +10,9 @@
       </div>
 
       <div>
-        <span class="heading-label">
-          PRODUCT MANAGEMENT
-        </span>
+        <span class="heading-label">PRODUCT MANAGEMENT</span>
 
-        <h2>
-          Products
-        </h2>
+        <h2>Products</h2>
 
         <p>
           Manage your cosmetics products, prices, stock and classification
@@ -26,26 +21,22 @@
 
     </div>
 
-
     <button
       mat-raised-button
       class="add-product-btn"
       type="button"
       (click)="addProduct()">
 
-      <mat-icon>
-        add
-      </mat-icon>
+      <mat-icon>add</mat-icon>
 
       Add Product
 
     </button>
 
-  </div>
+  </header>
 
 
-  <!-- ================= SEARCH ================= -->
-
+  <!-- SEARCH -->
   <div class="search-wrapper">
 
     <div class="search-box">
@@ -56,493 +47,402 @@
 
       <input
         type="text"
-        [(ngModel)]="searchTerm"
-        (input)="applyFilter()"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="onSearch($event)"
         placeholder="Search products..."
         aria-label="Search products"
       />
 
-      <button
-        *ngIf="searchTerm"
-        type="button"
-        class="clear-search"
-        (click)="clearSearch()"
-        aria-label="Clear search">
+      @if (searchTerm()) {
+        <button
+          type="button"
+          class="clear-search"
+          (click)="clearSearch()"
+          aria-label="Clear search">
 
-        <mat-icon>
-          close
-        </mat-icon>
+          <mat-icon>close</mat-icon>
+
+        </button>
+      }
+
+    </div>
+
+  </div>
+
+
+  <!-- ERROR -->
+  @if (errorMessage()) {
+
+    <div class="error-message">
+
+      <mat-icon>error_outline</mat-icon>
+
+      <span>
+        {{ errorMessage() }}
+      </span>
+
+      <button
+        mat-icon-button
+        type="button"
+        (click)="errorMessage.set(null)">
+
+        <mat-icon>close</mat-icon>
 
       </button>
 
     </div>
 
-  </div>
+  }
 
 
-  <!-- ================= ERROR ================= -->
+  <!-- LOADING -->
+  @if (isLoading()) {
 
-  <div
-    class="error-message"
-    *ngIf="errorMessage">
+    <div class="loading-container">
 
-    <mat-icon>
-      error_outline
-    </mat-icon>
+      <mat-spinner diameter="40"></mat-spinner>
 
-    <span>
-      {{ errorMessage }}
-    </span>
-
-    <button
-      mat-icon-button
-      type="button"
-      (click)="errorMessage = null">
-
-      <mat-icon>
-        close
-      </mat-icon>
-
-    </button>
-
-  </div>
-
-
-  <!-- ================= LOADING ================= -->
-
-  <div
-    class="loading-container"
-    *ngIf="isLoading">
-
-    <mat-spinner
-      diameter="40">
-    </mat-spinner>
-
-    <span>
-      Loading products...
-    </span>
-
-  </div>
-
-
-  <!-- ================= EMPTY ================= -->
-
-  <div
-    class="empty-state"
-    *ngIf="
-      !isLoading &&
-      filteredProducts.length === 0
-    ">
-
-    <mat-icon>
-      inventory_2
-    </mat-icon>
-
-    <h3>
-      No Products Found
-    </h3>
-
-    <p>
-      {{
-        searchTerm
-          ? 'No products match your search.'
-          : 'Start by adding your first product.'
-      }}
-    </p>
-
-    <button
-      *ngIf="!searchTerm"
-      mat-raised-button
-      class="add-product-btn"
-      type="button"
-      (click)="addProduct()">
-
-      <mat-icon>
-        add
-      </mat-icon>
-
-      Add Product
-
-    </button>
-
-  </div>
-
-
-  <!-- ================= PRODUCTS TABLE ================= -->
-
-  <div
-    class="table-wrapper"
-    *ngIf="
-      !isLoading &&
-      filteredProducts.length > 0
-    ">
-
-    <table
-      mat-table
-      [dataSource]="filteredProducts"
-      class="products-table">
-
-
-      <!-- ================= PRODUCT ================= -->
-
-      <ng-container matColumnDef="image">
-
-        <th
-          mat-header-cell
-          *matHeaderCellDef>
-
-          Product
-
-        </th>
-
-        <td
-          mat-cell
-          *matCellDef="let product">
-
-          <div class="product-info">
-
-            <div class="product-image">
-
-              <img
-                *ngIf="product.imageUrl"
-                [src]="getImageUrl(product.imageUrl)"
-                [alt]="product.name"
-              />
-
-              <mat-icon
-                *ngIf="!product.imageUrl">
-
-                image
-
-              </mat-icon>
-
-            </div>
-
-            <div class="product-name">
-
-              <strong>
-                {{ product.name }}
-              </strong>
-
-              <span>
-                #{{ product.id }}
-              </span>
-
-            </div>
-
-          </div>
-
-        </td>
-
-      </ng-container>
-
-
-      <!-- ================= BRAND ================= -->
-
-      <ng-container matColumnDef="brand">
-
-        <th
-          mat-header-cell
-          *matHeaderCellDef>
-
-          Brand
-
-        </th>
-
-        <td
-          mat-cell
-          *matCellDef="let product">
-
-          <div class="brand-cell">
-
-         
-
-            <span>
-              {{ product.brand?.name || 'No Brand' }}
-            </span>
-
-          </div>
-
-        </td>
-
-      </ng-container>
-
-
-      <!-- ================= PRICE ================= -->
-
-      <ng-container matColumnDef="price">
-
-        <th
-          mat-header-cell
-          *matHeaderCellDef>
-
-          Price
-
-        </th>
-
-        <td
-          mat-cell
-          *matCellDef="let product"
-          class="price-cell">
-
-          <ng-container
-            *ngIf="product.discountPercentage > 0; else normalPrice">
-
-            <div class="price-wrapper">
-
-              <span class="old-price">
-
-                {{ product.price | number:'1.2-2' }}
-                EGP
-
-              </span>
-
-              <span class="discounted-price">
-
-                {{ getDiscountedPrice(product) | number:'1.2-2' }}
-                EGP
-
-              </span>
-
-            </div>
-
-          </ng-container>
-
-
-          <ng-template #normalPrice>
-
-            <span class="normal-price">
-
-              {{ product.price | number:'1.2-2' }}
-              EGP
-
-            </span>
-
-          </ng-template>
-
-        </td>
-
-      </ng-container>
-
-
-      <!-- ================= DISCOUNT ================= -->
-
-      <ng-container matColumnDef="discount">
-
-        <th
-          mat-header-cell
-          *matHeaderCellDef>
-
-          Discount
-
-        </th>
-
-        <td
-          mat-cell
-          *matCellDef="let product">
-
-          <span
-            class="discount-badge"
-            [class.no-discount]="
-              !product.discountPercentage ||
-              product.discountPercentage <= 0
-            ">
-
-
-            {{
-              product.discountPercentage > 0
-                ? product.discountPercentage + '%'
-                : 'No Discount'
-            }}
-
-          </span>
-
-        </td>
-
-      </ng-container>
-
-
-    <!-- ================= STOCK ================= -->
-
-<ng-container matColumnDef="stock">
-
-  <th
-    mat-header-cell
-    *matHeaderCellDef>
-
-    Stock
-
-  </th>
-
-  <td
-    mat-cell
-    *matCellDef="let product">
-
-    <div class="stock-cell">
-
-      <!-- QUANTITY -->
-      <span
-        class="stock-quantity"
-        [class.low-stock]="
-          product.isInStock &&
-          product.stockQuantity <= 5 &&
-          product.stockQuantity > 0
-        "
-        [class.no-stock]="
-          !product.isInStock
-        ">
-
-        {{ product.stockQuantity }}
-
-      </span>
-
-
-      <!-- STATUS -->
-      <span
-        class="stock-status"
-        [class.in-stock]="product.isInStock"
-        [class.out-of-stock]="!product.isInStock">
-
-        <mat-icon>
-          {{
-            product.isInStock
-              ? 'check_circle'
-              : 'cancel'
-          }}
-        </mat-icon>
-
-        {{
-          product.isInStock
-            ? 'In Stock'
-            : 'Out of Stock'
-        }}
-
-      </span>
+      <span>Loading products...</span>
 
     </div>
 
-  </td>
-
-</ng-container>
+  }
 
 
-      <!-- ================= CLASSIFICATION ================= -->
+  <!-- EMPTY -->
+  @if (!isLoading() && filteredProducts().length === 0) {
 
-      <ng-container matColumnDef="subCategories">
+    <div class="empty-state">
 
-        <th
-          mat-header-cell
-          *matHeaderCellDef>
+      <mat-icon>inventory_2</mat-icon>
 
-          Classification
+      <h3>No Products Found</h3>
 
-        </th>
+      <p>
+        {{
+          searchTerm()
+            ? 'No products match your search.'
+            : 'Start by adding your first product.'
+        }}
+      </p>
 
-        <td
-          mat-cell
-          *matCellDef="let product">
+      @if (!searchTerm()) {
 
-          <div class="classification">
+        <button
+          mat-raised-button
+          class="add-product-btn"
+          type="button"
+          (click)="addProduct()">
+
+          <mat-icon>add</mat-icon>
+
+          Add Product
+
+        </button>
+
+      }
+
+    </div>
+
+  }
+
+
+  <!-- TABLE -->
+  @if (!isLoading() && filteredProducts().length > 0) {
+
+    <div class="table-wrapper">
+
+      <table
+        mat-table
+        [dataSource]="paginatedProducts()"
+        class="products-table">
+
+
+        <!-- PRODUCT -->
+        <ng-container matColumnDef="image">
+
+          <th mat-header-cell *matHeaderCellDef>
+            Product
+          </th>
+
+          <td mat-cell *matCellDef="let product">
+
+            <div class="product-info">
+
+              <div class="product-image">
+
+                @if (product.imageUrl) {
+
+                  <img
+                    [src]="getImageUrl(product.imageUrl)"
+                    [alt]="product.name" />
+
+                } @else {
+
+                  <mat-icon>image</mat-icon>
+
+                }
+
+              </div>
+
+              <div class="product-name">
+
+                <strong>
+                  {{ product.name }}
+                </strong>
+
+                <span>
+                  #{{ product.id }}
+                </span>
+
+              </div>
+
+            </div>
+
+          </td>
+
+        </ng-container>
+
+
+        <!-- BRAND -->
+        <ng-container matColumnDef="brand">
+
+          <th mat-header-cell *matHeaderCellDef>
+            Brand
+          </th>
+
+          <td mat-cell *matCellDef="let product">
+
+            {{ product.brand?.name || 'No Brand' }}
+
+          </td>
+
+        </ng-container>
+
+
+        <!-- PRICE -->
+        <ng-container matColumnDef="price">
+
+          <th mat-header-cell *matHeaderCellDef>
+            Price
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let product"
+            class="price-cell">
+
+            @if (product.discountPercentage > 0) {
+
+              <div class="price-wrapper">
+
+                <span class="old-price">
+                  {{ product.price | number:'1.2-2' }} EGP
+                </span>
+
+                <span class="discounted-price">
+                  {{ getDiscountedPrice(product) | number:'1.2-2' }} EGP
+                </span>
+
+              </div>
+
+            } @else {
+
+              <span class="normal-price">
+                {{ product.price | number:'1.2-2' }} EGP
+              </span>
+
+            }
+
+          </td>
+
+        </ng-container>
+
+
+        <!-- DISCOUNT -->
+        <ng-container matColumnDef="discount">
+
+          <th mat-header-cell *matHeaderCellDef>
+            Discount
+          </th>
+
+          <td mat-cell *matCellDef="let product">
 
             <span
-              class="category-chip"
-              *ngFor="
-                let subCategory of product.subCategories
+              class="discount-badge"
+              [class.no-discount]="
+                !product.discountPercentage ||
+                product.discountPercentage <= 0
               ">
 
-              {{ subCategory.name }}
+              {{
+                product.discountPercentage > 0
+                  ? product.discountPercentage + '%'
+                  : '___'
+              }}
 
             </span>
 
-            <span
-              *ngIf="
+          </td>
+
+        </ng-container>
+
+
+        <!-- STOCK -->
+        <ng-container matColumnDef="stock">
+
+          <th mat-header-cell *matHeaderCellDef>
+            Stock
+          </th>
+
+          <td mat-cell *matCellDef="let product">
+
+            <div class="stock-cell">
+
+              <span
+                class="stock-quantity"
+                [class.low-stock]="
+                  product.isInStock &&
+                  product.stockQuantity <= 5 &&
+                  product.stockQuantity > 0
+                "
+                [class.no-stock]="!product.isInStock">
+
+                {{ product.stockQuantity }}
+
+              </span>
+
+              <span
+                class="stock-status"
+                [class.in-stock]="product.isInStock"
+                [class.out-of-stock]="!product.isInStock">
+
+                <mat-icon>
+                  {{ product.isInStock ? 'check_circle' : 'cancel' }}
+                </mat-icon>
+
+                {{ product.isInStock ? 'In Stock' : 'Out of Stock' }}
+
+              </span>
+
+            </div>
+
+          </td>
+
+        </ng-container>
+
+
+        <!-- CLASSIFICATION -->
+        <ng-container matColumnDef="subCategories">
+
+          <th mat-header-cell *matHeaderCellDef>
+            Classification
+          </th>
+
+          <td mat-cell *matCellDef="let product">
+
+            <div class="classification">
+
+              @for (
+                subCategory of product.subCategories;
+                track subCategory.id
+              ) {
+
+                <span class="category-chip">
+                  {{ subCategory.name }}
+                </span>
+
+              }
+
+              @if (
                 !product.subCategories ||
                 product.subCategories.length === 0
-              "
-              class="no-category">
+              ) {
 
-              No classification
+                <span class="no-category">
+                  No classification
+                </span>
 
-            </span>
+              }
 
-          </div>
+            </div>
 
-        </td>
+          </td>
 
-      </ng-container>
-
-
-      <!-- ================= ACTIONS ================= -->
-
-      <ng-container matColumnDef="actions">
-
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          class="actions-header">
-
-          Actions
-
-        </th>
-
-        <td
-          mat-cell
-          *matCellDef="let product"
-          class="actions-cell">
-
-          <button
-            mat-icon-button
-            class="edit-btn"
-            type="button"
-            matTooltip="Edit product"
-            (click)="editProduct(product)">
-
-            <mat-icon>
-              edit
-            </mat-icon>
-
-          </button>
+        </ng-container>
 
 
-          <button
-            mat-icon-button
-            class="delete-btn"
-            type="button"
-            matTooltip="Delete product"
-            (click)="deleteProduct(product.id)">
+        <!-- ACTIONS -->
+        <ng-container matColumnDef="actions">
 
-            <mat-icon>
-              delete
-            </mat-icon>
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="actions-header">
 
-          </button>
+            Actions
 
-        </td>
+          </th>
 
-      </ng-container>
+          <td
+            mat-cell
+            *matCellDef="let product"
+            class="actions-cell">
+
+            <button
+              mat-icon-button
+              class="edit-btn"
+              type="button"
+              (click)="editProduct(product)">
+
+              <mat-icon>edit</mat-icon>
+
+            </button>
+
+            <button
+              mat-icon-button
+              class="delete-btn"
+              type="button"
+              (click)="deleteProduct(product.id)">
+
+              <mat-icon>delete</mat-icon>
+
+            </button>
+
+          </td>
+
+        </ng-container>
 
 
-      <!-- ================= HEADER ================= -->
+        <!-- HEADER / ROWS -->
+        <tr
+          mat-header-row
+          *matHeaderRowDef="displayedColumns">
+        </tr>
 
-      <tr
-        mat-header-row
-        *matHeaderRowDef="displayedColumns">
-      </tr>
+        <tr
+          mat-row
+          *matRowDef="
+            let row;
+            columns: displayedColumns;
+          ">
+        </tr>
+
+      </table>
 
 
-      <!-- ================= ROWS ================= -->
+      <!-- PAGINATION -->
+      <mat-paginator
+        [length]="filteredProducts().length"
+        [pageSize]="pageSize()"
+        [pageIndex]="pageIndex()"
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        (page)="onPageChange($event)"
+        showFirstLastButtons>
+      </mat-paginator>
 
-      <tr
-        mat-row
-        *matRowDef="
-          let row;
-          columns: displayedColumns;
-        ">
+    </div>
 
-      </tr>
-
-    </table>
-
-  </div>
+  }
 
 </div>

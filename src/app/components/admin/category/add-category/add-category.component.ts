@@ -1,17 +1,18 @@
 import {
-  ChangeDetectorRef,
   Component,
   Inject,
   OnInit,
-  inject
+  computed,
+  inject,
+  signal
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 
 import {
-  ReactiveFormsModule,
   FormBuilder,
   FormGroup,
+  ReactiveFormsModule,
   Validators
 } from '@angular/forms';
 
@@ -22,8 +23,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
 import { MatIconModule } from '@angular/material/icon';
-
-import { Category } from '../../../../models/category.model';
 
 import {
   MAT_DIALOG_DATA,
@@ -59,99 +58,152 @@ export class AddCategoryComponent
   implements OnInit {
 
 
-  private fb =
+  // =========================================================
+  // SERVICES
+  // =========================================================
+
+  private readonly fb =
     inject(FormBuilder);
 
-
-  private categoryService =
+  private readonly categoryService =
     inject(CategoryService);
 
-
-  categoryForm: FormGroup;
-
-
-  errorMessage:
-    string | null = null;
+  private readonly dialogRef =
+    inject(MatDialogRef<AddCategoryComponent>);
 
 
-  imagePreview:
-    string | null = null;
-
-
-  selectedImage:
-    File | null = null;
-
-
-  isSubmitting = false;
-
+  // =========================================================
+  // DIALOG DATA
+  // =========================================================
 
   constructor(
 
-    private dialogRef:
-      MatDialogRef<AddCategoryComponent>,
-
     @Inject(MAT_DIALOG_DATA)
-    public data: any,
+    public readonly data: any
 
-    private cdr:
-      ChangeDetectorRef
+  ) {}
 
-  ) {
 
-    this.categoryForm =
-      this.fb.group({
+  // =========================================================
+  // FORM
+  // =========================================================
 
-        name: [
-          '',
-          Validators.required
-        ],
+  readonly categoryForm: FormGroup =
+    this.fb.group({
 
-        description: [
-          ''
-        ]
+      name: [
+        '',
+        Validators.required
+      ],
 
-      });
+      description: [
+        ''
+      ]
 
-  }
+    });
 
+
+  // =========================================================
+  // SIGNAL STATE
+  // =========================================================
+
+  readonly errorMessage =
+    signal<string | null>(null);
+
+  readonly imagePreview =
+    signal<string | null>(null);
+
+  readonly selectedImage =
+    signal<File | null>(null);
+
+  readonly isSubmitting =
+    signal(false);
+
+
+  // =========================================================
+  // DERIVED STATE
+  // =========================================================
+
+  readonly isAdd =
+    computed(() =>
+      this.data?.add === true
+    );
+
+
+  readonly dialogTitle =
+    computed(() =>
+      this.isAdd()
+        ? 'Add New Category'
+        : 'Edit Category'
+    );
+
+
+  readonly dialogDescription =
+    computed(() =>
+      this.isAdd()
+        ? 'Create a new product category'
+        : 'Update category information'
+    );
+
+
+  readonly submitText =
+    computed(() => {
+
+      if (this.isSubmitting()) {
+
+        return 'SAVING...';
+
+      }
+
+      return this.isAdd()
+        ? 'CREATE CATEGORY'
+        : 'UPDATE CATEGORY';
+
+    });
+
+
+  readonly submitIcon =
+    computed(() =>
+      this.isAdd()
+        ? 'add'
+        : 'save'
+    );
+
+
+  // =========================================================
+  // INIT
+  // =========================================================
 
   ngOnInit(): void {
 
-    /*
-     * EDIT CATEGORY
-     */
-
     if (
-      !this.data.add &&
-      this.data.category
+      !this.isAdd() &&
+      this.data?.category
     ) {
 
       this.categoryForm.patchValue({
 
         name:
-          this.data.category.name || '',
+          this.data.category.name ?? '',
 
         description:
-          this.data.category.description || ''
+          this.data.category.description ?? ''
 
       });
 
 
-      /*
-       * Show existing category image
-       */
-
-      this.imagePreview =
-        this.data.category.imageUrl || null;
+      this.imagePreview.set(
+        this.data.category.imageUrl ?? null
+      );
 
     }
 
   }
 
 
-  /* =========================================
-     SELECT IMAGE
-     ========================================= */
+  // =========================================================
+  // SELECT IMAGE
+  // =========================================================
 
   onImageSelected(
     event: Event
@@ -175,14 +227,17 @@ export class AddCategoryComponent
       input.files[0];
 
 
-    /*
-     * Validate image type
-     */
+    // =======================================================
+    // VALIDATE TYPE
+    // =======================================================
 
-    if (!file.type.startsWith('image/')) {
+    if (
+      !file.type.startsWith('image/')
+    ) {
 
-      this.errorMessage =
-        'Please select a valid image file.';
+      this.errorMessage.set(
+        'Please select a valid image file.'
+      );
 
       input.value = '';
 
@@ -191,10 +246,9 @@ export class AddCategoryComponent
     }
 
 
-    /*
-     * Optional size validation
-     * 5 MB maximum
-     */
+    // =======================================================
+    // VALIDATE SIZE
+    // =======================================================
 
     const maxSize =
       5 * 1024 * 1024;
@@ -202,8 +256,9 @@ export class AddCategoryComponent
 
     if (file.size > maxSize) {
 
-      this.errorMessage =
-        'Image size must be less than 5 MB.';
+      this.errorMessage.set(
+        'Image size must be less than 5 MB.'
+      );
 
       input.value = '';
 
@@ -212,32 +267,39 @@ export class AddCategoryComponent
     }
 
 
-    /*
-     * Save selected file
-     */
+    // =======================================================
+    // SAVE IMAGE
+    // =======================================================
 
-    this.selectedImage = file;
+    this.selectedImage.set(file);
 
-    this.errorMessage = null;
+    this.errorMessage.set(null);
 
 
-    /*
-     * Create preview
-     */
+    // =======================================================
+    // PREVIEW
+    // =======================================================
 
     const reader =
       new FileReader();
 
 
-    reader.onload =
-      () => {
+    reader.onload = () => {
 
-        this.imagePreview =
-          reader.result as string;
+      this.imagePreview.set(
+        reader.result as string
+      );
 
-        this.cdr.detectChanges();
+    };
 
-      };
+
+    reader.onerror = () => {
+
+      this.errorMessage.set(
+        'Failed to load the selected image.'
+      );
+
+    };
 
 
     reader.readAsDataURL(file);
@@ -245,15 +307,15 @@ export class AddCategoryComponent
   }
 
 
-  /* =========================================
-     SUBMIT
-     ========================================= */
+  // =========================================================
+  // SUBMIT
+  // =========================================================
 
   async onSubmit(): Promise<void> {
 
     if (
       this.categoryForm.invalid ||
-      this.isSubmitting
+      this.isSubmitting()
     ) {
 
       this.categoryForm.markAllAsTouched();
@@ -263,154 +325,179 @@ export class AddCategoryComponent
     }
 
 
-    this.errorMessage = null;
+    this.errorMessage.set(null);
 
-    this.isSubmitting = true;
+    this.isSubmitting.set(true);
 
 
     try {
-
-      /*
-       * Create FormData
-       */
 
       const formData =
         new FormData();
 
 
-      /*
-       * Category name
-       */
+      // =====================================================
+      // NAME
+      // =====================================================
 
       formData.append(
         'Name',
-        this.categoryForm.value.name
+        this.categoryForm
+          .get('name')
+          ?.value ?? ''
       );
 
 
-      /*
-       * Description
-       */
+      // =====================================================
+      // DESCRIPTION
+      // =====================================================
 
       formData.append(
         'Description',
-        this.categoryForm.value.description || ''
+        this.categoryForm
+          .get('description')
+          ?.value ?? ''
       );
 
 
-      /*
-       * Image
-       *
-       * Only append when the user
-       * selected a new image.
-       */
+      // =====================================================
+      // IMAGE
+      // =====================================================
 
-      if (this.selectedImage) {
+      const image =
+        this.selectedImage();
+
+
+      if (image) {
 
         formData.append(
           'Image',
-          this.selectedImage,
-          this.selectedImage.name
+          image,
+          image.name
         );
 
       }
 
 
-      /*
-       * EDIT
-       */
+      // =====================================================
+      // UPDATE
+      // =====================================================
 
       if (
-        !this.data.add &&
-        this.data.category
+        !this.isAdd() &&
+        this.data?.category
       ) {
+
+        const categoryId =
+          this.data.category.id;
+
 
         formData.append(
           'Id',
-          this.data.category.id.toString()
+          categoryId.toString()
         );
 
 
-        const res =
+        const response =
           await firstValueFrom(
+
             this.categoryService.updateCategory(
-              this.data.category.id,
+              categoryId,
               formData
             )
+
           );
 
 
-        if (!res) {
-this.errorMessage = 'Category update failed'
-         /*  throw new Error(
-            'Category update failed'
-          ); */
+        if (!response) {
+
+          throw new Error(
+            'Category update failed.'
+          );
 
         }
 
       }
 
 
-      /*
-       * ADD
-       */
+      // =====================================================
+      // CREATE
+      // =====================================================
 
       else {
 
-        const res =
+        const response =
           await firstValueFrom(
+
             this.categoryService.addCategory(
               formData
             )
+
           );
 
 
-        if (!res) {
-this.errorMessage = 'Category creation failed'
-         /*  throw new Error(
-            'Category creation failed'
-          ); */
+        if (!response) {
+
+          throw new Error(
+            'Category creation failed.'
+          );
 
         }
 
       }
 
 
-      /*
-       * SUCCESS
-       */
+      // =====================================================
+      // SUCCESS
+      // =====================================================
 
       this.dialogRef.close({
+
         status: true
+
       });
 
-
-    } catch (error) {
-
-    
+    }
 
 
-      this.errorMessage =
-        'Something went wrong while saving the category.';
+    catch (error) {
+
+      console.error(
+        'Error saving category:',
+        error
+      );
 
 
-      this.isSubmitting = false;
+      this.errorMessage.set(
+        error instanceof Error
+          ? error.message
+          : 'Something went wrong while saving the category.'
+      );
 
-      this.cdr.detectChanges();
+      this.isSubmitting.set(false);
 
     }
 
   }
 
 
-  /* =========================================
-     CANCEL
-     ========================================= */
+  // =========================================================
+  // CANCEL
+  // =========================================================
 
   onCancel(): void {
 
+    if (this.isSubmitting()) {
+
+      return;
+
+    }
+
+
     this.dialogRef.close({
+
       status: false
+
     });
 
   }

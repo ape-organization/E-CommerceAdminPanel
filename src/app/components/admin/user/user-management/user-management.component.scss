@@ -1,47 +1,19 @@
-/* =========================================================
+/* ============================================================
    USER MANAGEMENT
-   Same visual style as Product Management
-   ========================================================= */
+   ============================================================ */
 
-:host {
-  --navy: #0b1f3a;
-  --navy-light: #132f52;
-
-  --gold: #d4af37;
-  --gold-dark: #b8941f;
-
-  --white: #ffffff;
-
-  --text: #263238;
-  --gray: #69727d;
-  --light-gray: #f5f6f8;
-  --border: #e5e7eb;
-
-  --success: #198754;
-  --danger: #dc3545;
-}
-
-
-/* =========================================================
-   MAIN CONTAINER
-   ========================================================= */
-th{
-  color: var(--navy);
-}
 .management-container {
   width: 100%;
   max-width: 1100px;
 
   margin: 0 auto;
   padding: 24px;
-
-  box-sizing: border-box;
 }
 
 
-/* =========================================================
+/* ============================================================
    HEADER
-   ========================================================= */
+   ============================================================ */
 
 .header-actions {
   display: flex;
@@ -52,82 +24,64 @@ th{
   margin-bottom: 28px;
 }
 
-
 .page-heading {
   display: flex;
   align-items: center;
-
   gap: 14px;
 }
-
-
-/* =========================================================
-   HEADER ICON
-   ========================================================= */
 
 .heading-icon {
   width: 46px;
   height: 46px;
 
-  flex-shrink: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: 11px;
+  flex-shrink: 0;
 
-  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid color-mix(
+    in srgb,
+    var(--color-accent) 30%,
+    transparent
+  );
 
-  border: 1px solid rgba(212, 175, 55, 0.30);
+  border-radius: var(--radius-md);
 
-  color: var(--gold-dark);
+  background: var(--color-surface-soft);
+  color: var(--color-accent);
 }
-
 
 .heading-icon mat-icon {
   width: 23px;
   height: 23px;
-
   font-size: 23px;
-
-  line-height: 23px;
 }
-
-
-/* =========================================================
-   PAGE TITLE
-   ========================================================= */
 
 .page-heading h2 {
   margin: 0;
 
-  color: var(--navy);
+  color: var(--color-primary);
 
   font-size: 1.35rem;
   font-weight: 700;
-
-  line-height: 1.3;
 }
-
 
 .page-heading p {
   margin: 5px 0 0;
 
-  color: var(--gray);
+  color: var(--color-text-secondary);
 
   font-size: 0.78rem;
-  line-height: 1.4;
 }
 
 
-/* =========================================================
-   ADD USER BUTTON
-   ========================================================= */
+/* ============================================================
+   ADD BUTTON
+   ============================================================ */
 
 .add-button {
   min-height: 44px;
-
   padding: 0 18px;
 
   display: inline-flex;
@@ -136,261 +90,181 @@ th{
 
   gap: 7px;
 
-  border-radius: 7px;
+  border-radius: var(--radius-sm) !important;
 
-  background: var(--navy);
-  color: var(--white);
+  background: var(--color-primary) !important;
+  color: var(--color-surface) !important;
 
   font-size: 0.78rem;
   font-weight: 700;
 
-  letter-spacing: 0.2px;
-
-  box-shadow:
-    0 3px 10px rgba(11, 31, 58, 0.15);
+  box-shadow: var(--shadow-sm);
 
   transition:
-    background 0.2s ease,
+    background-color 0.2s ease,
     transform 0.2s ease,
     box-shadow 0.2s ease;
 }
 
-
 .add-button mat-icon {
-  width: 19px;
-  height: 19px;
-
-  font-size: 19px;
-
-  color: var(--gold);
+  color: var(--color-accent-light);
 }
-
 
 .add-button:hover {
-  background: var(--navy-light);
-
+  background: var(--color-primary-light) !important;
   transform: translateY(-1px);
-
-  box-shadow:
-    0 5px 15px rgba(11, 31, 58, 0.20);
+  box-shadow: var(--shadow-md);
 }
 
 
-/* =========================================================
-   TABLE CONTAINER
-   ========================================================= */
+/* ============================================================
+   TABLE
+   ============================================================ */
 
 .table-responsive {
   width: 100%;
 
-  background: var(--white);
-
-  border: 1px solid var(--border);
-
-  border-radius: 12px;
-
-  box-shadow:
-    0 5px 25px rgba(11, 31, 58, 0.07);
-
   overflow: hidden;
+
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-md);
 }
-.table-responsive th
-{
-  background: #f8f9fb;
-    color: #6d7685 !important;
-font-weight: bold;
-}
-.table-responsive td{
-  border-bottom:.2 solid lightgray;
-}
-/* =========================================================
-   TABLE
-   ========================================================= */
 
 table {
   width: 100%;
-
-  border-collapse: collapse;
 }
 
 
-/* =========================================================
-   TABLE HEADER
-   ========================================================= */
+/* ============================================================
+   MATERIAL TABLE HEADER
+   ============================================================ */
 
 ::ng-deep .mat-mdc-header-row {
   height: 52px;
-
-  background: var(--navy);
+  background: var(--color-surface-soft);
 }
-
 
 ::ng-deep .mat-mdc-header-cell {
   padding: 0 20px;
 
-  background: var(--navy);
+  background: var(--color-surface-soft);
 
-  color: var(--white) !important;
+  color: var(--color-text-secondary) !important;
 
   font-size: 0.72rem;
-
   font-weight: 700;
 
   letter-spacing: 0.4px;
-
   text-transform: uppercase;
 
-  border-bottom: none;
+  border-bottom: 1px solid var(--color-border);
 }
 
-
-/* First header cell */
-
-::ng-deep .mat-mdc-header-cell:first-child {
-  padding-left: 24px;
-}
-
-
-/* Last header cell */
-
-::ng-deep .mat-mdc-header-cell:last-child {
-  padding-right: 24px;
-}
-
-
-/* =========================================================
-   TABLE BODY
-   ========================================================= */
-
-::ng-deep .mat-mdc-row {
-  min-height: 68px;
-
-  background: var(--white);
-
-  transition:
-    background 0.2s ease;
-}
-
-
-::ng-deep .mat-mdc-row:hover {
-  background: #f8f9fb;
-}
-
-
-::ng-deep .mat-mdc-cell {
-  padding: 12px 20px;
-
-  color: var(--text);
-
-  font-size: 0.85rem;
-
-  border-bottom: none;
-}
-
-
-/* First cell */
-
+::ng-deep .mat-mdc-header-cell:first-child,
 ::ng-deep .mat-mdc-cell:first-child {
   padding-left: 24px;
 }
 
-
-/* Last cell */
-
+::ng-deep .mat-mdc-header-cell:last-child,
 ::ng-deep .mat-mdc-cell:last-child {
   padding-right: 24px;
 }
 
 
-/* Remove border from final row */
+/* ============================================================
+   TABLE ROW
+   ============================================================ */
 
-::ng-deep
-.mat-mdc-row:last-child
-.mat-mdc-cell {
+::ng-deep .mat-mdc-row {
+  min-height: 68px;
+
+  background: var(--color-surface);
+
+  transition: background-color 0.2s ease;
+}
+
+::ng-deep .mat-mdc-row:hover {
+  background: var(--color-surface-soft);
+}
+
+::ng-deep .mat-mdc-cell {
+  padding: 12px 20px;
+
+  color: var(--color-text);
+
+  font-size: 0.85rem;
+
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+::ng-deep .mat-mdc-row:last-child .mat-mdc-cell {
   border-bottom: none;
 }
 
 
-/* =========================================================
-   USER INFORMATION
-   ========================================================= */
+/* ============================================================
+   USER
+   ============================================================ */
 
 .user-info {
   display: flex;
   align-items: center;
-
   gap: 11px;
 
   min-width: 180px;
 }
 
-
-/* =========================================================
-   USER AVATAR
-   ========================================================= */
-
 .user-avatar {
   width: 38px;
   height: 38px;
-
-  flex-shrink: 0;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
+  flex-shrink: 0;
+
+  border: 1px solid var(--color-border);
+
   border-radius: 50%;
 
-  background:
-    rgba(11, 31, 58, 0.08);
-
-  border:
-    1px solid rgba(11, 31, 58, 0.08);
-
-  color: var(--navy);
+  background: var(--color-surface-soft);
+  color: var(--color-primary);
 }
-
 
 .user-avatar mat-icon {
   width: 19px;
   height: 19px;
-
   font-size: 19px;
-
-  line-height: 19px;
 }
 
-
-/* =========================================================
-   USER NAME
-   ========================================================= */
-
 .user-name {
-  color: var(--navy);
+  color: var(--color-primary);
 
   font-size: 0.85rem;
-
   font-weight: 600;
 
   white-space: nowrap;
 }
 
 
-/* =========================================================
+/* ============================================================
    EMAIL
-   ========================================================= */
+   ============================================================ */
 
 .email-cell {
   display: flex;
   align-items: center;
-
   gap: 8px;
 
-  color: var(--gray);
+  color: var(--color-text-secondary);
 
   font-size: 0.82rem;
 }
-
 
 .email-cell mat-icon {
   width: 18px;
@@ -400,98 +274,62 @@ table {
 
   font-size: 18px;
 
-  color: var(--gold-dark);
+  color: var(--color-accent);
 }
 
 
-/* =========================================================
+/* ============================================================
    ACTIONS
-   ========================================================= */
+   ============================================================ */
 
 .action-buttons {
   display: flex;
   align-items: center;
-
   gap: 4px;
 }
 
-
-/* =========================================================
-   EDIT BUTTON
-   ========================================================= */
-
-.edit-button {
-  width: 38px;
-  height: 38px;
-
-  color: var(--success);
-
-  transition:
-    background 0.2s ease,
-    transform 0.2s ease;
-}
-
-
-.edit-button mat-icon {
-  font-size: 19px;
-}
-
-
-.edit-button:hover {
-  background:
-    rgba(25, 135, 84, 0.10);
-
-  transform:
-    translateY(-1px);
-}
-
-
-/* =========================================================
-   DELETE BUTTON
-   ========================================================= */
-
+.edit-button,
 .delete-button {
   width: 38px;
   height: 38px;
 
-  color: var(--danger);
-
   transition:
-    background 0.2s ease,
+    background-color 0.2s ease,
     transform 0.2s ease;
 }
 
-
-.delete-button mat-icon {
-  font-size: 19px;
+.edit-button {
+  color: var(--color-success);
 }
 
+.delete-button {
+  color: var(--color-error);
+}
+
+.edit-button:hover {
+  background: color-mix(
+    in srgb,
+    var(--color-success) 10%,
+    transparent
+  );
+
+  transform: translateY(-1px);
+}
 
 .delete-button:hover {
-  background:
-    rgba(220, 53, 69, 0.10);
+  background: color-mix(
+    in srgb,
+    var(--color-error) 10%,
+    transparent
+  );
 
-  transform:
-    translateY(-1px);
+  transform: translateY(-1px);
 }
 
 
-/* =========================================================
-   EMPTY TABLE
-   ========================================================= */
-
-::ng-deep .mat-mdc-no-data-row {
-  height: 100px;
-
-  color: var(--gray);
-
-  text-align: center;
-}
-
-
-/* =========================================================
+/* ============================================================
    MOBILE
-   ========================================================= */
+   ============================================================ */
 
 @media (max-width: 700px) {
 
@@ -499,123 +337,86 @@ table {
     padding: 16px;
   }
 
-
-  /* Header */
-
   .header-actions {
     flex-direction: column;
-
     align-items: stretch;
 
     gap: 18px;
-
     margin-bottom: 20px;
   }
-
 
   .page-heading {
     align-items: flex-start;
   }
-
 
   .heading-icon {
     width: 42px;
     height: 42px;
   }
 
-
-  .heading-icon mat-icon {
-    font-size: 21px;
-
-    width: 21px;
-    height: 21px;
-  }
-
-
   .page-heading h2 {
     font-size: 1.15rem;
   }
 
-
   .page-heading p {
-    font-size: 0.70rem;
-
     max-width: 260px;
+    font-size: 0.70rem;
   }
-
-
-  /* Button */
 
   .add-button {
     width: 100%;
-
-    justify-content: center;
   }
-
-
-  /* Table */
 
   .table-responsive {
     overflow-x: auto;
 
-    border-radius: 10px;
+    border-radius: var(--radius-md);
 
     -webkit-overflow-scrolling: touch;
   }
-
 
   table {
     min-width: 620px;
   }
 
-
   ::ng-deep .mat-mdc-header-cell {
     padding: 0 16px;
-
     font-size: 0.68rem;
   }
 
-
   ::ng-deep .mat-mdc-cell {
     padding: 10px 16px;
-
     font-size: 0.80rem;
   }
-
 
   ::ng-deep .mat-mdc-header-cell:first-child,
   ::ng-deep .mat-mdc-cell:first-child {
     padding-left: 18px;
   }
 
-
   ::ng-deep .mat-mdc-header-cell:last-child,
   ::ng-deep .mat-mdc-cell:last-child {
     padding-right: 18px;
   }
-
 
   .user-avatar {
     width: 34px;
     height: 34px;
   }
 
-
   .user-name {
     font-size: 0.80rem;
   }
 
-
   .email-cell {
     font-size: 0.76rem;
   }
-
 }
 
 
-/* =========================================================
+/* ============================================================
    VERY SMALL SCREENS
-   ========================================================= */
+   ============================================================ */
 
 @media (max-width: 420px) {
 
@@ -623,40 +424,24 @@ table {
     padding: 12px;
   }
 
-
   .page-heading {
     gap: 10px;
   }
 
-
   .heading-icon {
     width: 38px;
     height: 38px;
-
-    border-radius: 9px;
   }
-
-
-  .heading-icon mat-icon {
-    font-size: 19px;
-
-    width: 19px;
-    height: 19px;
-  }
-
 
   .page-heading h2 {
     font-size: 1.05rem;
   }
 
-
   .page-heading p {
     font-size: 0.67rem;
   }
 
-
   .table-responsive {
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
   }
-
 }

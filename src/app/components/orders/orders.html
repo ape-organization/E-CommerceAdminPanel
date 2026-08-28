@@ -1,672 +1,780 @@
 <div class="orders-page">
 
-  <!-- ========================================================= -->
-  <!-- HEADER -->
-  <!-- ========================================================= -->
 
-  <div class="page-header">
+  <!-- ===================================================== -->
+  <!-- HEADER -->
+  <!-- ===================================================== -->
+
+  <header class="page-header">
 
     <div class="header-content">
 
       <div>
+
         <h1>
-          <mat-icon>receipt_long</mat-icon>
+
+          <mat-icon>
+            receipt_long
+          </mat-icon>
+
           Orders
+
         </h1>
 
         <p>
           Manage and monitor all customer orders
         </p>
-      </div>
 
-     
+      </div>
 
     </div>
 
-  </div>
+  </header>
 
 
- 
-
-
-  <!-- ========================================================= -->
+  <!-- ===================================================== -->
   <!-- ERROR -->
-  <!-- ========================================================= -->
+  <!-- ===================================================== -->
 
-  <div
-    class="error-message"
-    *ngIf="!loading && errorMessage">
+  @if (
+    !loading() &&
+    errorMessage()
+  ) {
 
-    <mat-icon>
-      error_outline
-    </mat-icon>
-
-    <span>
-      {{ errorMessage }}
-    </span>
-
-    <button
-      mat-button
-      type="button"
-      (click)="loadOrders()">
-
-      Try Again
-
-    </button>
-
-  </div>
-
-
-  <!-- ========================================================= -->
-  <!-- LOADING -->
-  <!-- ========================================================= -->
-
-  <div
-    class="loading-container"
-    *ngIf="loading === true">
-
-    <mat-spinner
-      diameter="45">
-    </mat-spinner>
-
-    <p>
-      Loading orders...
-    </p>
-
-  </div>
-
-
-  <!-- ========================================================= -->
-  <!-- EMPTY -->
-  <!-- ========================================================= -->
-
-  <div
-    class="empty-state"
-    *ngIf="
-      loading === false &&
-      !errorMessage &&
-      orders.length === 0
-    ">
-
-    <mat-icon>
-      receipt_long
-    </mat-icon>
-
-    <h2>
-      No Orders Found
-    </h2>
-
-    <p>
-      There are no orders available yet.
-    </p>
-
-    <button
-      mat-raised-button
-      type="button"
-      (click)="loadOrders()">
+    <div class="error-message">
 
       <mat-icon>
-        refresh
+        error_outline
       </mat-icon>
 
-      Refresh
+      <span>
+        {{ errorMessage() }}
+      </span>
 
-    </button>
+      <button
+        mat-button
+        type="button"
+        (click)="loadOrders()">
 
-  </div>
+        Try Again
 
+      </button>
 
-  <!-- ========================================================= -->
-  <!-- ORDERS TABLE -->
-  <!-- ========================================================= -->
+    </div>
 
-  <div
-    class="orders-table-container"
-    *ngIf="
-      loading === false &&
-      !errorMessage &&
-      orders.length > 0
-    ">
-
-    <table class="orders-table">
-
-      <!-- ======================================================= -->
-      <!-- TABLE HEADER -->
-      <!-- ======================================================= -->
-
-      <thead>
-
-        <tr>
-
-        
-
-          <th>
-            Customer
-          </th>
-
-         
-
-          <th>
-            Date
-          </th>
-
-          <th>
-            Items
-          </th>
-
-          <th>
-            Total
-          </th>
-
-          <th>
-            Status
-          </th>
-
-          <th>
-            Actions
-          </th>
-
-        </tr>
-
-      </thead>
+  }
 
 
-      <!-- ======================================================= -->
-      <!-- TABLE BODY -->
-      <!-- ======================================================= -->
+  <!-- ===================================================== -->
+  <!-- LOADING -->
+  <!-- ===================================================== -->
 
-      <tbody>
+  @if (
+    loading()
+  ) {
 
-        <ng-container
-          *ngFor="
-            let order of orders;
-            trackBy: trackByOrderId
-          ">
+    <div class="loading-container">
 
-          <!-- =================================================== -->
-          <!-- ORDER ROW -->
-          <!-- =================================================== -->
+      <mat-spinner
+        diameter="45">
+      </mat-spinner>
 
-          <tr
-            class="order-row"
-            [class.expanded]="isExpanded(order.id)">
+      <p>
+        Loading orders...
+      </p>
 
-          
+    </div>
+
+  }
 
 
-            <!-- CUSTOMER -->
+  <!-- ===================================================== -->
+  <!-- EMPTY -->
+  <!-- ===================================================== -->
 
-            <td>
+  @if (
+    !loading() &&
+    !errorMessage() &&
+    !orders().length
+  ) {
 
-              
+    <div class="empty-state">
+
+      <mat-icon>
+        receipt_long
+      </mat-icon>
+
+      <h2>
+        No Orders Found
+      </h2>
+
+      <p>
+        There are no orders available yet.
+      </p>
+
+      <button
+        mat-raised-button
+        type="button"
+        (click)="loadOrders()">
+
+        <mat-icon>
+          refresh
+        </mat-icon>
+
+        Refresh
+
+      </button>
+
+    </div>
+
+  }
+
+
+  <!-- ===================================================== -->
+  <!-- ORDERS -->
+  <!-- ===================================================== -->
+
+  @if (
+    !loading() &&
+    !errorMessage() &&
+    orders().length
+  ) {
+
+    <div class="orders-table-container">
+
+
+      <table class="orders-table">
+
+
+        <!-- =============================================== -->
+        <!-- HEADER -->
+        <!-- =============================================== -->
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Customer
+            </th>
+
+            <th>
+              Date
+            </th>
+
+            <th>
+              Items
+            </th>
+
+            <th>
+              Total
+            </th>
+
+            <th>
+              Status
+            </th>
+
+            <th>
+              Actions
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <!-- =============================================== -->
+        <!-- BODY -->
+        <!-- =============================================== -->
+
+        <tbody>
+
+          @for (
+            order of paginatedOrders();
+            track order.id
+          ) {
+
+
+            <!-- =========================================== -->
+            <!-- ORDER ROW -->
+            <!-- =========================================== -->
+
+            <tr
+              class="order-row"
+              [class.expanded]="
+                isExpanded(order.id)
+              ">
+
+
+              <!-- CUSTOMER -->
+
+              <td>
+
+                <strong>
+                  {{ order.clientName || 'Unknown Client' }}
+                </strong>
+
+              </td>
+
+
+              <!-- DATE -->
+
+              <td>
+
+                <div class="date-cell">
 
                   <strong>
-                    {{ order.clientName || 'Unknown Client' }}
+
+                    {{
+                      order.orderDate
+                        | date:'dd/MM/yyyy'
+                    }}
+
                   </strong>
 
-                
+                </div>
 
-            </td>
+              </td>
 
 
+              <!-- ITEMS -->
 
-            <!-- DATE -->
+              <td>
 
-            <td>
+                <span class="items-count">
 
-              <div class="date-cell">
+                  <mat-icon>
+                    inventory_2
+                  </mat-icon>
 
-                <strong>
-                  {{ order.orderDate | date:'dd/MM/yyyy' }}
-                </strong>
+                  {{ getItemsCount(order) }}
 
+                </span>
 
-              </div>
+              </td>
 
-            </td>
 
+              <!-- TOTAL -->
 
-            <!-- ITEMS -->
+              <td>
 
-            <td>
+                <div class="total-cell">
 
-              <span class="items-count">
+                  <strong>
 
-                <mat-icon>
-                  inventory_2
-                </mat-icon>
+                    {{
+                      order.totalAmount
+                        | number:'1.2-2'
+                    }}
 
-                {{ getItemsCount(order) }}
+                  </strong>
 
-              </span>
-
-            </td>
-
-
-            <!-- TOTAL -->
-
-            <td>
-
-              <div class="total-cell">
-
-                <strong>
-                  {{ order.totalAmount | number:'1.2-2' }}
-                </strong>
-
-                <small>
-                  EGP
-                </small>
-
-              </div>
-
-            </td>
-
-
-            <!-- STATUS -->
-
-            <td>
-
-              <span
-                class="status-badge"
-                [ngClass]="getStatusClass(order.status)">
-
-                {{ order.status }}
-
-              </span>
-
-            </td>
-
-
-            <!-- ACTIONS -->
-
-            <td>
-
-              <button
-                mat-icon-button
-                type="button"
-                (click)="toggleOrder(order.id)"
-                [attr.aria-label]="
-                  isExpanded(order.id)
-                    ? 'Hide order details'
-                    : 'Show order details'
-                ">
-
-                <mat-icon>
-
-                  {{
-                    isExpanded(order.id)
-                      ? 'expand_less'
-                      : 'expand_more'
-                  }}
-
-                </mat-icon>
-
-              </button>
-
-            </td>
-
-          </tr>
-
-
-          <!-- =================================================== -->
-          <!-- EXPANDED DETAILS ROW -->
-          <!-- =================================================== -->
-
-          <tr
-            class="details-row"
-            *ngIf="isExpanded(order.id)">
-
-            <td
-              colspan="9">
-
-              <div class="order-details">
-
-
-                <!-- ============================================= -->
-                <!-- CUSTOMER INFORMATION -->
-                <!-- ============================================= -->
-
-                <div class="details-section">
-
-                  <div class="section-title">
-
-                    <mat-icon>
-                      person
-                    </mat-icon>
-
-                    <h3>
-                      Customer Information
-                    </h3>
-
-                  </div>
-
-
-                  <div class="customer-details-grid">
-
-                    <div class="detail-item">
-
-                      <span>
-                        Name
-                      </span>
-
-                      <strong>
-                        {{ order.clientName || '-' }}
-                      </strong>
-
-                    </div>
-
-
-                    <div class="detail-item">
-
-                      <span>
-                        Phone
-                      </span>
-
-                      <strong>
-                        {{ order.phoneNumber || '-' }}
-                      </strong>
-
-                    </div>
-
-
-                    <div class="detail-item">
-
-                      <span>
-                        Email
-                      </span>
-
-                      <strong>
-                        {{ order.email || '-' }}
-                      </strong>
-
-                    </div>
-
-
-                    <div class="detail-item">
-
-                      <span>
-                        Address
-                      </span>
-
-                      <strong>
-                        {{ order.address || '-' }}
-                      </strong>
-
-                    </div>
-
-                  </div>
+                  <small>
+                    EGP
+                  </small>
 
                 </div>
 
-
-                <!-- ============================================= -->
-                <!-- PRODUCTS -->
-                <!-- ============================================= -->
-
-                <div class="details-section">
-
-                  <div class="section-title">
-
-                    <mat-icon>
-                      shopping_cart
-                    </mat-icon>
-
-                    <h3>
-                      Order Items
-                    </h3>
-
-                  </div>
+              </td>
 
 
-                  <div
-                    class="items-table-container"
-                    *ngIf="
-                      order.items &&
-                      order.items.length > 0
-                    ">
+              <!-- STATUS -->
 
-                    <table class="items-table">
+              <td>
 
-                      <thead>
+                <span
+                  class="status-badge"
+                  [ngClass]="
+                    getStatusClass(order.status)
+                  ">
 
-                        <tr>
+                  {{ order.status }}
 
-                          <th>
-                            Product
-                          </th>
+                </span>
 
-                       
-
-                          <th>
-                            Quantity
-                          </th>
-
-                          <th>
-                            Unit Price
-                          </th>
-
-                          <th>
-                            Total
-                          </th>
-
-                        </tr>
-
-                      </thead>
+              </td>
 
 
-                      <tbody>
+              <!-- ACTION -->
 
-                        <tr
-                          *ngFor="
-                            let item of order.items
+              <td>
+
+                <button
+                  mat-icon-button
+                  type="button"
+                  (click)="
+                    toggleOrder(order.id)
+                  "
+                  [attr.aria-label]="
+                    isExpanded(order.id)
+                      ? 'Hide order details'
+                      : 'Show order details'
+                  ">
+
+                  <mat-icon>
+
+                    {{
+                      isExpanded(order.id)
+                        ? 'expand_less'
+                        : 'expand_more'
+                    }}
+
+                  </mat-icon>
+
+                </button>
+
+              </td>
+
+            </tr>
+
+
+            <!-- =========================================== -->
+            <!-- DETAILS -->
+            <!-- =========================================== -->
+
+            @if (
+              isExpanded(order.id)
+            ) {
+
+              <tr class="details-row">
+
+                <td colspan="6">
+
+
+                  <div class="order-details">
+
+
+                    <!-- ================================= -->
+                    <!-- CUSTOMER -->
+                    <!-- ================================= -->
+
+                    <section
+                      class="details-section">
+
+
+                      <div class="section-title">
+
+                        <mat-icon>
+                          person
+                        </mat-icon>
+
+                        <h3>
+                          Customer Information
+                        </h3>
+
+                      </div>
+
+
+                      <div
+                        class="customer-details-grid">
+
+
+                        <div class="detail-item">
+
+                          <span>
+                            Name
+                          </span>
+
+                          <strong>
+                            {{ order.clientName || '-' }}
+                          </strong>
+
+                        </div>
+
+
+                        <div class="detail-item">
+
+                          <span>
+                            Phone
+                          </span>
+
+                          <strong>
+                            {{ order.phoneNumber || '-' }}
+                          </strong>
+
+                        </div>
+
+
+                        <div class="detail-item">
+
+                          <span>
+                            Email
+                          </span>
+
+                          <strong>
+                            {{ order.email || '-' }}
+                          </strong>
+
+                        </div>
+
+
+                        <div class="detail-item">
+
+                          <span>
+                            Address
+                          </span>
+
+                          <strong>
+                            {{ order.address || '-' }}
+                          </strong>
+
+                        </div>
+
+
+                      </div>
+
+                    </section>
+
+
+                    <!-- ================================= -->
+                    <!-- ITEMS -->
+                    <!-- ================================= -->
+
+                    <section
+                      class="details-section">
+
+
+                      <div class="section-title">
+
+                        <mat-icon>
+                          shopping_cart
+                        </mat-icon>
+
+                        <h3>
+                          Order Items
+                        </h3>
+
+                      </div>
+
+
+                      @if (
+                        order.items.length
+                      ) {
+
+                        <div
+                          class="items-table-container">
+
+
+                          <table class="items-table">
+
+
+                            <thead>
+
+                              <tr>
+
+                                <th>
+                                  Product
+                                </th>
+
+                                <th>
+                                  Quantity
+                                </th>
+
+                                <th>
+                                  Unit Price
+                                </th>
+
+                                <th>
+                                  Total
+                                </th>
+
+                              </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                              @for (
+                                item of order.items;
+                                track item.id
+                              ) {
+
+                                <tr>
+
+
+                                  <!-- PRODUCT -->
+
+                                  <td>
+
+                                    <div
+                                      class="product-cell">
+
+
+                                      <div
+                                        class="product-image">
+
+                                        @if (
+                                          item.imageUrl
+                                        ) {
+
+                                          <img
+                                            [src]="
+                                              getImageUrl(
+                                                item.imageUrl
+                                              )
+                                            "
+                                            [alt]="
+                                              item.productName
+                                            "
+                                          />
+
+                                        } @else {
+
+                                          <mat-icon>
+                                            image
+                                          </mat-icon>
+
+                                        }
+
+                                      </div>
+
+
+                                      <strong>
+
+                                        {{
+                                          item.productName
+                                        }}
+
+                                      </strong>
+
+                                    </div>
+
+                                  </td>
+
+
+                                  <!-- QUANTITY -->
+
+                                  <td>
+
+                                    <span
+                                      class="quantity-badge">
+
+                                      {{ item.quantity }}
+
+                                    </span>
+
+                                  </td>
+
+
+                                  <!-- UNIT PRICE -->
+
+                                  <td>
+
+                                    {{
+                                      item.unitPrice
+                                        | number:'1.2-2'
+                                    }}
+
+                                    EGP
+
+                                  </td>
+
+
+                                  <!-- TOTAL -->
+
+                                  <td>
+
+                                    <strong>
+
+                                      {{
+                                        item.totalPrice
+                                          | number:'1.2-2'
+                                      }}
+
+                                      EGP
+
+                                    </strong>
+
+                                  </td>
+
+
+                                </tr>
+
+                              }
+
+                            </tbody>
+
+                          </table>
+
+                        </div>
+
+                      } @else {
+
+                        <div class="no-items">
+
+                          <mat-icon>
+                            shopping_cart
+                          </mat-icon>
+
+                          <span>
+                            No items found.
+                          </span>
+
+                        </div>
+
+                      }
+
+                    </section>
+
+
+                    <!-- ================================= -->
+                    <!-- FOOTER -->
+                    <!-- ================================= -->
+
+                    <div
+                      class="order-details-footer">
+
+
+                      <!-- TOTAL -->
+
+                      <div class="details-total">
+
+                        <span>
+                          Order Total
+                        </span>
+
+                        <strong>
+
+                          {{
+                            order.totalAmount
+                              | number:'1.2-2'
+                          }}
+
+                          EGP
+
+                        </strong>
+
+                      </div>
+
+
+                      <!-- STATUS -->
+
+                      <div class="status-control">
+
+                        <label>
+                          Change Status
+                        </label>
+
+
+                        <mat-select
+                          [value]="order.status"
+                          (selectionChange)="
+                            updateStatus(
+                              order,
+                              $event.value
+                            )
                           ">
 
-                          <!-- PRODUCT -->
 
-                          <td>
+                          <mat-option
+                            value="Pending">
 
-                            <div class="product-cell">
+                            Pending
 
-                              <div class="product-image">
-
-                                <img
-                                  *ngIf="item.imageUrl"
-                                  [src]="getImageUrl(item.imageUrl)"
-                                  [alt]="item.productName"
-                                />
-
-                                <mat-icon
-                                  *ngIf="!item.imageUrl">
-
-                                  image
-
-                                </mat-icon>
-
-                              </div>
+                          </mat-option>
 
 
-                              <div>
+                          <mat-option
+                            value="Processing">
 
-                                <strong>
-                                  {{ item.productName }}
-                                </strong>
+                            Processing
 
-                              </div>
-
-                            </div>
-
-                          </td>
+                          </mat-option>
 
 
-                       
+                          <mat-option
+                            value="Completed">
+
+                            Completed
+
+                          </mat-option>
 
 
-                          <!-- QUANTITY -->
+                          <mat-option
+                            value="Delivered">
 
-                          <td>
+                            Delivered
 
-                            <span class="quantity-badge">
-                              {{ item.quantity }}
-                            </span>
-
-                          </td>
+                          </mat-option>
 
 
-                          <!-- UNIT PRICE -->
+                          <mat-option
+                            value="Cancelled">
 
-                          <td>
+                            Cancelled
 
-                            {{ item.unitPrice | number:'1.2-2' }}
-                            EGP
-
-                          </td>
+                          </mat-option>
 
 
-                          <!-- TOTAL -->
+                        </mat-select>
 
-                          <td>
+                      </div>
 
-                            <strong>
 
-                              {{ item.totalPrice | number:'1.2-2' }}
+                      <!-- CANCEL -->
 
-                              EGP
+                      @if (
+                        order.status.toLowerCase() !==
+                        'cancelled'
+                      ) {
 
-                            </strong>
+                        <button
+                          mat-stroked-button
+                          class="cancel-btn"
+                          type="button"
+                          (click)="
+                            cancelOrder(order)
+                          ">
 
-                          </td>
+                          <mat-icon>
+                            cancel
+                          </mat-icon>
 
-                        </tr>
+                          Cancel Order
 
-                      </tbody>
+                        </button>
 
-                    </table>
+                      }
+
+                    </div>
+
 
                   </div>
 
+                </td>
 
-                  <div
-                    class="no-items"
-                    *ngIf="
-                      !order.items ||
-                      order.items.length === 0
-                    ">
+              </tr>
 
-                    <mat-icon>
-                      shopping_cart
-                    </mat-icon>
+            }
 
-                    <span>
-                      No items found.
-                    </span>
+          }
 
-                  </div>
+        </tbody>
 
-                </div>
+      </table>
 
 
-                <!-- ============================================= -->
-                <!-- ORDER FOOTER -->
-                <!-- ============================================= -->
+      <!-- ================================================= -->
+      <!-- PAGINATION -->
+      <!-- ================================================= -->
 
-                <div class="order-details-footer">
+      <div class="orders-pagination">
 
+        <mat-paginator
+          [length]="totalOrders()"
+          [pageIndex]="pageIndex()"
+          [pageSize]="pageSize()"
+          [pageSizeOptions]="pageSizeOptions"
+          [showFirstLastButtons]="true"
+          (page)="onPageChange($event)">
+        </mat-paginator>
 
-                  <!-- TOTAL -->
-
-                  <div class="details-total">
-
-                    <span>
-                      Order Total
-                    </span>
-
-                    <strong>
-
-                      {{ order.totalAmount | number:'1.2-2' }}
-
-                      EGP
-
-                    </strong>
-
-                  </div>
+      </div>
 
 
-                  <!-- STATUS -->
+    </div>
 
-                  <div class="status-control">
-
-                    <label>
-                      Change Status
-                    </label>
-
-                    <mat-select
-                      [value]="order.status"
-                      (selectionChange)="
-                        updateStatus(
-                          order,
-                          $event.value
-                        )
-                      ">
-
-                      <mat-option value="Pending">
-                        Pending
-                      </mat-option>
-
-                      <mat-option value="Processing">
-                        Processing
-                      </mat-option>
-
-                      <mat-option value="Completed">
-                        Completed
-                      </mat-option>
-
-                      <mat-option value="Delivered">
-                        Delivered
-                      </mat-option>
-
-                      <mat-option value="Cancelled">
-                        Cancelled
-                      </mat-option>
-
-                    </mat-select>
-
-                  </div>
-
-
-                  <!-- CANCEL -->
-
-                  <button
-                    mat-stroked-button
-                    class="cancel-btn"
-                    type="button"
-                    *ngIf="
-                      order.status.toLowerCase() !==
-                      'cancelled'
-                    "
-                    (click)="cancelOrder(order)">
-
-                    <mat-icon>
-                      cancel
-                    </mat-icon>
-
-                    Cancel Order
-
-                  </button>
-
-                </div>
-
-              </div>
-
-            </td>
-
-          </tr>
-
-        </ng-container>
-
-      </tbody>
-
-    </table>
-
-  </div>
+  }
 
 </div>

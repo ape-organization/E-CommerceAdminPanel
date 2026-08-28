@@ -31,11 +31,7 @@
     }
   }
 
-  h3 {
-    margin: 0 0 12px;
-    color: #333;
-    font-size: 1.25rem;
-  }
+ 
 
   p {
     margin: 0 0 24px;
@@ -63,4 +59,21 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+.del
+{
+  background: var(--color-primary-light);
+  color:var(  --color-surface);
+  font-family: Arial, Helvetica, sans-serif;
+  border-radius: 10px;
+}
+.head
+{
+  color:var(--color-text-light);
+}
+.header
+{
+  color: var(--color-text-secondary);
+   margin: 0 0 12px;
+    font-size: 1.25rem;
 }

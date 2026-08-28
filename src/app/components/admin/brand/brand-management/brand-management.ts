@@ -5,33 +5,19 @@ import {
   signal
 } from '@angular/core';
 
-import {
-  BrandService
-} from '../../../../services/brand.service';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
-import {
-  Brand
-} from '../../../../models/Brand.model';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
 
-import {
-  SharedModule
-} from '../../../../shared/shared.module';
+import { BrandService } from '../../../../services/brand.service';
+import { Brand } from '../../../../models/Brand.model';
 
-import {
-  AddBrand
-} from '../add-brand/add-brand';
+import { SharedModule } from '../../../../shared/shared.module';
 
-import {
-  MatTableDataSource
-} from '@angular/material/table';
+import { AddBrand } from '../add-brand/add-brand';
+import { ConfirmDeleteComponent } from '../../../../shared/confirm-delete/confirm-delete.component';
 
-import {
-  ConfirmDeleteComponent
-} from '../../../../shared/confirm-delete/confirm-delete.component';
-
-import {
-  MatDialog
-} from '@angular/material/dialog';
 import { environment } from '../../../../../environments/environment';
 
 
@@ -41,244 +27,202 @@ import { environment } from '../../../../../environments/environment';
   standalone: true,
 
   imports: [
-    SharedModule
+    SharedModule,
+    MatPaginatorModule
   ],
 
-  templateUrl:
-    './brand-management.html',
-
-  styleUrl:
-    './brand-management.scss'
+  templateUrl: './brand-management.html',
+  styleUrl: './brand-management.scss'
 })
-export class BrandManagement
-  implements OnInit {
+export class BrandManagement implements OnInit {
+
+  private readonly brandService = inject(BrandService);
+  private readonly dialog = inject(MatDialog);
 
 
-  // =====================================================
-  // SERVICES
-  // =====================================================
-
-  private brandService =
-    inject(BrandService);
-
-
-  // =====================================================
+  // ============================================================
   // DATA
-  // =====================================================
+  // ============================================================
 
-  brands =
-    signal<Brand[]>([]);
+  brands = signal<Brand[]>([]);
+
+  dataSource = signal(
+    new MatTableDataSource<Brand>()
+  );
 
 
-  dataSource =
-    new MatTableDataSource<Brand>();
+  // ============================================================
+  // PAGINATION
+  // ============================================================
+
+  pageIndex = signal(0);
+  pageSize = signal(10);
 
 
-  displayedColumns: string[] = [
+  // ============================================================
+  // TABLE
+  // ============================================================
+
+  displayedColumns = [
     'name',
     'actions'
   ];
 
 
-  // =====================================================
-  // STATE
-  // =====================================================
-
-  brandToEdit:
-    Brand | null = null;
-
-
-  // =====================================================
-  // CONSTRUCTOR
-  // =====================================================
-
-  constructor(
-    private dialog: MatDialog
-  ) {}
-
-
-  // =====================================================
+  // ============================================================
   // INIT
-  // =====================================================
+  // ============================================================
 
   ngOnInit(): void {
-
     this.loadBrands();
-
   }
 
 
-  // =====================================================
-  // LOAD BRANDS
-  // =====================================================
+  // ============================================================
+  // LOAD
+  // ============================================================
 
   loadBrands(): void {
 
-    this.brandService
-      .getBrands()
-      .subscribe({
+    this.brandService.getBrands().subscribe({
 
-        next: (brands: Brand[]) => {
+      next: (brands) => {
 
-          this.brands.set(brands);
-console.log(brands)
-          this.dataSource.data =
-            brands;
+        this.brands.set(
+          Array.isArray(brands) ? brands : []
+        );
 
-        },
+        this.updateTable();
 
-        error: (error) => {
+      },
 
-          console.error(
-            'Error loading brands:',
-            error
-          );
+      error: (error) => {
 
-        }
+        console.error(
+          'Error loading brands:',
+          error
+        );
 
-      });
+        this.brands.set([]);
+        this.updateTable();
+
+      }
+
+    });
 
   }
 
 
-  // =====================================================
-  // ADD BRAND
-  // =====================================================
+  // ============================================================
+  // PAGINATION
+  // ============================================================
+
+  onPageChange(event: PageEvent): void {
+
+    this.pageIndex.set(event.pageIndex);
+    this.pageSize.set(event.pageSize);
+
+    this.updateTable();
+
+  }
+
+
+  private updateTable(): void {
+
+    const start =
+      this.pageIndex() * this.pageSize();
+
+    const end =
+      start + this.pageSize();
+
+    const data =
+      this.brands().slice(start, end);
+
+    this.dataSource.set(
+      new MatTableDataSource<Brand>(data)
+    );
+
+  }
+
+
+  // ============================================================
+  // ADD
+  // ============================================================
 
   showAddBrand(): void {
 
-    this.brandToEdit = null;
-
-
     this.dialog
-      .open(
-        AddBrand,
-        {
+      .open(AddBrand, {
+        width: '500px',
+        maxWidth: '95vw',
+        disableClose: true,
 
-          width: '500px',
-
-          maxWidth: '95vw',
-
-          disableClose: true,
-
-          data: {
-
-            brand: null,
-
-            add: true
-
-          }
-
+        data: {
+          brand: null,
+          add: true
         }
-      )
+      })
       .afterClosed()
-      .subscribe((res: any) => {
+      .subscribe(res => {
 
-        if (
-          !res ||
-          !res.status
-        ) {
-
-          return;
-
+        if (res?.status) {
+          this.loadBrands();
         }
-
-
-        this.loadBrands();
-
-        this.closeBrandDialog();
 
       });
 
   }
 
 
-  // =====================================================
-  // EDIT BRAND
-  // =====================================================
+  // ============================================================
+  // EDIT
+  // ============================================================
 
-  editBrand(
-    brand: Brand
-  ): void {
-
-    this.brandToEdit =
-      brand;
-
+  editBrand(brand: Brand): void {
 
     this.dialog
-      .open(
-        AddBrand,
-        {
+      .open(AddBrand, {
+        width: '500px',
+        maxWidth: '95vw',
+        disableClose: true,
 
-          width: '500px',
-
-          maxWidth: '95vw',
-
-          disableClose: true,
-
-          data: {
-
-            brand:
-              this.brandToEdit,
-
-            add: false
-
-          }
-
+        data: {
+          brand,
+          add: false
         }
-      )
+      })
       .afterClosed()
-      .subscribe((res: any) => {
+      .subscribe(res => {
 
-        if (
-          !res ||
-          !res.status
-        ) {
-
-          return;
-
+        if (res?.status) {
+          this.loadBrands();
         }
-
-
-        this.loadBrands();
-
-        this.closeBrandDialog();
 
       });
 
   }
 
 
-  // =====================================================
-  // DELETE BRAND
-  // =====================================================
+  // ============================================================
+  // DELETE
+  // ============================================================
 
-  deleteBrand(
-    id: number
-  ): void {
+  deleteBrand(id: number): void {
 
     this.dialog
       .open(
         ConfirmDeleteComponent,
         {
-
           data:
             'Are you sure you want to delete this brand?'
-
         }
       )
       .afterClosed()
-      .subscribe((res: any) => {
+      .subscribe(res => {
 
-        if (
-          !res ||
-          !res.status
-        ) {
-
+        if (!res?.status) {
           return;
-
         }
-
 
         this.brandService
           .deleteBrand(id)
@@ -286,11 +230,34 @@ console.log(brands)
 
             next: () => {
 
-              this.loadBrands();
+              const updated =
+                this.brands()
+                  .filter(brand => brand.id !== id);
+
+              this.brands.set(updated);
+
+              /*
+               * If the last item on the current
+               * page was deleted, go back one page.
+               */
+
+              const maxPage =
+                Math.max(
+                  0,
+                  Math.ceil(
+                    updated.length / this.pageSize()
+                  ) - 1
+                );
+
+              if (this.pageIndex() > maxPage) {
+                this.pageIndex.set(maxPage);
+              }
+
+              this.updateTable();
 
             },
 
-            error: (error) => {
+            error: error => {
 
               console.error(
                 'Error deleting brand:',
@@ -306,47 +273,27 @@ console.log(brands)
   }
 
 
-  // =====================================================
-  // CLOSE
-  // =====================================================
-
-  closeBrandDialog(): void {
-
-    this.brandToEdit = null;
-
-  }
- // ==========================================================
-  // IMAGE URL
-  // ==========================================================
+  // ============================================================
+  // IMAGE
+  // ============================================================
 
   getImageUrl(
     imageUrl?: string | null
   ): string {
 
     if (!imageUrl) {
-
       return 'assets/images/product-placeholder.png';
-
     }
-
 
     if (
-
-      imageUrl.startsWith(
-        'http://'
-      ) ||
-
-      imageUrl.startsWith(
-        'https://'
-      )
-
+      imageUrl.startsWith('http://') ||
+      imageUrl.startsWith('https://')
     ) {
-
       return imageUrl;
-
     }
 
-    return environment.imageBaseUrl+imageUrl;
+    return `${environment.imageBaseUrl}${imageUrl}`;
 
   }
+
 }

@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 
 import {
-  ChangeDetectorRef,
   Component,
   Inject,
   OnInit,
-  inject
+  inject,
+  signal,
+  computed
 } from '@angular/core';
 
 import {
@@ -33,6 +34,7 @@ import { ProductService } from '../../../../services/product.service';
 import { SubCategoryService } from '../../../../services/sub-category.service';
 import { CategoryService } from '../../../../services/category.service';
 import { BrandService } from '../../../../services/brand.service';
+import { MatRadioModule } from '@angular/material/radio';
 import { environment } from '../../../../../environments/environment';
 
 
@@ -69,10 +71,8 @@ interface Product {
 
   price: number;
 
-  // New backend property
   discountPercentage?: number | null;
 
-  // Keep this for compatibility if old API response is still used
   discount?: number | null;
 
   isInStock: boolean;
@@ -104,15 +104,14 @@ interface Product {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-
     MatDialogModule,
+    MatRadioModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatIconModule,
-    MatProgressSpinnerModule,
-    MatSlideToggleModule
+    MatProgressSpinnerModule
   ],
 
   templateUrl: './add-product.component.html',
@@ -124,7 +123,8 @@ export class AddProductComponent implements OnInit {
   // SERVICES
   // ==========================================================
 
-  private readonly fb = inject(FormBuilder);
+  private readonly fb =
+    inject(FormBuilder);
 
   private readonly productService =
     inject(ProductService);
@@ -138,60 +138,9 @@ export class AddProductComponent implements OnInit {
   private readonly brandService =
     inject(BrandService);
 
-  private readonly cdr =
-    inject(ChangeDetectorRef);
-
 
   // ==========================================================
-  // FORM
-  // ==========================================================
-
-  productForm!: FormGroup;
-
-
-  // ==========================================================
-  // DATA
-  // ==========================================================
-
-  brands: Brand[] = [];
-
-  categories: Category[] = [];
-
-  filteredSubCategories: SubCategory[] = [];
-
-
-  // ==========================================================
-  // EDIT DATA
-  // ==========================================================
-
-  private editingSubCategoryIds: number[] = [];
-
-  private editingCategoryId: number | null = null;
-
-
-  // ==========================================================
-  // IMAGE
-  // ==========================================================
-
-  selectedFile: File | null = null;
-
-  imagePreview:
-    string |
-    ArrayBuffer |
-    null = null;
-
-
-  // ==========================================================
-  // STATE
-  // ==========================================================
-
-  isSubmitting = false;
-
-  errorMessage: string | null = null;
-
-
-  // ==========================================================
-  // CONSTRUCTOR
+  // DIALOG
   // ==========================================================
 
   constructor(
@@ -204,6 +153,145 @@ export class AddProductComponent implements OnInit {
       product?: Product;
     }
   ) {}
+
+
+  // ==========================================================
+  // FORM
+  // ==========================================================
+
+  productForm!: FormGroup;
+
+
+  // ==========================================================
+  // SIGNAL STATE
+  // ==========================================================
+
+  readonly brands =
+    signal<Brand[]>([]);
+
+  readonly categories =
+    signal<Category[]>([]);
+
+  readonly filteredSubCategories =
+    signal<SubCategory[]>([]);
+
+  readonly isLoadingSubCategories =
+    signal(false);
+
+  readonly isLoadingCategories =
+    signal(false);
+
+  readonly isLoadingBrands =
+    signal(false);
+
+  readonly isSubmitting =
+    signal(false);
+
+  readonly errorMessage =
+    signal<string | null>(null);
+
+  readonly selectedFile =
+    signal<File | null>(null);
+
+  readonly imagePreview =
+    signal<string | null>(null);
+
+  /**
+   * Currently selected category.
+   *
+   * This is the source of truth for
+   * loading subcategories.
+   */
+  readonly selectedCategoryId =
+    signal<number | null>(null);
+
+
+  /**
+   * Currently selected subcategory IDs.
+   *
+   * Kept separately as signal so the UI
+   * does not need to depend directly on
+   * FormGroup changes.
+   */
+  readonly selectedSubCategoryIds =
+    signal<number[]>([]);
+
+
+  // ==========================================================
+  // EDIT STATE
+  // ==========================================================
+
+  private editingSubCategoryIds: number[] = [];
+
+  private editingCategoryId: number | null = null;
+
+
+  // ==========================================================
+  // COMPUTED
+  // ==========================================================
+
+  readonly isEditing =
+    computed(() =>
+      this.data?.isEditing === true
+    );
+
+
+  readonly hasImage =
+    computed(() =>
+      !!this.imagePreview()
+    );
+
+
+  readonly selectedSubCategoryCount =
+    computed(() =>
+      this.selectedSubCategoryIds().length
+    );
+
+
+  readonly discountedPrice =
+    computed(() => {
+
+      if (!this.productForm) {
+        return 0;
+      }
+
+      const price =
+        Number(
+          this.productForm
+            .get('price')
+            ?.value
+        ) || 0;
+
+      const discount =
+        Number(
+          this.productForm
+            .get('discountPercentage')
+            ?.value
+        ) || 0;
+
+      const validDiscount =
+        Math.min(
+          Math.max(discount, 0),
+          100
+        );
+
+      return (
+        price -
+        (
+          price *
+          validDiscount /
+          100
+        )
+      );
+    });
+
+
+  // ==========================================================
+  // IMAGE API
+  // ==========================================================
+
+  readonly api =
+    environment.imageBaseUrl;
 
 
   // ==========================================================
@@ -304,25 +392,41 @@ export class AddProductComponent implements OnInit {
 
   private loadBrands(): void {
 
+    this.isLoadingBrands.set(true);
+
     this.brandService
       .getBrands()
       .subscribe({
 
-        next: (brands: Brand[]) => {
+        next: (
+          brands: Brand[]
+        ) => {
 
-          this.brands =
-            brands ?? [];
+          this.brands.set(
+            brands ?? []
+          );
 
-          this.cdr.detectChanges();
+          this.isLoadingBrands.set(
+            false
+          );
         },
 
         error: (error) => {
 
-        
+          console.error(
+            'Failed to load brands:',
+            error
+          );
 
-          this.errorMessage = 'Failed to load brands.';
+          this.brands.set([]);
 
-          this.cdr.detectChanges();
+          this.isLoadingBrands.set(
+            false
+          );
+
+          this.errorMessage.set(
+            'Failed to load brands.'
+          );
         }
 
       });
@@ -335,41 +439,66 @@ export class AddProductComponent implements OnInit {
 
   private loadCategories(): void {
 
+    this.isLoadingCategories.set(true);
+
     this.categoryService
       .getCategories()
       .subscribe({
 
-        next: (categories: Category[]) => {
+        next: (
+          categories: Category[]
+        ) => {
 
-          this.categories =
-            categories ?? [];
+          this.categories.set(
+            categories ?? []
+          );
 
-          /*
-           * If we are editing and already know the category,
-           * load its subcategories now.
+          this.isLoadingCategories.set(
+            false
+          );
+
+          /**
+           * EDIT MODE
+           *
+           * The product data may have arrived
+           * before the categories API.
+           *
+           * Once categories are available,
+           * load the subcategories for the
+           * selected category.
            */
-          const categoryId =
-            this.productForm
-              .get('categoryId')
-              ?.value;
+          if (
+            this.editingCategoryId
+          ) {
 
-          if (categoryId) {
+            this.selectedCategoryId.set(
+              this.editingCategoryId
+            );
 
             this.loadSubCategories(
-              Number(categoryId),
+              this.editingCategoryId,
               this.editingSubCategoryIds
             );
           }
 
-          this.cdr.detectChanges();
         },
 
         error: (error) => {
 
-        
-          this.errorMessage = 'Failed to load categories.';
+          console.error(
+            'Failed to load categories:',
+            error
+          );
 
-          this.cdr.detectChanges();
+          this.categories.set([]);
+
+          this.isLoadingCategories.set(
+            false
+          );
+
+          this.errorMessage.set(
+            'Failed to load categories.'
+          );
         }
 
       });
@@ -385,66 +514,230 @@ export class AddProductComponent implements OnInit {
     selectedIds: number[] = []
   ): void {
 
-    if (!categoryId) {
+    const id =
+      Number(categoryId);
 
-      this.filteredSubCategories = [];
+
+    // --------------------------------------------------------
+    // INVALID CATEGORY
+    // --------------------------------------------------------
+
+    if (
+      !id ||
+      Number.isNaN(id)
+    ) {
+
+      this.selectedCategoryId.set(
+        null
+      );
+
+      this.filteredSubCategories.set([]);
+
+      this.selectedSubCategoryIds.set([]);
 
       this.productForm
         .get('subCategoryIds')
-        ?.setValue([]);
-
-      this.cdr.detectChanges();
+        ?.setValue(
+          [],
+          {
+            emitEvent: false
+          }
+        );
 
       return;
     }
 
+
+    // --------------------------------------------------------
+    // SET SELECTED CATEGORY
+    // --------------------------------------------------------
+
+    this.selectedCategoryId.set(
+      id
+    );
+
+
+    // --------------------------------------------------------
+    // START LOADING
+    // --------------------------------------------------------
+
+    this.isLoadingSubCategories.set(
+      true
+    );
+
+
+    // --------------------------------------------------------
+    // CLEAR OLD OPTIONS
+    // --------------------------------------------------------
+
+    this.filteredSubCategories.set([]);
+
+
+    // --------------------------------------------------------
+    // API
+    // --------------------------------------------------------
+
     this.subCategoryService
-      .getByCategoryId(categoryId)
+      .getByCategoryId(id)
       .subscribe({
 
         next: (
-          subCategories: SubCategory[]
+          response: SubCategory[] | any
         ) => {
 
-          this.filteredSubCategories =
-            subCategories ?? [];
+          console.log(
+            'Subcategory API response:',
+            response
+          );
 
-          /*
-           * Only select IDs that actually belong
-           * to the selected category.
+
+          /**
+           * Normally the service should return:
+           *
+           * SubCategory[]
+           *
+           * But this also safely handles
+           * common API wrapper formats.
            */
+          let result: SubCategory[] = [];
+
+
+          if (
+            Array.isArray(response)
+          ) {
+
+            result = response;
+
+          } else if (
+            Array.isArray(response?.data)
+          ) {
+
+            result = response.data;
+
+          } else if (
+            Array.isArray(response?.items)
+          ) {
+
+            result = response.items;
+          }
+
+
+          /**
+           * Make sure the returned subcategories
+           * actually belong to this category.
+           *
+           * This also protects the dropdown if
+           * the backend returns unexpected data.
+           */
+          result =
+            result.filter(
+              subCategory =>
+                Number(
+                  subCategory.categoryId
+                ) === id
+            );
+
+
+          console.log(
+            'Filtered subcategories:',
+            result
+          );
+
+
+          // --------------------------------------------------
+          // SET SIGNAL
+          // --------------------------------------------------
+
+          this.filteredSubCategories.set(
+            result
+          );
+
+
+          // --------------------------------------------------
+          // KEEP ONLY VALID SELECTED IDS
+          // --------------------------------------------------
+
           const validIds =
             selectedIds
-              .map(id => Number(id))
-              .filter(id =>
-                this.filteredSubCategories.some(
-                  sc => Number(sc.id) === id
-                )
+              .map(
+                selectedId =>
+                  Number(selectedId)
+              )
+              .filter(
+                selectedId =>
+                  !Number.isNaN(selectedId) &&
+                  result.some(
+                    subCategory =>
+                      Number(
+                        subCategory.id
+                      ) === selectedId
+                  )
               );
+
+
+          // --------------------------------------------------
+          // UPDATE SIGNAL
+          // --------------------------------------------------
+
+          this.selectedSubCategoryIds.set(
+            validIds
+          );
+
+
+          // --------------------------------------------------
+          // UPDATE FORM
+          // --------------------------------------------------
 
           this.productForm
             .get('subCategoryIds')
-            ?.setValue(validIds);
+            ?.setValue(
+              validIds,
+              {
+                emitEvent: false
+              }
+            );
 
           this.productForm
             .get('subCategoryIds')
             ?.updateValueAndValidity();
 
-          this.cdr.detectChanges();
+
+          // --------------------------------------------------
+          // FINISHED
+          // --------------------------------------------------
+
+          this.isLoadingSubCategories.set(
+            false
+          );
         },
 
         error: (error) => {
 
-        
-          this.filteredSubCategories = [];
+          console.error(
+            'Failed to load subcategories:',
+            error
+          );
+
+          this.filteredSubCategories.set([]);
+
+          this.selectedSubCategoryIds.set([]);
 
           this.productForm
             .get('subCategoryIds')
-            ?.setValue([]);
+            ?.setValue(
+              [],
+              {
+                emitEvent: false
+              }
+            );
 
-          this.errorMessage = 'Failed to load subcategories.';
+          this.isLoadingSubCategories.set(
+            false
+          );
 
-          this.cdr.detectChanges();
+          this.errorMessage.set(
+            'Failed to load subcategories.'
+          );
         }
 
       });
@@ -459,29 +752,111 @@ export class AddProductComponent implements OnInit {
     categoryId: number
   ): void {
 
-    this.errorMessage = null;
+    this.errorMessage.set(null);
 
-    /*
-     * User manually changed the category.
-     * The old subcategories must NOT remain selected.
-     */
+
+    const id =
+      Number(categoryId);
+
+
+    console.log(
+      'Category changed:',
+      id
+    );
+
+
+    // --------------------------------------------------------
+    // CLEAR PREVIOUS SUBCATEGORIES
+    // --------------------------------------------------------
+
     this.editingSubCategoryIds = [];
+
+    this.selectedSubCategoryIds.set([]);
+
+    this.filteredSubCategories.set([]);
+
 
     this.productForm
       .get('subCategoryIds')
-      ?.setValue([]);
+      ?.setValue(
+        [],
+        {
+          emitEvent: false
+        }
+      );
 
-    this.filteredSubCategories = [];
 
-    if (!categoryId) {
+    // --------------------------------------------------------
+    // INVALID CATEGORY
+    // --------------------------------------------------------
+
+    if (
+      !id ||
+      Number.isNaN(id)
+    ) {
+
+      this.selectedCategoryId.set(
+        null
+      );
 
       return;
     }
 
+
+    // --------------------------------------------------------
+    // SET CATEGORY
+    // --------------------------------------------------------
+
+    this.selectedCategoryId.set(
+      id
+    );
+
+
+    // --------------------------------------------------------
+    // LOAD SUBCATEGORIES
+    // --------------------------------------------------------
+
     this.loadSubCategories(
-      Number(categoryId),
+      id,
       []
     );
+  }
+
+
+  // ==========================================================
+  // SUBCATEGORY CHANGE
+  // ==========================================================
+
+  onSubCategoryChange(
+    selectedIds: number[]
+  ): void {
+
+    const ids =
+      Array.isArray(selectedIds)
+        ? selectedIds
+            .map(
+              id => Number(id)
+            )
+            .filter(
+              id =>
+                !Number.isNaN(id)
+            )
+        : [];
+
+
+    this.selectedSubCategoryIds.set(
+      ids
+    );
+
+
+    this.productForm
+      .get('subCategoryIds')
+      ?.setValue(
+        ids,
+        {
+          emitEvent: false
+        }
+      );
   }
 
 
@@ -493,33 +868,35 @@ export class AddProductComponent implements OnInit {
     product: Product
   ): void {
 
-    /*
-     * ==============================================
-     * GET SUBCATEGORY IDS
-     * ==============================================
-     */
+    // --------------------------------------------------------
+    // SUBCATEGORY IDS
+    // --------------------------------------------------------
 
     this.editingSubCategoryIds =
       (product.subCategories ?? [])
-        .map(sc => Number(sc.id))
-        .filter(id => !isNaN(id));
+        .map(
+          subCategory =>
+            Number(subCategory.id)
+        )
+        .filter(
+          id =>
+            !Number.isNaN(id)
+        );
 
 
-    /*
-     * ==============================================
-     * GET CATEGORY ID
-     * ==============================================
-     */
+    // --------------------------------------------------------
+    // CATEGORY
+    // --------------------------------------------------------
 
     this.editingCategoryId =
-      this.getProductCategoryId(product);
+      this.getProductCategoryId(
+        product
+      );
 
 
-    /*
-     * ==============================================
-     * GET BRAND ID
-     * ==============================================
-     */
+    // --------------------------------------------------------
+    // BRAND
+    // --------------------------------------------------------
 
     const brandId =
       product.brandId ??
@@ -527,17 +904,9 @@ export class AddProductComponent implements OnInit {
       null;
 
 
-    /*
-     * ==============================================
-     * GET DISCOUNT
-     * ==============================================
-     *
-     * New API:
-     *     discountPercentage
-     *
-     * Old API compatibility:
-     *     discount
-     */
+    // --------------------------------------------------------
+    // DISCOUNT
+    // --------------------------------------------------------
 
     const discount =
       product.discountPercentage ??
@@ -545,11 +914,9 @@ export class AddProductComponent implements OnInit {
       0;
 
 
-    /*
-     * ==============================================
-     * PATCH FORM
-     * ==============================================
-     */
+    // --------------------------------------------------------
+    // PATCH FORM
+    // --------------------------------------------------------
 
     this.productForm.patchValue({
 
@@ -574,16 +941,6 @@ export class AddProductComponent implements OnInit {
       categoryId:
         this.editingCategoryId,
 
-      /*
-       * IMPORTANT:
-       *
-       * Don't set the subcategory IDs here yet.
-       * The mat-select options have not necessarily
-       * been loaded.
-       *
-       * loadSubCategories() will set them after
-       * receiving the options.
-       */
       subCategoryIds:
         [],
 
@@ -593,14 +950,25 @@ export class AddProductComponent implements OnInit {
     });
 
 
-    /*
-     * ==============================================
-     * LOAD SUBCATEGORIES
-     * ==============================================
-     */
+    // --------------------------------------------------------
+    // SET CATEGORY SIGNAL
+    // --------------------------------------------------------
 
-    if (this.editingCategoryId) {
+    if (
+      this.editingCategoryId
+    ) {
 
+      this.selectedCategoryId.set(
+        this.editingCategoryId
+      );
+
+
+      /**
+       * Load subcategories immediately.
+       *
+       * This is safe because the API is
+       * independent of the categories list.
+       */
       this.loadSubCategories(
         this.editingCategoryId,
         this.editingSubCategoryIds
@@ -608,22 +976,20 @@ export class AddProductComponent implements OnInit {
     }
 
 
-    /*
-     * ==============================================
-     * IMAGE
-     * ==============================================
-     */
+    // --------------------------------------------------------
+    // IMAGE
+    // --------------------------------------------------------
 
-    if (product.imageUrl) {
+    if (
+      product.imageUrl
+    ) {
 
-      this.imagePreview =
+      this.imagePreview.set(
         this.getImageUrl(
           product.imageUrl
-        );
+        )
+      );
     }
-
-
-    this.cdr.detectChanges();
   }
 
 
@@ -635,39 +1001,55 @@ export class AddProductComponent implements OnInit {
     product: Product
   ): number | null {
 
-    /*
-     * First try direct categoryId.
-     */
+    // --------------------------------------------------------
+    // DIRECT CATEGORY ID
+    // --------------------------------------------------------
 
     if (
       product.categoryId !== null &&
       product.categoryId !== undefined
     ) {
 
-      return Number(
-        product.categoryId
-      );
+      const id =
+        Number(
+          product.categoryId
+        );
+
+      if (
+        !Number.isNaN(id)
+      ) {
+
+        return id;
+      }
     }
 
 
-    /*
-     * Then try category.id.
-     */
+    // --------------------------------------------------------
+    // CATEGORY OBJECT
+    // --------------------------------------------------------
 
     if (
-      product.category?.id
+      product.category?.id !== null &&
+      product.category?.id !== undefined
     ) {
 
-      return Number(
-        product.category.id
-      );
+      const id =
+        Number(
+          product.category.id
+        );
+
+      if (
+        !Number.isNaN(id)
+      ) {
+
+        return id;
+      }
     }
 
 
-    /*
-     * Finally get category from
-     * the first subcategory.
-     */
+    // --------------------------------------------------------
+    // SUBCATEGORY CATEGORY
+    // --------------------------------------------------------
 
     if (
       product.subCategories &&
@@ -678,14 +1060,21 @@ export class AddProductComponent implements OnInit {
         product.subCategories[0]
           ?.categoryId;
 
+
       if (
         categoryId !== null &&
         categoryId !== undefined
       ) {
 
-        return Number(
-          categoryId
-        );
+        const id =
+          Number(categoryId);
+
+        if (
+          !Number.isNaN(id)
+        ) {
+
+          return id;
+        }
       }
     }
 
@@ -700,39 +1089,7 @@ export class AddProductComponent implements OnInit {
 
   getDiscountedPrice(): number {
 
-    const price =
-      Number(
-        this.productForm
-          .get('price')
-          ?.value
-      ) || 0;
-
-    const discount =
-      Number(
-        this.productForm
-          .get('discountPercentage')
-          ?.value
-      ) || 0;
-
-
-    const validDiscount =
-      Math.min(
-        Math.max(
-          discount,
-          0
-        ),
-        100
-      );
-
-
-    return (
-      price -
-      (
-        price *
-        validDiscount /
-        100
-      )
-    );
+    return this.discountedPrice();
   }
 
 
@@ -761,9 +1118,9 @@ export class AddProductComponent implements OnInit {
       input.files[0];
 
 
-    // ============================
+    // --------------------------------------------------------
     // VALIDATE TYPE
-    // ============================
+    // --------------------------------------------------------
 
     const allowedTypes = [
       'image/png',
@@ -778,7 +1135,7 @@ export class AddProductComponent implements OnInit {
       )
     ) {
 
-      alert(
+      this.errorMessage.set(
         'Please select a PNG, JPG or WEBP image.'
       );
 
@@ -788,9 +1145,9 @@ export class AddProductComponent implements OnInit {
     }
 
 
-    // ============================
+    // --------------------------------------------------------
     // VALIDATE SIZE
-    // ============================
+    // --------------------------------------------------------
 
     const maxSize =
       5 * 1024 * 1024;
@@ -800,7 +1157,7 @@ export class AddProductComponent implements OnInit {
       file.size > maxSize
     ) {
 
-      alert(
+      this.errorMessage.set(
         'Image size must be less than 5 MB.'
       );
 
@@ -810,17 +1167,20 @@ export class AddProductComponent implements OnInit {
     }
 
 
-    // ============================
+    // --------------------------------------------------------
     // STORE FILE
-    // ============================
+    // --------------------------------------------------------
 
-    this.selectedFile =
-      file;
+    this.selectedFile.set(
+      file
+    );
+
+    this.errorMessage.set(null);
 
 
-    // ============================
-    // CREATE PREVIEW
-    // ============================
+    // --------------------------------------------------------
+    // PREVIEW
+    // --------------------------------------------------------
 
     const reader =
       new FileReader();
@@ -828,20 +1188,21 @@ export class AddProductComponent implements OnInit {
 
     reader.onload = () => {
 
-      this.imagePreview =
-        reader.result;
-
-      this.cdr.detectChanges();
+      this.imagePreview.set(
+        reader.result as string
+      );
     };
 
 
     reader.onerror = () => {
 
-      this.imagePreview = null;
+      this.imagePreview.set(null);
 
-      this.selectedFile = null;
+      this.selectedFile.set(null);
 
-      this.cdr.detectChanges();
+      this.errorMessage.set(
+        'Failed to read the selected image.'
+      );
     };
 
 
@@ -869,16 +1230,16 @@ export class AddProductComponent implements OnInit {
 
 
     if (
-      this.isSubmitting
+      this.isSubmitting()
     ) {
 
       return;
     }
 
 
-    this.errorMessage = null;
+    this.errorMessage.set(null);
 
-    this.isSubmitting = true;
+    this.isSubmitting.set(true);
 
 
     const value =
@@ -919,14 +1280,6 @@ export class AddProductComponent implements OnInit {
       )
     );
 
-
-    /*
-     * IMPORTANT:
-     *
-     * Backend property:
-     *
-     * DiscountPercentage
-     */
 
     formData.append(
       'DiscountPercentage',
@@ -977,14 +1330,19 @@ export class AddProductComponent implements OnInit {
     // ========================================================
     // CATEGORY
     // ========================================================
-    //
-    // If your backend DOES NOT have CategoryId
-    // in the request model, don't append it.
-    //
-    // SubCategoryIds are enough to determine
-    // the category in your current backend design.
-    //
-    // ========================================================
+
+    if (
+      value.categoryId !== null &&
+      value.categoryId !== undefined
+    ) {
+
+      formData.append(
+        'CategoryId',
+        String(
+          value.categoryId
+        )
+      );
+    }
 
 
     // ========================================================
@@ -992,28 +1350,16 @@ export class AddProductComponent implements OnInit {
     // ========================================================
 
     const subCategoryIds =
-      (
-        value.subCategoryIds ?? []
-      )
-        .map((id: number | string) =>
-          Number(id)
+      this.selectedSubCategoryIds()
+        .map(
+          id =>
+            Number(id)
         )
-        .filter((id: number) =>
-          !isNaN(id)
+        .filter(
+          id =>
+            !Number.isNaN(id)
         );
 
-
-    /*
-     * Send:
-     *
-     * SubCategoryIds=1
-     * SubCategoryIds=3
-     * SubCategoryIds=5
-     *
-     * instead of:
-     *
-     * SubCategoryIds=[1,3,5]
-     */
 
     subCategoryIds.forEach(
       (id: number) => {
@@ -1030,29 +1376,16 @@ export class AddProductComponent implements OnInit {
     // IMAGE
     // ========================================================
 
-    if (
-      this.selectedFile
-    ) {
+    const file =
+      this.selectedFile();
+
+    if (file) {
 
       formData.append(
         'Image',
-        this.selectedFile
+        file
       );
     }
-
-
-    // ========================================================
-    // DEBUG FORM DATA
-    // ========================================================
-
-    /*
-     * Uncomment this temporarily if you want
-     * to verify exactly what is being sent.
-     *
-     * formData.forEach((value, key) => {
-     *   console.log(key, value);
-     * });
-     */
 
 
     // ========================================================
@@ -1064,15 +1397,14 @@ export class AddProductComponent implements OnInit {
     ) {
 
       this.productService
-        .createProduct(
-          formData
-        )
+        .createProduct(formData)
         .subscribe({
 
           next: () => {
 
-            this.isSubmitting =
-              false;
+            this.isSubmitting.set(
+              false
+            );
 
             this.dialogRef.close(
               true
@@ -1081,12 +1413,21 @@ export class AddProductComponent implements OnInit {
 
           error: (error) => {
 
-            this.errorMessage = 'Failed to create product.';
+            console.error(
+              'Create product error:',
+              error
+            );
 
-            this.isSubmitting =
-              false;
+            this.errorMessage.set(
+              this.getApiErrorMessage(
+                error,
+                'Failed to create product.'
+              )
+            );
 
-            this.cdr.detectChanges();
+            this.isSubmitting.set(
+              false
+            );
           }
 
         });
@@ -1105,11 +1446,13 @@ export class AddProductComponent implements OnInit {
 
     if (!productId) {
 
-      this.errorMessage =
-        'Product ID is missing.';
+      this.errorMessage.set(
+        'Product ID is missing.'
+      );
 
-      this.isSubmitting =
-        false;
+      this.isSubmitting.set(
+        false
+      );
 
       return;
     }
@@ -1124,8 +1467,9 @@ export class AddProductComponent implements OnInit {
 
         next: () => {
 
-          this.isSubmitting =
-            false;
+          this.isSubmitting.set(
+            false
+          );
 
           this.dialogRef.close(
             true
@@ -1134,16 +1478,61 @@ export class AddProductComponent implements OnInit {
 
         error: (error) => {
 
-        
-          this.errorMessage =  'Failed to update product.';
+          console.error(
+            'Update product error:',
+            error
+          );
 
-          this.isSubmitting =
-            false;
+          this.errorMessage.set(
+            this.getApiErrorMessage(
+              error,
+              'Failed to update product.'
+            )
+          );
 
-          this.cdr.detectChanges();
+          this.isSubmitting.set(
+            false
+          );
         }
 
       });
+  }
+
+
+  // ==========================================================
+  // API ERROR
+  // ==========================================================
+
+  private getApiErrorMessage(
+    error: any,
+    fallback: string
+  ): string {
+
+    if (
+      error?.error?.message
+    ) {
+
+      return error.error.message;
+    }
+
+
+    if (
+      error?.error?.title
+    ) {
+
+      return error.error.title;
+    }
+
+
+    if (
+      typeof error?.error === 'string'
+    ) {
+
+      return error.error;
+    }
+
+
+    return fallback;
   }
 
 
@@ -1154,7 +1543,7 @@ export class AddProductComponent implements OnInit {
   cancel(): void {
 
     if (
-      this.isSubmitting
+      this.isSubmitting()
     ) {
 
       return;
@@ -1173,7 +1562,7 @@ export class AddProductComponent implements OnInit {
   ): string {
 
     return (
-      this.filteredSubCategories
+      this.filteredSubCategories()
         .find(
           subCategory =>
             Number(subCategory.id) ===
@@ -1188,18 +1577,14 @@ export class AddProductComponent implements OnInit {
   // ==========================================================
   // IMAGE URL
   // ==========================================================
-api=environment.imageBaseUrl
+
   private getImageUrl(
     imageUrl: string
   ): string {
 
     if (
-      imageUrl.startsWith(
-        'http://'
-      ) ||
-      imageUrl.startsWith(
-        'https://'
-      )
+      imageUrl.startsWith('http://') ||
+      imageUrl.startsWith('https://')
     ) {
 
       return imageUrl;

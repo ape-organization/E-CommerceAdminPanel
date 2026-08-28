@@ -1,13 +1,13 @@
 <div class="overlay">
   <div class="confirm-box">
     <div class="icon-header">
-      <mat-icon color="warn">warning</mat-icon>
+      <mat-icon class="head">warning</mat-icon>
     </div>
-    <h3>Confirm Action</h3>
+    <h3 class="header">Confirm Action</h3>
     <p>{{ data }}</p>
     <div class="actions">
       <button mat-button (click)="onCancel()">CANCEL</button>
-      <button mat-raised-button color="warn" (click)="onConfirm()">DELETE</button>
+      <button mat-raised-button class="del" (click)="onConfirm()">DELETE</button>
     </div>
   </div>
 </div>

@@ -1,31 +1,12 @@
-/* =========================================
-   COSMETICS CATEGORY MODAL
-   ========================================= */
-
-:host {
-
-  --navy: #0b1f3a;
-  --navy-light: #132f52;
-
-  --gold: #d4af37;
-  --gold-light: #e6c85c;
-  --gold-dark: #b8941f;
-
-  --white: #ffffff;
-
-  --gray: #69727d;
-  --gray-light: #f5f6f8;
-
-  --border: #e1e4e8;
-
-  --danger: #b33a3a;
-
-}
+/* =========================================================
+   CATEGORY MODAL
+   Uses GLOBAL APPLICATION VARIABLES
+   ========================================================= */
 
 
-/* =========================================
+/* =========================================================
    OVERLAY
-   ========================================= */
+   ========================================================= */
 
 .modal-overlay {
 
@@ -43,11 +24,10 @@
   display: flex;
 
   align-items: center;
-
   justify-content: center;
 
   background:
-    rgba(7, 21, 41, 0.72);
+    rgba(58, 39, 33, 0.62);
 
   backdrop-filter:
     blur(5px);
@@ -60,9 +40,9 @@
 }
 
 
-/* =========================================
+/* =========================================================
    MODAL
-   ========================================= */
+   ========================================================= */
 
 .modal-container {
 
@@ -74,16 +54,20 @@
 
   box-sizing: border-box;
 
-  background:
-    var(--white);
+  overflow-y: auto;
 
-  border-radius: 14px;
+  background:
+    var(--color-surface);
+
+  border:
+    1px solid
+    var(--color-border);
+
+  border-radius:
+    var(--radius-lg);
 
   box-shadow:
-    0 20px 60px
-    rgba(0, 0, 0, 0.25);
-
-  overflow-y: auto;
+    var(--shadow-lg);
 
   animation:
     modal-slide-in 0.3s ease-out;
@@ -91,22 +75,25 @@
 }
 
 
-/* =========================================
+/* =========================================================
    HEADER
-   ========================================= */
+   ========================================================= */
 
 .modal-header {
 
   display: flex;
 
   align-items: center;
-
   justify-content: space-between;
 
-  padding: 20px 24px;
+  gap: 15px;
+
+  padding:
+    20px 24px;
 
   border-bottom:
-    1px solid var(--border);
+    1px solid
+    var(--color-border);
 
 }
 
@@ -125,39 +112,37 @@
 .title-icon {
 
   width: 42px;
-
   height: 42px;
+
+  flex-shrink: 0;
 
   display: flex;
 
   align-items: center;
-
   justify-content: center;
 
-  flex-shrink: 0;
-
-  border-radius: 10px;
+  border-radius:
+    var(--radius-md);
 
   background:
-    rgba(212, 175, 55, 0.12);
+    rgba(184, 138, 90, 0.12);
 
   border:
     1px solid
-    rgba(212, 175, 55, 0.3);
+    rgba(184, 138, 90, 0.30);
 
   color:
-    var(--gold-dark);
+    var(--color-accent);
 
 }
 
 
 .title-icon mat-icon {
 
-  font-size: 21px;
-
   width: 21px;
-
   height: 21px;
+
+  font-size: 21px;
 
 }
 
@@ -167,38 +152,50 @@
   margin: 0;
 
   color:
-    var(--navy);
+    var(--color-primary);
 
-  font-size: 1.15rem;
+  font-family:
+    var(--font-heading);
 
-  font-weight: 700;
+  font-size:
+    1.15rem;
+
+  font-weight:
+    600;
+
+  line-height:
+    1.3;
 
 }
 
 
 .modal-header p {
 
-  margin: 3px 0 0;
+  margin:
+    3px 0 0;
 
   color:
-    var(--gray);
+    var(--color-text-secondary);
 
-  font-size: 0.72rem;
+  font-size:
+    0.72rem;
 
 }
 
 
-/* =========================================
+/* =========================================================
    CLOSE
-   ========================================= */
+   ========================================================= */
 
 .close-button {
 
+  flex-shrink: 0;
+
   color:
-    var(--gray);
+    var(--color-text-secondary);
 
   transition:
-    background 0.2s ease,
+    background-color 0.2s ease,
     color 0.2s ease;
 
 }
@@ -207,21 +204,30 @@
 .close-button:hover {
 
   color:
-    var(--navy);
+    var(--color-primary);
 
   background:
-    rgba(11, 31, 58, 0.06);
+    rgba(58, 39, 33, 0.06);
 
 }
 
 
-/* =========================================
+.close-button:disabled {
+
+  opacity:
+    0.5;
+
+}
+
+
+/* =========================================================
    FORM
-   ========================================= */
+   ========================================================= */
 
 form {
 
-  padding: 24px;
+  padding:
+    24px;
 
 }
 
@@ -232,136 +238,158 @@ form {
 
   flex-direction: column;
 
-  gap: 16px;
+  gap:
+    16px;
 
 }
 
+.icon{padding-right: 10px;}
 
-::ng-deep .mat-mdc-form-field {
-
-  width: 100%;
-
-}
-
-
-/* =========================================
+/* =========================================================
    IMAGE UPLOAD
-   ========================================= */
+   ========================================================= */
 
 .image-upload-section {
 
   display: flex;
-justify-content: center;
+
   align-items: center;
+  justify-content: center;
 
-  gap: 18px;
+  gap:
+    18px;
 
-  padding: 14px;
+  padding:
+    14px;
 
   background:
-    #fafbfc;
+    var(--color-surface-soft);
 
   border:
-    1px solid var(--border);
+    1px solid
+    var(--color-border);
 
-  border-radius: 10px;
+  border-radius:
+    var(--radius-md);
 
 }
 
 
-/* =========================================
+/* =========================================================
    IMAGE PREVIEW
-   ========================================= */
+   ========================================================= */
 
 .image-preview-wrapper {
 
   position: relative;
 
-  width: 105px;
+  width:
+    105px;
 
-  height: 105px;
+  height:
+    105px;
 
   flex-shrink: 0;
 
   display: flex;
 
   align-items: center;
-
   justify-content: center;
 
   overflow: hidden;
 
-  border-radius: 12px;
+  border-radius:
+    var(--radius-md);
 
   background:
-    #f1f3f5;
+    var(--color-surface-muted);
 
   border:
-    1px solid var(--border);
+    1px solid
+    var(--color-border);
 
-  cursor: pointer;
+  cursor:
+    pointer;
 
 }
 
 
 .category-image-preview {
 
-  width: 100%;
+  width:
+    100%;
 
-  height: 100%;
+  height:
+    100%;
 
-  object-fit: cover;
+  display:
+    block;
 
-  display: block;
+  object-fit:
+    cover;
 
 }
 
 
+/* =========================================================
+   IMAGE PLACEHOLDER
+   ========================================================= */
+
 .image-placeholder {
 
-  width: 100%;
+  width:
+    100%;
 
-  height: 100%;
+  height:
+    100%;
 
   display: flex;
 
   flex-direction: column;
 
   align-items: center;
-
   justify-content: center;
 
-  gap: 6px;
+  gap:
+    6px;
 
   color:
-    var(--gray);
+    var(--color-text-secondary);
 
 }
 
 
 .image-placeholder mat-icon {
 
-  width: 30px;
+  width:
+    30px;
 
-  height: 30px;
+  height:
+    30px;
 
-  font-size: 30px;
+  font-size:
+    30px;
+
+  color:
+    var(--color-accent);
 
 }
 
 
 .image-placeholder span {
 
-  font-size: 0.68rem;
+  font-size:
+    0.68rem;
 
-  font-weight: 600;
+  font-weight:
+    600;
 
 }
 
 
-/* =========================================
+/* =========================================================
    IMAGE HOVER
-   ========================================= */
+   ========================================================= */
 
 .image-hover-overlay {
 
@@ -374,18 +402,19 @@ justify-content: center;
   flex-direction: column;
 
   align-items: center;
-
   justify-content: center;
 
-  gap: 4px;
+  gap:
+    4px;
 
   background:
-    rgba(11, 31, 58, 0.72);
+    rgba(58, 39, 33, 0.78);
 
   color:
-    var(--white);
+    var(--color-surface);
 
-  opacity: 0;
+  opacity:
+    0;
 
   transition:
     opacity 0.2s ease;
@@ -396,16 +425,18 @@ justify-content: center;
 .image-hover-overlay mat-icon {
 
   color:
-    var(--gold);
+    var(--color-accent-light);
 
 }
 
 
 .image-hover-overlay span {
 
-  font-size: 0.65rem;
+  font-size:
+    0.65rem;
 
-  font-weight: 600;
+  font-weight:
+    600;
 
 }
 
@@ -413,14 +444,15 @@ justify-content: center;
 .image-preview-wrapper:hover
 .image-hover-overlay {
 
-  opacity: 1;
+  opacity:
+    1;
 
 }
 
 
-/* =========================================
-   IMAGE INFO
-   ========================================= */
+/* =========================================================
+   IMAGE INFORMATION
+   ========================================================= */
 
 .image-upload-info {
 
@@ -430,7 +462,8 @@ justify-content: center;
 
   align-items: flex-start;
 
-  gap: 4px;
+  gap:
+    4px;
 
 }
 
@@ -438,11 +471,13 @@ justify-content: center;
 .image-title {
 
   color:
-    var(--navy);
+    var(--color-primary);
 
-  font-size: 0.82rem;
+  font-size:
+    0.82rem;
 
-  font-weight: 700;
+  font-weight:
+    700;
 
 }
 
@@ -450,9 +485,13 @@ justify-content: center;
 .image-description {
 
   color:
-    var(--gray);
+    var(--color-text-secondary);
 
-  font-size: 0.68rem;
+  font-size:
+    0.68rem;
+
+  line-height:
+    1.4;
 
 }
 
@@ -460,60 +499,36 @@ justify-content: center;
 .image-format {
 
   color:
-    #9299a2;
+    var(--color-text-muted);
 
-  font-size: 0.62rem;
+  font-size:
+    0.62rem;
 
 }
 
 
-/* =========================================
-   CHOOSE IMAGE BUTTON
-   ========================================= */
+/* =========================================================
+   MATERIAL FORM FIELDS
+   ========================================================= */
 
-.choose-image-button {
+::ng-deep
+.mat-mdc-form-field {
 
-  height: 34px;
+  width:
+    100%;
 
-  margin-top: 5px;
+}
 
-  padding:
-    0 12px;
 
-  border-radius: 6px;
-
-  border-color:
-    var(--gold-dark) !important;
+::ng-deep
+.mat-mdc-form-field
+.mat-mdc-form-field-icon-prefix {
 
   color:
-    var(--navy) !important;
-
-  font-size: 0.68rem;
-
-  font-weight: 700;
+    var(--color-text-secondary);
 
 }
 
-
-.choose-image-button mat-icon {
-
-  color:
-    var(--gold-dark);
-
-  font-size: 17px;
-
-  width: 17px;
-
-  height: 17px;
-
-  margin-right: 4px;
-
-}
-
-
-/* =========================================
-   MATERIAL FOCUS
-   ========================================= */
 
 ::ng-deep
 .mat-mdc-form-field.mat-focused
@@ -528,7 +543,7 @@ justify-content: center;
 .mdc-notched-outline__trailing {
 
   border-color:
-    var(--gold) !important;
+    var(--color-accent) !important;
 
 }
 
@@ -538,24 +553,14 @@ justify-content: center;
 .mat-mdc-floating-label {
 
   color:
-    var(--gold-dark) !important;
+    var(--color-accent) !important;
 
 }
 
 
-::ng-deep
-.mat-mdc-form-field
-.mat-mdc-form-field-icon-prefix {
-
-  color:
-    var(--gray);
-
-}
-
-
-/* =========================================
+/* =========================================================
    ERROR
-   ========================================= */
+   ========================================================= */
 
 .error-message {
 
@@ -563,139 +568,172 @@ justify-content: center;
 
   align-items: center;
 
-  gap: 8px;
+  gap:
+    8px;
 
-  padding: 10px 12px;
+  padding:
+    10px 12px;
 
-  border-radius: 7px;
+  border-radius:
+    var(--radius-sm);
 
   background:
-    rgba(179, 58, 58, 0.08);
+    rgba(166, 93, 77, 0.08);
 
   border:
     1px solid
-    rgba(179, 58, 58, 0.2);
+    rgba(166, 93, 77, 0.25);
 
   color:
-    var(--danger);
+    var(--color-error);
 
-  font-size: 0.72rem;
+  font-size:
+    0.72rem;
 
 }
 
 
 .error-message mat-icon {
 
-  font-size: 18px;
+  width:
+    18px;
 
-  width: 18px;
+  height:
+    18px;
 
-  height: 18px;
+  font-size:
+    18px;
+
+  flex-shrink:
+    0;
 
 }
 
 
-/* =========================================
+/* =========================================================
    ACTIONS
-   ========================================= */
+   ========================================================= */
 
 .modal-actions {
 
   display: flex;
 
   align-items: center;
-
   justify-content: flex-end;
 
-  gap: 10px;
+  gap:
+    10px;
 
-  margin-top: 8px;
+  margin-top:
+    8px;
 
-  padding-top: 20px;
+  padding-top:
+    20px;
 
   border-top:
-    1px solid var(--border);
+    1px solid
+    var(--color-border);
 
 }
 
 
 .modal-actions button {
 
-  min-width: 110px;
+  min-width:
+    110px;
 
-  height: 42px;
+  height:
+    42px;
 
-  border-radius: 6px;
+  border-radius:
+    var(--radius-sm);
 
-  font-size: 0.72rem;
+  font-size:
+    0.72rem;
 
-  font-weight: 700;
+  font-weight:
+    700;
 
-  letter-spacing: 0.3px;
+  letter-spacing:
+    0.3px;
 
 }
 
+
+/* =========================================================
+   CANCEL
+   ========================================================= */
 
 .cancel-button {
 
   color:
-    var(--gray);
+    var(--color-text-secondary);
 
   transition:
-    all 0.2s ease;
+    background-color 0.2s ease,
+    color 0.2s ease;
 
 }
 
 
-.cancel-button:hover {
+.cancel-button:hover:not(:disabled) {
 
   background:
-    #f3f4f6;
+    var(--color-surface-soft);
 
   color:
-    var(--navy);
+    var(--color-primary);
 
 }
 
+
+/* =========================================================
+   SUBMIT
+   ========================================================= */
 
 .submit-button {
 
-  min-width: 155px !important;
+  min-width:
+    155px !important;
 
   display: flex;
 
   align-items: center;
-
   justify-content: center;
 
-  gap: 5px;
+  gap:
+    5px;
 
   background:
-    var(--navy);
+    var(--color-primary) !important;
 
   color:
-    var(--white);
+    var(--color-surface) !important;
 
   box-shadow:
-    0 3px 10px
-    rgba(11, 31, 58, 0.16);
+    var(--shadow-sm);
 
   transition:
-    all 0.2s ease;
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 
 }
 
 
 .submit-button mat-icon {
 
+  width:
+    18px;
+
+  height:
+    18px;
+
+  font-size:
+    18px;
+
   color:
-    var(--gold);
-
-  font-size: 18px;
-
-  width: 18px;
-
-  height: 18px;
+    var(--color-accent-light);
 
 }
 
@@ -703,30 +741,31 @@ justify-content: center;
 .submit-button:not(:disabled):hover {
 
   background:
-    var(--navy-light);
+    var(--color-primary-light) !important;
 
   transform:
     translateY(-1px);
 
   box-shadow:
-    0 5px 14px
-    rgba(11, 31, 58, 0.22);
+    var(--shadow-md);
 
 }
 
 
 .submit-button:disabled {
 
-  opacity: 0.5;
+  opacity:
+    0.5;
 
-  box-shadow: none;
+  box-shadow:
+    none;
 
 }
 
 
-/* =========================================
+/* =========================================================
    ANIMATIONS
-   ========================================= */
+   ========================================================= */
 
 @keyframes overlay-fade {
 
@@ -766,103 +805,124 @@ justify-content: center;
 }
 
 
-/* =========================================
+/* =========================================================
    MOBILE
-   ========================================= */
+   ========================================================= */
 
 @media (max-width: 500px) {
 
   .modal-overlay {
 
-    padding: 12px;
+    padding:
+      12px;
 
   }
 
 
   .modal-container {
 
-    max-height: 94vh;
+    max-height:
+      94vh;
 
-    border-radius: 12px;
+    border-radius:
+      var(--radius-md);
 
   }
 
 
   .modal-header {
 
-    padding: 16px;
+    padding:
+      16px;
 
   }
 
 
   form {
 
-    padding: 20px 16px;
+    padding:
+      20px 16px;
 
   }
 
 
   .title-icon {
 
-    width: 38px;
+    width:
+      38px;
 
-    height: 38px;
+    height:
+      38px;
 
   }
 
 
   .modal-header h2 {
 
-    font-size: 1rem;
+    font-size:
+      1rem;
 
   }
 
 
   .modal-header p {
 
-    font-size: 0.65rem;
+    font-size:
+      0.65rem;
 
   }
 
 
   .image-upload-section {
 
-    gap: 12px;
+    gap:
+      12px;
 
-    padding: 10px;
+    padding:
+      10px;
 
   }
 
 
   .image-preview-wrapper {
 
-    width: 82px;
+    width:
+      82px;
 
-    height: 82px;
+    height:
+      82px;
 
   }
 
 
   .image-description {
 
-    font-size: 0.62rem;
+    font-size:
+      0.62rem;
 
   }
 
 
   .modal-actions {
 
-    flex-direction: column-reverse;
+    flex-direction:
+      column-reverse;
 
-    align-items: stretch;
+    align-items:
+      stretch;
 
   }
 
 
   .modal-actions button {
 
-    width: 100%;
+    width:
+      100%;
 
   }
 
+}
+.error
+{
+  color: var(--color-error);
 }
