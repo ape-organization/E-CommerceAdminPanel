@@ -1,3 +1,4 @@
+
 import { CommonModule } from '@angular/common';
 
 import {
@@ -28,69 +29,19 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatRadioModule } from '@angular/material/radio';
 
 import { ProductService } from '../../../../services/product.service';
 import { SubCategoryService } from '../../../../services/sub-category.service';
 import { CategoryService } from '../../../../services/category.service';
 import { BrandService } from '../../../../services/brand.service';
-import { MatRadioModule } from '@angular/material/radio';
+
 import { environment } from '../../../../../environments/environment';
+import { Product } from '../../../../models/product.model';
+import { Brand } from '../../../../models/Brand.model';
+import { Category } from '../../../../models/category.model';
+import { SubCategory } from '../../../../models/subCategory.model';
 
-
-// ============================================================
-// MODELS
-// ============================================================
-
-interface Brand {
-  id: number;
-  name: string;
-  description?: string;
-  imageUrl?: string | null;
-}
-
-interface Category {
-  id: number;
-  name: string;
-  description?: string;
-}
-
-interface SubCategory {
-  id: number;
-  name: string;
-  categoryId: number;
-  categoryName?: string;
-}
-
-interface Product {
-  id: number;
-
-  name: string;
-
-  description?: string | null;
-
-  price: number;
-
-  discountPercentage?: number | null;
-
-  discount?: number | null;
-
-  isInStock: boolean;
-
-  stockQuantity: number;
-
-  imageUrl?: string | null;
-
-  brandId?: number | null;
-
-  brand?: Brand | null;
-
-  categoryId?: number | null;
-
-  category?: Category | null;
-
-  subCategories?: SubCategory[];
-}
 
 
 // ============================================================
@@ -196,11 +147,9 @@ export class AddProductComponent implements OnInit {
   readonly imagePreview =
     signal<string | null>(null);
 
+
   /**
    * Currently selected category.
-   *
-   * This is the source of truth for
-   * loading subcategories.
    */
   readonly selectedCategoryId =
     signal<number | null>(null);
@@ -208,10 +157,6 @@ export class AddProductComponent implements OnInit {
 
   /**
    * Currently selected subcategory IDs.
-   *
-   * Kept separately as signal so the UI
-   * does not need to depend directly on
-   * FormGroup changes.
    */
   readonly selectedSubCategoryIds =
     signal<number[]>([]);
@@ -457,16 +402,7 @@ export class AddProductComponent implements OnInit {
             false
           );
 
-          /**
-           * EDIT MODE
-           *
-           * The product data may have arrived
-           * before the categories API.
-           *
-           * Once categories are available,
-           * load the subcategories for the
-           * selected category.
-           */
+
           if (
             this.editingCategoryId
           ) {
@@ -585,20 +521,8 @@ export class AddProductComponent implements OnInit {
           response: SubCategory[] | any
         ) => {
 
-          console.log(
-            'Subcategory API response:',
-            response
-          );
 
 
-          /**
-           * Normally the service should return:
-           *
-           * SubCategory[]
-           *
-           * But this also safely handles
-           * common API wrapper formats.
-           */
           let result: SubCategory[] = [];
 
 
@@ -622,13 +546,10 @@ export class AddProductComponent implements OnInit {
           }
 
 
-          /**
-           * Make sure the returned subcategories
-           * actually belong to this category.
-           *
-           * This also protects the dropdown if
-           * the backend returns unexpected data.
-           */
+          // --------------------------------------------------
+          // FILTER BY CATEGORY
+          // --------------------------------------------------
+
           result =
             result.filter(
               subCategory =>
@@ -636,13 +557,6 @@ export class AddProductComponent implements OnInit {
                   subCategory.categoryId
                 ) === id
             );
-
-
-          console.log(
-            'Filtered subcategories:',
-            result
-          );
-
 
           // --------------------------------------------------
           // SET SIGNAL
@@ -757,13 +671,6 @@ export class AddProductComponent implements OnInit {
 
     const id =
       Number(categoryId);
-
-
-    console.log(
-      'Category changed:',
-      id
-    );
-
 
     // --------------------------------------------------------
     // CLEAR PREVIOUS SUBCATEGORIES
@@ -910,7 +817,7 @@ export class AddProductComponent implements OnInit {
 
     const discount =
       product.discountPercentage ??
-      product.discount ??
+      
       0;
 
 
@@ -963,12 +870,6 @@ export class AddProductComponent implements OnInit {
       );
 
 
-      /**
-       * Load subcategories immediately.
-       *
-       * This is safe because the API is
-       * independent of the categories list.
-       */
       this.loadSubCategories(
         this.editingCategoryId,
         this.editingSubCategoryIds
@@ -1006,13 +907,13 @@ export class AddProductComponent implements OnInit {
     // --------------------------------------------------------
 
     if (
-      product.categoryId !== null &&
-      product.categoryId !== undefined
+      product.category?.id !== null &&
+      product.category?.id !== undefined
     ) {
 
       const id =
         Number(
-          product.categoryId
+          product.category?.id
         );
 
       if (
@@ -1218,6 +1119,10 @@ export class AddProductComponent implements OnInit {
 
   save(): void {
 
+    // --------------------------------------------------------
+    // VALIDATE FORM
+    // --------------------------------------------------------
+
     if (
       this.productForm.invalid
     ) {
@@ -1229,6 +1134,10 @@ export class AddProductComponent implements OnInit {
     }
 
 
+    // --------------------------------------------------------
+    // PREVENT DOUBLE SUBMIT
+    // --------------------------------------------------------
+
     if (
       this.isSubmitting()
     ) {
@@ -1237,15 +1146,278 @@ export class AddProductComponent implements OnInit {
     }
 
 
+    // --------------------------------------------------------
+    // CLEAR PREVIOUS ERROR
+    // --------------------------------------------------------
+
     this.errorMessage.set(null);
 
-    this.isSubmitting.set(true);
 
+    // --------------------------------------------------------
+    // GET FORM VALUE
+    // --------------------------------------------------------
 
     const value =
       this.productForm
         .getRawValue();
 
+
+    const productName =
+      String(
+        value.name ?? ''
+      ).trim();
+
+
+    // --------------------------------------------------------
+    // NAME VALIDATION
+    // --------------------------------------------------------
+
+    if (!productName) {
+
+      this.errorMessage.set(
+        'Product name is required.'
+      );
+
+      return;
+    }
+
+
+    // --------------------------------------------------------
+    // START SUBMITTING
+    // --------------------------------------------------------
+
+    this.isSubmitting.set(true);
+
+
+    // ========================================================
+    // CREATE
+    // ========================================================
+
+    if (
+      !this.data?.isEditing
+    ) {
+
+      /*
+       * IMPORTANT:
+       *
+       * Before creating the product, check the database
+       * to see if another product already has this name.
+       */
+
+      this.productService
+        .checkProductExists(
+          productName
+        )
+        .subscribe({
+
+          // ==================================================
+          // CHECK RESULT
+          // ==================================================
+
+          next: (
+            res: any
+          ) => {
+
+            // ------------------------------------------------
+            // PRODUCT ALREADY EXISTS
+            // ------------------------------------------------
+            if (res.exists) {
+
+              this.errorMessage.set(
+                'Same product already exists.'
+              );
+
+              this.isSubmitting.set(
+                false
+              );
+
+              return;
+            }
+
+
+            // ------------------------------------------------
+            // PRODUCT DOES NOT EXIST
+            // ------------------------------------------------
+
+            this.createProduct(
+              value
+            );
+          },
+
+
+          // ==================================================
+          // CHECK ERROR
+          // ==================================================
+
+          error: (error) => {
+
+            console.error(
+              'Check product exists error:',
+              error
+            );
+
+            this.errorMessage.set(
+              this.getApiErrorMessage(
+                error,
+                'Unable to check if the product already exists.'
+              )
+            );
+
+            this.isSubmitting.set(
+              false
+            );
+          }
+
+        });
+
+      return;
+    }
+
+
+    // ========================================================
+    // UPDATE
+    // ========================================================
+
+    this.updateProduct(
+      value
+    );
+  }
+
+
+  // ==========================================================
+  // CREATE PRODUCT
+  // ==========================================================
+
+  private createProduct(
+    value: any
+  ): void {
+
+    const formData =
+      this.buildFormData(
+        value
+      );
+
+
+    this.productService
+      .createProduct(
+        formData
+      )
+      .subscribe({
+
+        next: () => {
+
+          this.isSubmitting.set(
+            false
+          );
+
+          this.dialogRef.close(
+            true
+          );
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Create product error:',
+            error
+          );
+
+          this.errorMessage.set(
+            this.getApiErrorMessage(
+              error,
+              'Failed to create product.'
+            )
+          );
+
+          this.isSubmitting.set(
+            false
+          );
+        }
+
+      });
+  }
+
+
+  // ==========================================================
+  // UPDATE PRODUCT
+  // ==========================================================
+
+  private updateProduct(
+    value: any
+  ): void {
+
+    const productId =
+      this.data?.product?.id;
+
+
+    if (!productId) {
+
+      this.errorMessage.set(
+        'Product ID is missing.'
+      );
+
+      this.isSubmitting.set(
+        false
+      );
+
+      return;
+    }
+
+
+    const formData =
+      this.buildFormData(
+        value
+      );
+
+
+    this.productService
+      .updateProduct(
+        productId,
+        formData
+      )
+      .subscribe({
+
+        next: () => {
+
+          this.isSubmitting.set(
+            false
+          );
+
+          this.dialogRef.close(
+            true
+          );
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Update product error:',
+            error
+          );
+
+          this.errorMessage.set(
+            this.getApiErrorMessage(
+              error,
+              'Failed to update product.'
+            )
+          );
+
+          this.isSubmitting.set(
+            false
+          );
+        }
+
+      });
+  }
+
+
+  // ==========================================================
+  // BUILD FORM DATA
+  // ==========================================================
+
+  private buildFormData(
+    value: any
+  ): FormData {
 
     const formData =
       new FormData();
@@ -1379,6 +1551,7 @@ export class AddProductComponent implements OnInit {
     const file =
       this.selectedFile();
 
+
     if (file) {
 
       formData.append(
@@ -1388,114 +1561,7 @@ export class AddProductComponent implements OnInit {
     }
 
 
-    // ========================================================
-    // CREATE
-    // ========================================================
-
-    if (
-      !this.data?.isEditing
-    ) {
-
-      this.productService
-        .createProduct(formData)
-        .subscribe({
-
-          next: () => {
-
-            this.isSubmitting.set(
-              false
-            );
-
-            this.dialogRef.close(
-              true
-            );
-          },
-
-          error: (error) => {
-
-            console.error(
-              'Create product error:',
-              error
-            );
-
-            this.errorMessage.set(
-              this.getApiErrorMessage(
-                error,
-                'Failed to create product.'
-              )
-            );
-
-            this.isSubmitting.set(
-              false
-            );
-          }
-
-        });
-
-      return;
-    }
-
-
-    // ========================================================
-    // UPDATE
-    // ========================================================
-
-    const productId =
-      this.data?.product?.id;
-
-
-    if (!productId) {
-
-      this.errorMessage.set(
-        'Product ID is missing.'
-      );
-
-      this.isSubmitting.set(
-        false
-      );
-
-      return;
-    }
-
-
-    this.productService
-      .updateProduct(
-        productId,
-        formData
-      )
-      .subscribe({
-
-        next: () => {
-
-          this.isSubmitting.set(
-            false
-          );
-
-          this.dialogRef.close(
-            true
-          );
-        },
-
-        error: (error) => {
-
-          console.error(
-            'Update product error:',
-            error
-          );
-
-          this.errorMessage.set(
-            this.getApiErrorMessage(
-              error,
-              'Failed to update product.'
-            )
-          );
-
-          this.isSubmitting.set(
-            false
-          );
-        }
-
-      });
+    return formData;
   }
 
 
@@ -1593,4 +1659,5 @@ export class AddProductComponent implements OnInit {
 
     return `${this.api}${imageUrl}`;
   }
+
 }

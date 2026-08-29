@@ -30,14 +30,6 @@ import {
 // CACHE CONFIGURATION
 // ============================================================
 
-/*
- * Requests explicitly marked with this context token
- * can be cached.
- *
- * We will also automatically cache the lookup endpoints
- * below, so your existing services do not need to change.
- */
-
 export const CACHE_REQUEST =
   new HttpContextToken<boolean>(
     () => false
@@ -53,6 +45,7 @@ interface CacheEntry {
   response: any;
 
   expiresAt: number;
+
 }
 
 
@@ -66,15 +59,6 @@ const cache =
 
 // ============================================================
 // ACTIVE REQUESTS
-//
-// Prevents this:
-//
-// Component A -> GET /brands
-// Component B -> GET /brands
-//
-// from creating two HTTP requests.
-//
-// Both components share the same request.
 // ============================================================
 
 const activeRequests =
@@ -82,11 +66,7 @@ const activeRequests =
 
 
 // ============================================================
-// CACHE VERSION SIGNAL
-//
-// This is a signal as requested.
-//
-// It changes whenever cache data is added/removed.
+// CACHE VERSION
 // ============================================================
 
 export const cacheVersion =
@@ -94,16 +74,47 @@ export const cacheVersion =
 
 
 // ============================================================
-// TTL
+// CACHE TTL
 // ============================================================
 
 const CACHE_TTL =
-  30 * 60 * 1000; // 30 minutes
+  30 * 60 * 1000;
+
+
+// ============================================================
+// PUBLIC AUTH REQUEST
+// ============================================================
+
+/*
+ * These endpoints do not require an access token.
+ *
+ * IMPORTANT:
+ *
+ * /refresh must completely bypass the interceptor's
+ * authentication/refresh logic.
+ */
+
+function isPublicAuthRequest(
+  req: HttpRequest<unknown>
+): boolean {
+
+  const url =
+    req.url
+      .toLowerCase()
+      .split('?')[0];
+
+  return (
+    url.endsWith('/users/login') ||
+    url.endsWith('/users/refresh')
+  );
+
+}
 
 
 // ============================================================
 // CACHEABLE REQUEST
 // ============================================================
+
 function isCacheableRequest(
   req: HttpRequest<any>
 ): boolean {
@@ -122,7 +133,21 @@ function isCacheableRequest(
 
 
   /*
-   * Explicitly requested cache.
+   * Public authentication requests
+   * should never be cached.
+   */
+
+  if (
+    isPublicAuthRequest(req)
+  ) {
+
+    return false;
+
+  }
+
+
+  /*
+   * Explicit cache request.
    */
 
   if (
@@ -188,6 +213,7 @@ function isCacheableRequest(
 
 
   return false;
+
 }
 
 
@@ -222,17 +248,6 @@ function getCacheKey(
   req: HttpRequest<any>
 ): string {
 
-  /*
-   * Include the complete URL.
-   *
-   * This is important for:
-   *
-   * /subcategories/1
-   * /subcategories/2
-   *
-   * They must have different cache entries.
-   */
-
   return (
     req.method.toUpperCase() +
     ':' +
@@ -243,7 +258,7 @@ function getCacheKey(
 
 
 // ============================================================
-// CACHEABLE RESOURCE TYPE
+// CACHE RESOURCE
 // ============================================================
 
 function getCacheResource(
@@ -296,95 +311,12 @@ function getCacheResource(
 
 
   return null;
-}
-
-
-// ============================================================
-// CLEAR CACHE
-// ============================================================
-
-function clearCacheForResource(
-  resource:
-    'brands' |
-    'categories' |
-    'subcategories'
-): void {
-
-  const keysToDelete: string[] = [];
-
-
-  for (
-    const key of cache.keys()
-  ) {
-
-    if (
-      keyContainsResource(
-        key,
-        resource
-      )
-    ) {
-
-      keysToDelete.push(
-        key
-      );
-
-    }
-
-  }
-
-
-  for (
-    const key of keysToDelete
-  ) {
-
-    cache.delete(
-      key
-    );
-
-  }
-
-
-  /*
-   * Also remove matching active requests.
-   *
-   * Usually there won't be any mutation while a GET
-   * is running, but this keeps the cache consistent.
-   */
-
-  for (
-    const key of activeRequests.keys()
-  ) {
-
-    if (
-      keyContainsResource(
-        key,
-        resource
-      )
-    ) {
-
-      activeRequests.delete(
-        key
-      );
-
-    }
-
-  }
-
-
-  cacheVersion.update(
-    value => value + 1
-  );
-
-
-  console.log(
-    `Cache cleared: ${resource}`
-  );
 
 }
 
 
 // ============================================================
-// CHECK CACHE KEY RESOURCE
+// CHECK CACHE RESOURCE
 // ============================================================
 
 function keyContainsResource(
@@ -433,11 +365,96 @@ function keyContainsResource(
 
 
   return false;
+
 }
 
 
 // ============================================================
-// INVALIDATE AFTER MUTATION
+// CLEAR CACHE FOR RESOURCE
+// ============================================================
+
+function clearCacheForResource(
+  resource:
+    'brands' |
+    'categories' |
+    'subcategories'
+): void {
+
+  const keysToDelete: string[] = [];
+
+
+  // ==========================================================
+  // REMOVE CACHE
+  // ==========================================================
+
+  for (
+    const key of cache.keys()
+  ) {
+
+    if (
+      keyContainsResource(
+        key,
+        resource
+      )
+    ) {
+
+      keysToDelete.push(
+        key
+      );
+
+    }
+
+  }
+
+
+  for (
+    const key of keysToDelete
+  ) {
+
+    cache.delete(
+      key
+    );
+
+  }
+
+
+  // ==========================================================
+  // REMOVE ACTIVE REQUESTS
+  // ==========================================================
+
+  for (
+    const key of activeRequests.keys()
+  ) {
+
+    if (
+      keyContainsResource(
+        key,
+        resource
+      )
+    ) {
+
+      activeRequests.delete(
+        key
+      );
+
+    }
+
+  }
+
+
+  // ==========================================================
+  // UPDATE SIGNAL
+  // ==========================================================
+
+  cacheVersion.update(
+    value => value + 1
+  );
+
+}
+
+
+// ============================================================
+// INVALIDATE CACHE AFTER MUTATION
 // ============================================================
 
 function invalidateCache(
@@ -450,7 +467,7 @@ function invalidateCache(
 
 
   // ==========================================================
-  // BRAND CREATE / UPDATE / DELETE
+  // BRANDS
   // ==========================================================
 
   if (
@@ -470,7 +487,7 @@ function invalidateCache(
 
 
   // ==========================================================
-  // SUBCATEGORY
+  // SUBCATEGORIES
   // ==========================================================
 
   if (
@@ -484,14 +501,6 @@ function invalidateCache(
       'subcategories'
     );
 
-    /*
-     * Subcategory changes can affect category
-     * menu data if your API returns subcategories
-     * inside categories.
-     *
-     * Therefore clear categories too.
-     */
-
     clearCacheForResource(
       'categories'
     );
@@ -502,7 +511,7 @@ function invalidateCache(
 
 
   // ==========================================================
-  // CATEGORY
+  // CATEGORIES
   // ==========================================================
 
   if (
@@ -515,10 +524,6 @@ function invalidateCache(
     clearCacheForResource(
       'categories'
     );
-
-    /*
-     * Category changes can affect subcategories.
-     */
 
     clearCacheForResource(
       'subcategories'
@@ -549,15 +554,37 @@ export const authInterceptor: HttpInterceptorFn = (
 
 
   // ==========================================================
-  // CHECK REFRESH REQUEST
+  // PUBLIC AUTH REQUEST
   // ==========================================================
 
-  const isRefreshRequest =
-    req.url
-      .toLowerCase()
-      .includes(
-        '/users/refresh'
-      );
+  const publicAuthRequest =
+    isPublicAuthRequest(req);
+
+
+  /*
+   * IMPORTANT
+   *
+   * Login and refresh must completely bypass
+   * access-token handling.
+   *
+   * Especially /refresh:
+   *
+   * POST /users/refresh
+   *
+   * must NOT:
+   *
+   * - receive Authorization header
+   * - use cache
+   * - trigger another refresh if it returns 401
+   */
+
+  if (
+    publicAuthRequest
+  ) {
+
+    return next(req);
+
+  }
 
 
   // ==========================================================
@@ -569,21 +596,15 @@ export const authInterceptor: HttpInterceptorFn = (
 
 
   // ==========================================================
-  // ADD TOKEN
+  // ADD ACCESS TOKEN
   // ==========================================================
 
   let request =
     req;
 
 
-  /*
-   * Never attach the old access token to
-   * the refresh request.
-   */
-
   if (
-    token &&
-    !isRefreshRequest
+    token
   ) {
 
     request =
@@ -631,7 +652,7 @@ export const authInterceptor: HttpInterceptorFn = (
 
 
     // ========================================================
-    // CHECK EXISTING CACHE
+    // CACHE HIT
     // ========================================================
 
     const cached =
@@ -645,14 +666,7 @@ export const authInterceptor: HttpInterceptorFn = (
       Date.now() <
       cached.expiresAt
     ) {
-
-      console.log(
-        'CACHE HIT:',
-        request.urlWithParams
-      );
-
-
-      return of(
+ return of(
         cached.response
       );
 
@@ -663,7 +677,9 @@ export const authInterceptor: HttpInterceptorFn = (
     // REMOVE EXPIRED CACHE
     // ========================================================
 
-    if (cached) {
+    if (
+      cached
+    ) {
 
       cache.delete(
         cacheKey
@@ -673,7 +689,7 @@ export const authInterceptor: HttpInterceptorFn = (
 
 
     // ========================================================
-    // CHECK ACTIVE REQUEST
+    // ACTIVE REQUEST
     // ========================================================
 
     const activeRequest =
@@ -685,14 +701,7 @@ export const authInterceptor: HttpInterceptorFn = (
     if (
       activeRequest
     ) {
-
-      console.log(
-        'CACHE REQUEST REUSED:',
-        request.urlWithParams
-      );
-
-
-      return activeRequest;
+return activeRequest;
 
     }
 
@@ -704,15 +713,12 @@ export const authInterceptor: HttpInterceptorFn = (
     const request$ =
       next(request).pipe(
 
+        // ====================================================
+        // CACHE RESPONSE
+        // ====================================================
+
         tap(
           response => {
-
-            /*
-             * Cache the complete HttpResponse.
-             *
-             * This allows HttpClient subscribers to receive
-             * the same response structure as a normal request.
-             */
 
             cache.set(
               cacheKey,
@@ -731,14 +737,7 @@ export const authInterceptor: HttpInterceptorFn = (
             cacheVersion.update(
               value => value + 1
             );
-
-
-            console.log(
-              'CACHE SET:',
-              request.urlWithParams
-            );
-
-          }
+}
         ),
 
 
@@ -791,18 +790,16 @@ export const authInterceptor: HttpInterceptorFn = (
 
   return next(request).pipe(
 
+    // ========================================================
+    // HANDLE RESPONSE
+    // ========================================================
+
     tap({
 
       next: () => {
 
         /*
-         * If this was:
-         *
-         * POST /brands
-         * PUT /brands/5
-         * DELETE /brands/5
-         *
-         * clear the appropriate cache.
+         * Invalidate cache after successful mutation.
          */
 
         if (
@@ -819,6 +816,10 @@ export const authInterceptor: HttpInterceptorFn = (
 
     }),
 
+
+    // ========================================================
+    // HANDLE ERRORS
+    // ========================================================
 
     catchError(
       (
@@ -848,30 +849,16 @@ export const authInterceptor: HttpInterceptorFn = (
 
 
         // ====================================================
-        // REFRESH REQUEST FAILED
-        // ====================================================
-
-        if (
-          isRefreshRequest
-        ) {
-
-          authService.logout();
-
-
-          return throwError(
-            () => error
-          );
-
-        }
-
-
-        // ====================================================
-        // NO REFRESH TOKEN
+        // GET REFRESH TOKEN
         // ====================================================
 
         const refreshToken =
           authService.getRefreshToken();
 
+
+        // ====================================================
+        // NO REFRESH TOKEN
+        // ====================================================
 
         if (
           !refreshToken
@@ -908,8 +895,8 @@ export const authInterceptor: HttpInterceptorFn = (
               () => {
 
                 /*
-                 * AuthService already saved
-                 * the new token.
+                 * AuthService has already saved
+                 * the new access token.
                  */
 
                 const newToken =
@@ -935,13 +922,6 @@ export const authInterceptor: HttpInterceptorFn = (
                   );
 
                 }
-
-
-                console.log(
-                  'Retrying request with new access token:',
-                  request.url
-                );
-
 
                 // ==============================================
                 // RETRY ORIGINAL REQUEST
@@ -980,6 +960,11 @@ export const authInterceptor: HttpInterceptorFn = (
                   refreshError
                 );
 
+
+                /*
+                 * AuthService.refreshToken()
+                 * already calls logout() when refresh fails.
+                 */
 
                 return throwError(
                   () =>

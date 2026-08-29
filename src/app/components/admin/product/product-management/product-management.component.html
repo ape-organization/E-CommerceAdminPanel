@@ -431,15 +431,23 @@
       </table>
 
 
-      <!-- PAGINATION -->
-      <mat-paginator
-        [length]="filteredProducts().length"
-        [pageSize]="pageSize()"
-        [pageIndex]="pageIndex()"
-        [pageSizeOptions]="[5, 10, 25, 50]"
-        (page)="onPageChange($event)"
-        showFirstLastButtons>
-      </mat-paginator>
+     
+<!-- ===================================================== -->
+<!-- PAGINATION -->
+<!-- ===================================================== -->
+<mat-paginator
+  [length]="
+    isSearchMode()
+      ? filteredProducts().length
+      : totalCount()
+  "
+  [pageSize]="pageSize()"
+  [pageIndex]="pageIndex()"
+  [pageSizeOptions]="[10, 25, 50, 100]"
+  showFirstLastButtons
+  (page)="onPageChange($event)">
+</mat-paginator>
+
 
     </div>
 

@@ -1,4 +1,5 @@
 import { Brand } from "./Brand.model";
+import { Category } from "./category.model";
 
 export interface SubCategoryResponse {
   id: number;
@@ -18,6 +19,7 @@ id: number;
   imageUrl?: string | null;
   brandId?: number | null;
   brand?: Brand | null;
+  category?:Category|null;
   subCategories: SubCategoryResponse[];
 }
 

@@ -17,6 +17,8 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { OrderService } from '../../services/order.service';
 import { Order, OrderItem } from '../../models/order.model';
 import { environment } from '../../../environments/environment';
+import { ConfirmDeleteComponent } from '../../shared/confirm-delete/confirm-delete.component';
+import { MatDialog } from '@angular/material/dialog';
 
 
 // ============================================================
@@ -65,7 +67,7 @@ export class Orders implements OnInit {
 
   private readonly orderService =
     inject(OrderService);
-
+private readonly dialog=inject(MatDialog);
 
   // ==========================================================
   // SIGNAL STATE
@@ -401,18 +403,19 @@ export class Orders implements OnInit {
 
     }
 
+  this.dialog
+      .open(ConfirmDeleteComponent, {
+        data: `Are you sure you want to cancel Order #${order.id}?`
+      })
+      .afterClosed()
+      .subscribe(result => {
+   
+        if (!result?.status) {
+          return;
+        }
+ 
 
-    const confirmed =
-      confirm(
-        `Are you sure you want to cancel Order #${order.id}?`
-      );
-
-
-    if (!confirmed) {
-
-      return;
-
-    }
+    
 
 
     this.orderService
@@ -458,7 +461,7 @@ export class Orders implements OnInit {
         }
 
       });
-
+    })
   }
 
 

@@ -648,68 +648,6 @@
                       </div>
 
 
-                      <!-- STATUS -->
-
-                      <div class="status-control">
-
-                        <label>
-                          Change Status
-                        </label>
-
-
-                        <mat-select
-                          [value]="order.status"
-                          (selectionChange)="
-                            updateStatus(
-                              order,
-                              $event.value
-                            )
-                          ">
-
-
-                          <mat-option
-                            value="Pending">
-
-                            Pending
-
-                          </mat-option>
-
-
-                          <mat-option
-                            value="Processing">
-
-                            Processing
-
-                          </mat-option>
-
-
-                          <mat-option
-                            value="Completed">
-
-                            Completed
-
-                          </mat-option>
-
-
-                          <mat-option
-                            value="Delivered">
-
-                            Delivered
-
-                          </mat-option>
-
-
-                          <mat-option
-                            value="Cancelled">
-
-                            Cancelled
-
-                          </mat-option>
-
-
-                        </mat-select>
-
-                      </div>
 
 
                       <!-- CANCEL -->
