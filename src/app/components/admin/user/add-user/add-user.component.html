@@ -125,7 +125,7 @@
               {{ hidePassword ? 'visibility_off' : 'visibility' }}
             </mat-icon>
           </button>
-
+ 
           <mat-error *ngIf="userForm.get('password')?.hasError('required')"class="error">
             Password is required
           </mat-error>
@@ -134,7 +134,9 @@
             Password must be at least 6 characters
           </mat-error>
         </mat-form-field>
-
+ <p class="pass">
+            Min. 8 characters, including a letter, number, and special character.
+  </p>
       </div>
 
 
