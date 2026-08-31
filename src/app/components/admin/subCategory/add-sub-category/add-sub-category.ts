@@ -28,6 +28,7 @@ import { MatSelectModule } from '@angular/material/select';
 
 import { Category } from '../../../../models/category.model';
 import { SubCategory } from '../../../../models/subCategory.model';
+import { TranslatePipe } from '@ngx-translate/core';
 
 
 // ============================================================
@@ -55,6 +56,7 @@ export interface AddSubCategoryDialogData {
   standalone: true,
 
   imports: [
+    TranslatePipe,
     CommonModule,
     ReactiveFormsModule,
 

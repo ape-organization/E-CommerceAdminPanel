@@ -45,6 +45,7 @@ import {
 import {
   BrandService
 } from '../../../../services/brand.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 
 @Component({
@@ -53,6 +54,7 @@ import {
   standalone: true,
 
   imports: [
+    TranslatePipe,
     CommonModule,
     ReactiveFormsModule,
     MatButtonModule,

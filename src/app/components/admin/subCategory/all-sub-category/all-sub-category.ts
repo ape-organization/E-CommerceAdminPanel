@@ -22,6 +22,7 @@ import { ConfirmDeleteComponent } from '../../../../shared/confirm-delete/confir
 
 import { Category } from '../../../../models/category.model';
 import { SubCategory } from '../../../../models/subCategory.model';
+import { TranslatePipe } from '@ngx-translate/core';
 
 
 @Component({
@@ -33,7 +34,8 @@ import { SubCategory } from '../../../../models/subCategory.model';
     MatIconModule,
     MatButtonModule,
     MatTooltipModule,
-    MatTableModule
+    MatTableModule,
+    TranslatePipe
   ],
 
   templateUrl: './all-sub-category.html',

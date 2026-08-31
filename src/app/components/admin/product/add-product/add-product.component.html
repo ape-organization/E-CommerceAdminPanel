@@ -16,18 +16,22 @@
       <div class="header-text">
 
         <span class="header-eyebrow">
-          PRODUCT MANAGEMENT
+          {{ 'products.managementTitle' | translate }}
         </span>
 
         <h2>
-          {{ isEditing() ? 'Edit Product' : 'Add New Product' }}
+          {{
+            isEditing()
+              ? ('products.editProduct' | translate)
+              : ('products.addNewProduct' | translate)
+          }}
         </h2>
 
         <p>
           {{
             isEditing()
-              ? 'Update your product information'
-              : 'Create a new product for your cosmetics store'
+              ? ('products.updateProductInformation' | translate)
+              : ('products.createNewProduct' | translate)
           }}
         </p>
 
@@ -40,7 +44,7 @@
       type="button"
       [disabled]="isSubmitting()"
       (click)="cancel()"
-      aria-label="Close dialog">
+      [attr.aria-label]="'common.closeDialog' | translate">
 
       <mat-icon>
         close
@@ -74,7 +78,7 @@
 
           <img
             [src]="imagePreview()"
-            alt="Product image"
+            [attr.alt]="'products.productImage' | translate"
             class="preview-image"
           />
 
@@ -85,7 +89,7 @@
             </mat-icon>
 
             <span>
-              Change Image
+              {{ 'products.changeImage' | translate }}
             </span>
 
           </div>
@@ -99,11 +103,11 @@
             </mat-icon>
 
             <span>
-              Upload Image
+              {{ 'products.uploadImage' | translate }}
             </span>
 
             <small>
-              JPG, PNG or WEBP
+              {{ 'products.supportedImageFormats' | translate }}
             </small>
 
           </div>
@@ -125,15 +129,15 @@
       <div class="image-info">
 
         <strong>
-          Product Image
+          {{ 'products.productImage' | translate }}
         </strong>
 
         <span>
-          Add a clear image of your product.
+          {{ 'products.imageDescription' | translate }}
         </span>
 
         <small>
-          Maximum size: 5 MB
+          {{ 'products.maximumImageSize' | translate }}
         </small>
 
       </div>
@@ -156,11 +160,11 @@
       <div>
 
         <h3>
-          Basic Information
+          {{ 'products.basicInformation' | translate }}
         </h3>
 
         <p>
-          Enter the main product details
+          {{ 'products.enterMainProductDetails' | translate }}
         </p>
 
       </div>
@@ -186,7 +190,7 @@
         <input
           matInput
           formControlName="name"
-          placeholder="e.g. Vitamin C Serum"
+          [placeholder]="'products.productNamePlaceholder' | translate"
         />
 
         @if (
@@ -194,7 +198,7 @@
         ) {
 
           <mat-error>
-            Product name is required.
+            {{ 'products.productNameRequired' | translate }}
           </mat-error>
 
         }
@@ -204,7 +208,7 @@
         ) {
 
           <mat-error>
-            Product name is too long.
+            {{ 'products.productNameTooLong' | translate }}
           </mat-error>
 
         }
@@ -223,7 +227,7 @@
           matPrefix
           class="currency-prefix">
 
-          EGP
+          {{ 'common.egp' | translate }}
 
         </span>
 
@@ -241,7 +245,7 @@
         ) {
 
           <mat-error>
-            Price is required.
+            {{ 'products.priceRequired' | translate }}
           </mat-error>
 
         }
@@ -251,7 +255,7 @@
         ) {
 
           <mat-error>
-            Price cannot be negative.
+            {{ 'products.priceCannotBeNegative' | translate }}
           </mat-error>
 
         }
@@ -287,7 +291,7 @@
         ) {
 
           <mat-error>
-            Discount cannot be negative.
+            {{ 'products.discountCannotBeNegative' | translate }}
           </mat-error>
 
         }
@@ -299,7 +303,7 @@
         ) {
 
           <mat-error>
-            Discount cannot exceed 100%.
+            {{ 'products.discountCannotExceed' | translate }}
           </mat-error>
 
         }
@@ -315,7 +319,7 @@
         appearance="outline">
 
         <mat-label>
-          Stock Quantity
+          {{ 'products.stockQuantity' | translate }}
         </mat-label>
 
         <mat-icon matPrefix>
@@ -338,7 +342,7 @@
         ) {
 
           <mat-error>
-            Stock quantity is required.
+            {{ 'products.stockQuantityRequired' | translate }}
           </mat-error>
 
         }
@@ -350,7 +354,7 @@
         ) {
 
           <mat-error>
-            Stock cannot be negative.
+            {{ 'products.stockCannotBeNegative' | translate }}
           </mat-error>
 
         }
@@ -380,14 +384,14 @@
           <div class="discount-preview-content">
 
             <span class="discount-preview-label">
-              DISCOUNTED PRICE
+              {{ 'products.discountedPrice' | translate }}
             </span>
 
             <div class="discount-prices">
 
               <span class="old-price">
 
-                EGP
+                {{ 'common.egp' | translate }}
                 {{
                   productForm.get('price')?.value
                     | number:'1.2-2'
@@ -397,7 +401,7 @@
 
               <span class="new-price">
 
-                EGP
+                {{ 'common.egp' | translate }}
                 {{
                   discountedPrice()
                     | number:'1.2-2'
@@ -420,83 +424,77 @@
     <!-- STOCK STATUS -->
     <!-- =================================================== -->
 
-  <!-- =================================================== -->
-<!-- STOCK STATUS -->
-<!-- =================================================== -->
+    <div class="stock-section">
 
-<div class="stock-section">
+      <div
+        class="stock-status-card"
+        [class.out-of-stock]="
+          !productForm.get('isInStock')?.value
+        ">
 
-  <div
-    class="stock-status-card"
-    [class.out-of-stock]="
-      !productForm.get('isInStock')?.value
-    ">
+        <div class="stock-status-info">
 
-    <div class="stock-status-info">
+          <div class="stock-status-icon">
 
-      <div class="stock-status-icon">
+            <mat-icon>
+              {{
+                productForm.get('isInStock')?.value
+                  ? 'check_circle'
+                  : 'cancel'
+              }}
+            </mat-icon>
 
-        <mat-icon>
-          {{
-            productForm.get('isInStock')?.value
-              ? 'check_circle'
-              : 'cancel'
-          }}
-        </mat-icon>
+          </div>
 
-      </div>
+          <div class="stock-status-text">
 
-      <div class="stock-status-text">
+            <strong>
+              {{
+                productForm.get('isInStock')?.value
+                  ? ('products.inStock' | translate)
+                  : ('products.outOfStock' | translate)
+              }}
+            </strong>
 
-        <strong>
-          {{
-            productForm.get('isInStock')?.value
-              ? 'In Stock'
-              : 'Out of Stock'
-          }}
-        </strong>
+            <span>
+              {{
+                productForm.get('isInStock')?.value
+                  ? ('products.productAvailable' | translate)
+                  : ('products.productUnavailable' | translate)
+              }}
+            </span>
 
-        <span>
-          {{
-            productForm.get('isInStock')?.value
-              ? 'Product is available for customers'
-              : 'Product is currently unavailable'
-          }}
-        </span>
+          </div>
+
+        </div>
+
+
+        <!-- =============================================== -->
+        <!-- RADIO BUTTONS -->
+        <!-- =============================================== -->
+
+        <mat-radio-group
+          formControlName="isInStock"
+          class="stock-radio-group"
+          [attr.aria-label]="'products.stockStatus' | translate">
+
+          <mat-radio-button [value]="true">
+
+            {{ 'products.inStock' | translate }}
+
+          </mat-radio-button>
+
+          <mat-radio-button [value]="false">
+
+            {{ 'products.outOfStock' | translate }}
+
+          </mat-radio-button>
+
+        </mat-radio-group>
 
       </div>
 
     </div>
-
-
-    <!-- =============================================== -->
-    <!-- RADIO BUTTONS -->
-    <!-- =============================================== -->
-
-    <mat-radio-group
-      formControlName="isInStock"
-      class="stock-radio-group"
-      aria-label="Product stock status">
-
-      <mat-radio-button
-        [value]="true" >
-
-        In Stock
-
-      </mat-radio-button>
-
-      <mat-radio-button
-        [value]="false">
-
-        Out of Stock
-
-      </mat-radio-button>
-
-    </mat-radio-group>
-
-  </div>
-
-</div>
 
 
     <!-- =================================================== -->
@@ -516,11 +514,11 @@
       <div>
 
         <h3>
-          Product Classification
+          {{ 'products.productClassification' | translate }}
         </h3>
 
         <p>
-          Select the brand, category and subcategories
+          {{ 'products.selectClassification' | translate }}
         </p>
 
       </div>
@@ -540,7 +538,7 @@
         class="full-width">
 
         <mat-label>
-          Brand
+          {{ 'products.brand' | translate }}
         </mat-label>
 
         <mat-select
@@ -549,7 +547,7 @@
           @if (isLoadingBrands()) {
 
             <mat-option disabled>
-              Loading brands...
+              {{ 'products.loadingBrands' | translate }}
             </mat-option>
 
           } @else {
@@ -573,7 +571,7 @@
             ) {
 
               <mat-option disabled>
-                No brands available.
+                {{ 'products.noBrandsAvailable' | translate }}
               </mat-option>
 
             }
@@ -589,7 +587,7 @@
         ) {
 
           <mat-error>
-            Please select a brand.
+            {{ 'products.selectBrand' | translate }}
           </mat-error>
 
         }
@@ -606,7 +604,7 @@
         class="full-width">
 
         <mat-label>
-          Category
+          {{ 'products.category' | translate }}
         </mat-label>
 
         <mat-select
@@ -618,7 +616,7 @@
           @if (isLoadingCategories()) {
 
             <mat-option disabled>
-              Loading categories...
+              {{ 'products.loadingCategories' | translate }}
             </mat-option>
 
           } @else {
@@ -642,7 +640,7 @@
             ) {
 
               <mat-option disabled>
-                No categories available.
+                {{ 'products.noCategoriesAvailable' | translate }}
               </mat-option>
 
             }
@@ -658,7 +656,7 @@
         ) {
 
           <mat-error>
-            Please select a category.
+            {{ 'products.selectCategory' | translate }}
           </mat-error>
 
         }
@@ -675,7 +673,7 @@
         class="full-width">
 
         <mat-label>
-          Subcategories
+          {{ 'products.subcategories' | translate }}
         </mat-label>
 
         <mat-select
@@ -700,8 +698,8 @@
 
             {{
               selectedSubCategoryCount() === 1
-                ? 'subcategory'
-                : 'subcategories'
+                ? ('products.subcategory' | translate)
+                : ('products.subcategories' | translate)
             }}
 
           </mat-select-trigger>
@@ -721,7 +719,7 @@
                 sync
               </mat-icon>
 
-              Loading subcategories...
+              {{ 'products.loadingSubcategories' | translate }}
 
             </mat-option>
 
@@ -757,7 +755,7 @@
             ) {
 
               <mat-option disabled>
-                No subcategories available.
+                {{ 'products.noSubcategoriesAvailable' | translate }}
               </mat-option>
 
             }
@@ -776,7 +774,7 @@
         ) {
 
           <mat-hint>
-            Select a category first.
+            {{ 'products.selectCategoryFirst' | translate }}
           </mat-hint>
 
         }
@@ -791,7 +789,7 @@
         ) {
 
           <mat-hint>
-            Loading subcategories...
+            {{ 'products.loadingSubcategories' | translate }}
           </mat-hint>
 
         }
@@ -808,7 +806,7 @@
         ) {
 
           <mat-hint>
-            You can select multiple subcategories.
+            {{ 'products.multipleSubcategoriesHint' | translate }}
           </mat-hint>
 
         }
@@ -828,7 +826,7 @@
         ) {
 
           <mat-error>
-            Select at least one subcategory.
+            {{ 'products.subcategoryRequired' | translate }}
           </mat-error>
 
         }
@@ -847,7 +845,7 @@
         <div class="selected-subcategories">
 
           <span class="selected-label">
-            SELECTED SUBCATEGORIES
+            {{ 'products.selectedSubcategories' | translate }}
           </span>
 
           <div class="selected-list">
@@ -895,11 +893,11 @@
       <div>
 
         <h3>
-          Description
+          {{ 'products.description' | translate }}
         </h3>
 
         <p>
-          Add information about your product
+          {{ 'products.addProductInformation' | translate }}
         </p>
 
       </div>
@@ -919,7 +917,7 @@
         matInput
         rows="4"
         formControlName="description"
-        placeholder="Describe the product, benefits, usage instructions..."
+        [placeholder]="'products.descriptionPlaceholder' | translate"
       ></textarea>
 
     </mat-form-field>
@@ -947,7 +945,7 @@
           type="button"
           class="error-close"
           (click)="errorMessage.set(null)"
-          aria-label="Dismiss error">
+          [attr.aria-label]="'common.dismissError' | translate">
 
           <mat-icon>
             close
@@ -973,51 +971,51 @@
         [disabled]="isSubmitting()"
         (click)="cancel()">
 
-        Cancel
+        {{ 'common.cancel' | translate }}
 
       </button>
 
 
-    <button
-  mat-raised-button
-  type="submit"
-  class="save-button"
-  [disabled]="
-    productForm.invalid ||
-    isSubmitting()
-  ">
+      <button
+        mat-raised-button
+        type="submit"
+        class="save-button"
+        [disabled]="
+          productForm.invalid ||
+          isSubmitting()
+        ">
 
-  @if (isSubmitting()) {
+        @if (isSubmitting()) {
 
-    <mat-spinner
-      diameter="18">
-    </mat-spinner>
+          <mat-spinner
+            diameter="18">
+          </mat-spinner>
 
-    <span>
-      Saving...
-    </span>
+          <span>
+            {{ 'common.saving' | translate }}
+          </span>
 
-  } @else {
+        } @else {
 
-    <ng-container>
+          <ng-container>
 
-      <mat-icon>
-        {{ isEditing() ? 'save' : 'add' }}
-      </mat-icon>
+            <mat-icon>
+              {{ isEditing() ? 'save' : 'add' }}
+            </mat-icon>
 
-      <span>
-        {{
-          isEditing()
-            ? 'Save Changes'
-            : 'Add Product'
-        }}
-      </span>
+            <span>
+              {{
+                isEditing()
+                  ? ('products.saveChanges' | translate)
+                  : ('products.addProduct' | translate)
+              }}
+            </span>
 
-    </ng-container>
+          </ng-container>
 
-  }
+        }
 
-</button>
+      </button>
 
     </div>
 

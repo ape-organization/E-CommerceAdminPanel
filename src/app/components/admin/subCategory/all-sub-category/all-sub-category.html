@@ -1,3 +1,4 @@
+
 <div class="management-container">
 
   <!-- =====================================================
@@ -19,11 +20,11 @@
       <div>
 
         <h2>
-          Subcategory Management
+          {{ 'subCategories.management' | translate }}
         </h2>
 
         <p>
-          Manage your store subcategories
+          {{ 'subCategories.description' | translate }}
         </p>
 
       </div>
@@ -44,7 +45,7 @@
         add
       </mat-icon>
 
-      Add Subcategory
+      {{ 'subCategories.addSubcategory' | translate }}
 
     </button>
 
@@ -74,7 +75,7 @@
           *matHeaderCellDef
         >
 
-          Subcategory
+          {{ 'subCategories.subcategory' | translate }}
 
         </th>
 
@@ -120,7 +121,7 @@
           *matHeaderCellDef
         >
 
-          Category
+          {{ 'subCategories.category' | translate }}
 
         </th>
 
@@ -150,8 +151,6 @@
       </ng-container>
 
 
-
-
       <!-- =================================================
            ACTIONS
            ================================================= -->
@@ -164,7 +163,7 @@
           class="actions-header"
         >
 
-          Actions
+          {{ 'common.actions' | translate }}
 
         </th>
 
@@ -182,6 +181,8 @@
             class="edit-btn"
             type="button"
             (click)="editSubcategory(subcategory)"
+            [matTooltip]="'common.edit' | translate"
+            [attr.aria-label]="'common.edit' | translate"
           >
 
             <mat-icon>
@@ -198,6 +199,8 @@
             class="delete-btn"
             type="button"
             (click)="deleteSubcategory(subcategory.id)"
+            [matTooltip]="'common.delete' | translate"
+            [attr.aria-label]="'common.delete' | translate"
           >
 
             <mat-icon>

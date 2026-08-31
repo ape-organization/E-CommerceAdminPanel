@@ -1,3 +1,4 @@
+
 <div class="modal-overlay">
 
   <div class="modal-container">
@@ -23,16 +24,16 @@
           <h2>
             {{
               data.add
-                ? 'Add New Brand'
-                : 'Edit Brand'
+                ? ('brands.addNewBrand' | translate)
+                : ('brands.editBrand' | translate)
             }}
           </h2>
 
           <p>
             {{
               data.add
-                ? 'Create a new cosmetic brand'
-                : 'Update brand information'
+                ? ('brands.createDescription' | translate)
+                : ('brands.updateDescription' | translate)
             }}
           </p>
 
@@ -46,7 +47,7 @@
         type="button"
         class="close-button"
         (click)="onCancel()"
-        aria-label="Close"
+        [attr.aria-label]="'common.close' | translate"
       >
 
         <mat-icon>
@@ -88,7 +89,7 @@
               [src]="imagePreview()"
               [alt]="
                 brandForm.get('name')?.value ||
-                'Brand image'
+                ('brands.brandImage' | translate)
               "
               class="brand-image-preview"
             />
@@ -106,7 +107,7 @@
               </mat-icon>
 
               <span>
-                Choose Image
+                {{ 'brands.chooseImage' | translate }}
               </span>
 
             </div>
@@ -121,7 +122,7 @@
               </mat-icon>
 
               <span>
-                Change Image
+                {{ 'brands.changeImage' | translate }}
               </span>
 
             </div>
@@ -148,8 +149,6 @@
 
         <mat-form-field appearance="outline">
 
-          
-
           <mat-icon matPrefix class="icon">
             verified
           </mat-icon>
@@ -157,12 +156,12 @@
           <input
             matInput
             formControlName="name"
-            placeholder="Enter brand name"
+            [placeholder]="'brands.enterBrandName' | translate"
           />
 
 
           <mat-error
-           class="error"
+            class="error"
             *ngIf="
               brandForm
                 .get('name')
@@ -170,7 +169,7 @@
             "
           >
 
-            Brand name is required
+            {{ 'brands.brandNameRequired' | translate }}
 
           </mat-error>
 
@@ -212,7 +211,7 @@
           (click)="onCancel()"
         >
 
-          CANCEL
+          {{ 'common.cancel' | translate }}
 
         </button>
 
@@ -240,11 +239,11 @@
 
           {{
             isSubmitting()
-              ? 'SAVING...'
+              ? ('common.saving' | translate)
               : (
                   data.add
-                    ? 'CREATE BRAND'
-                    : 'UPDATE BRAND'
+                    ? ('brands.createBrand' | translate)
+                    : ('brands.updateBrand' | translate)
                 )
           }}
 

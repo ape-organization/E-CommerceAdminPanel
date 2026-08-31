@@ -1,22 +1,18 @@
 
-
- <div class="dashboard">
-
+<div class="dashboard">
 
   <div class="dashboard-header">
 
     <div>
       <span class="eyebrow">
-        ADMIN DASHBOARD
+        {{ 'dashboard.adminDashboard' | translate }}
       </span>
 
       <h1>
-        Sales Overview
+        {{ 'dashboard.salesOverview' | translate }}
       </h1>
 
-      <p>
-        Track your store sales and revenue distribution.
-      </p>
+    
     </div>
 
     <div class="header-icon">
@@ -26,7 +22,6 @@
     </div>
 
   </div>
-
 
 
   <div
@@ -44,9 +39,7 @@
   </div>
 
 
-
   <div class="stats-grid">
-
 
 
     <div class="stat-card">
@@ -60,7 +53,7 @@
       <div class="stat-content">
 
         <span class="label">
-          TOTAL SALES
+          {{ 'dashboard.totalSales' | translate }}
         </span>
 
         <strong>
@@ -68,13 +61,12 @@
         </strong>
 
         <span class="description">
-          Active orders
+          {{ 'dashboard.activeOrders' | translate }}
         </span>
 
       </div>
 
     </div>
-
 
 
     <div class="stat-card">
@@ -88,25 +80,24 @@
       <div class="stat-content">
 
         <span class="label">
-          TOTAL REVENUE
+          {{ 'dashboard.totalRevenue' | translate }}
         </span>
 
         <strong>
           {{ totalRevenue() | number:'1.2-2' }}
 
           <small>
-            EGP
+            {{ 'common.egp' | translate }}
           </small>
         </strong>
 
         <span class="description">
-          Revenue from sales
+          {{ 'dashboard.revenueFromSales' | translate }}
         </span>
 
       </div>
 
     </div>
-
 
 
     <div class="stat-card">
@@ -120,20 +111,18 @@
       <div class="stat-content">
 
         <span class="label">
-          PARTNER SHARE
+          {{ 'dashboard.partnerShare' | translate }}
         </span>
 
         <strong>
           {{ partnerShare() | number:'1.2-2' }}
 
           <small>
-            EGP
+            {{ 'common.egp' | translate }}
           </small>
         </strong>
 
-        <span class="description">
-          30% of total revenue
-        </span>
+     
 
       </div>
 
@@ -142,7 +131,6 @@
       </span>
 
     </div>
-
 
 
     <div class="stat-card">
@@ -156,20 +144,18 @@
       <div class="stat-content">
 
         <span class="label">
-          YOUR SHARE
+          {{ 'dashboard.yourShare' | translate }}
         </span>
 
         <strong>
           {{ yourShare() | number:'1.2-2' }}
 
           <small>
-            EGP
+            {{ 'common.egp' | translate }}
           </small>
         </strong>
 
-        <span class="description">
-          70% of total revenue
-        </span>
+      
 
       </div>
 
@@ -182,4 +168,4 @@
 
   </div>
 
-</div> 
+</div>

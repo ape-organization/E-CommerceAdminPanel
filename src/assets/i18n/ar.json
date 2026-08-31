@@ -1,0 +1,301 @@
+
+{
+  "common": {
+    "cosmetics": "مستحضرات التجميل",
+    "login": "تسجيل الدخول",
+    "logout": "تسجيل الخروج",
+    "admin": "الإدارة",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "saving": "جاري الحفظ...",
+    "create": "إنشاء",
+    "update": "تحديث",
+    "add": "إضافة",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "refresh": "تحديث",
+    "tryAgain": "حاول مرة أخرى",
+    "name": "الاسم",
+    "phone": "الهاتف",
+    "email": "البريد الإلكتروني",
+    "address": "العنوان",
+    "egp": "جنيه",
+    "close": "إغلاق",
+    "actions": "الإجراءات"
+  },
+
+  "nav": {
+    "home": "الرئيسية",
+    "products": "المنتجات",
+    "categories": "الفئات",
+    "subCategories": "الفئات الفرعية",
+    "brands": "العلامات التجارية",
+    "users": "المستخدمون",
+    "orders": "الطلبات",
+    "toggleNavigation": "فتح أو إغلاق القائمة",
+    "shoppingCart": "سلة التسوق"
+  },
+
+  "dashboard": {
+    "adminDashboard": "لوحة تحكم الإدارة",
+    "salesOverview": "نظرة عامة على المبيعات",
+    "description": "تابع مبيعات متجرك وتوزيع الإيرادات.",
+
+    "totalSales": "إجمالي المبيعات",
+    "activeOrders": "الطلبات النشطة",
+
+    "totalRevenue": "إجمالي الإيرادات",
+    "revenueFromSales": "الإيرادات من المبيعات",
+
+    "partnerShare": "حصة الشريك",
+    "partnerShareDescription": "30% من إجمالي الإيرادات",
+
+    "yourShare": "حصتك",
+    "yourShareDescription": "70% من إجمالي الإيرادات",
+
+    "error": "حدث خطأ أثناء تحميل بيانات لوحة التحكم."
+  },
+
+  "brands": {
+    "management": "إدارة العلامات التجارية",
+    "description": "إدارة العلامات التجارية لمستحضرات التجميل",
+
+    "addBrand": "إضافة علامة تجارية",
+    "addNewBrand": "إضافة علامة تجارية جديدة",
+    "editBrand": "تعديل العلامة التجارية",
+
+    "createDescription": "إنشاء علامة تجارية جديدة لمستحضرات التجميل",
+    "updateDescription": "تحديث معلومات العلامة التجارية",
+
+    "brand": "العلامة التجارية",
+    "chooseImage": "اختيار صورة",
+    "changeImage": "تغيير الصورة",
+
+    "enterBrandName": "أدخل اسم العلامة التجارية",
+    "brandImage": "صورة العلامة التجارية",
+
+    "brandNameRequired": "اسم العلامة التجارية مطلوب",
+
+    "createBrand": "إنشاء العلامة التجارية",
+    "updateBrand": "تحديث العلامة التجارية"
+  },
+
+  "categories": {
+    "management": "إدارة الفئات",
+    "description": "إدارة فئات المنتجات",
+
+    "addCategory": "إضافة فئة",
+    "addNewCategory": "إضافة فئة جديدة",
+    "editCategory": "تعديل الفئة",
+
+    "createDescription": "إنشاء فئة منتجات جديدة",
+    "updateDescription": "تحديث معلومات الفئة",
+
+    "category": "الفئة",
+    "descriptionColumn": "الوصف",
+    "noDescription": "لا يوجد وصف متاح",
+
+    "chooseImage": "اختيار صورة",
+    "changeImage": "تغيير الصورة",
+
+    "enterCategoryName": "أدخل اسم الفئة",
+    "enterCategoryDescription": "أدخل وصف الفئة",
+
+    "nameRequired": "الاسم مطلوب"
+  },
+
+  "subCategories": {
+    "management": "إدارة الفئات الفرعية",
+    "description": "إدارة الفئات الفرعية للمتجر",
+
+    "addSubcategory": "إضافة فئة فرعية",
+    "editSubcategory": "تعديل الفئة الفرعية",
+"enterName":"ادخل الاسم ",
+    "subcategory": "الفئة الفرعية",
+    "category": "الفئة",
+
+    "selectCategory": "الفئة",
+    "enterSubcategoryName": "أدخل اسم الفئة الفرعية",
+
+    "noCategories": "لا توجد فئات متاحة.",
+
+    "categoryRequired": "يرجى اختيار فئة.",
+    "nameRequired": "اسم الفئة الفرعية مطلوب.",
+    "minLength": "يجب أن يحتوي الاسم على حرفين على الأقل.",
+    "maxLength": "لا يمكن أن يتجاوز الاسم 100 حرف."
+  },
+
+  "products": {
+    "management": "إدارة المنتجات",
+    "title": "المنتجات",
+    "description": "إدارة منتجات مستحضرات التجميل والأسعار والمخزون والتصنيف",
+
+    "addProduct": "إضافة منتج",
+    "editProduct": "تعديل المنتج",
+    "addNewProduct": "إضافة منتج جديد",
+
+    "updateInformation": "تحديث معلومات المنتج",
+    "createDescription": "إنشاء منتج جديد لمتجر مستحضرات التجميل",
+
+    "searchPlaceholder": "البحث عن المنتجات...",
+    "searchProducts": "البحث عن المنتجات",
+
+    "loading": "جاري تحميل المنتجات...",
+    "noProducts": "لم يتم العثور على منتجات",
+    "noProductsMatch": "لا توجد منتجات تطابق بحثك.",
+    "startAdding": "ابدأ بإضافة منتجك الأول.",
+
+    "product": "المنتج",
+    "brand": "العلامة التجارية",
+    "price": "السعر",
+    "discount": "الخصم",
+    "stock": "المخزون",
+    "classification": "التصنيف",
+    "actions": "الإجراءات",
+
+    "noBrand": "بدون علامة تجارية",
+    "noClassification": "بدون تصنيف",
+
+    "inStock": "متوفر",
+    "outOfStock": "غير متوفر",
+
+    "image": "صورة المنتج",
+    "uploadImage": "رفع صورة",
+    "changeImage": "تغيير الصورة",
+    "imageDescription": "أضف صورة واضحة للمنتج.",
+    "imageFormats": "JPG أو PNG أو WEBP",
+    "maximumSize": "الحد الأقصى للحجم: 5 ميجابايت",
+
+    "basicInformation": "المعلومات الأساسية",
+    "basicInformationDescription": "أدخل التفاصيل الأساسية للمنتج",
+
+    "productName": "اسم المنتج",
+    "productNamePlaceholder": "مثال: سيروم فيتامين C",
+    "productNameRequired": "اسم المنتج مطلوب.",
+    "productNameTooLong": "اسم المنتج طويل جدًا.",
+
+    "pricePlaceholder": "0.00",
+    "priceRequired": "السعر مطلوب.",
+    "priceNegative": "لا يمكن أن يكون السعر سالبًا.",
+
+    "discountPlaceholder": "0",
+    "discountNegative": "لا يمكن أن تكون نسبة الخصم سالبة.",
+    "discountMax": "لا يمكن أن تتجاوز نسبة الخصم 100%.",
+
+    "stockQuantity": "كمية المخزون",
+    "stockRequired": "كمية المخزون مطلوبة.",
+    "stockNegative": "لا يمكن أن تكون كمية المخزون سالبة.",
+
+    "discountedPrice": "السعر بعد الخصم",
+
+    "stockStatus": "حالة المخزون",
+    "productAvailable": "المنتج متاح للعملاء",
+    "productUnavailable": "المنتج غير متاح حاليًا",
+
+    "classificationTitle": "تصنيف المنتج",
+    "classificationDescription": "اختر العلامة التجارية والفئة والفئات الفرعية",
+
+    "selectBrand": "العلامة التجارية",
+    "loadingBrands": "جاري تحميل العلامات التجارية...",
+    "noBrands": "لا توجد علامات تجارية متاحة.",
+    "brandRequired": "يرجى اختيار علامة تجارية.",
+
+    "selectCategory": "الفئة",
+    "loadingCategories": "جاري تحميل الفئات...",
+    "noCategories": "لا توجد فئات متاحة.",
+    "categoryRequired": "يرجى اختيار فئة.",
+
+    "subcategories": "الفئات الفرعية",
+    "subcategory": "فئة فرعية",
+    "subcategoriesPlural": "فئات فرعية",
+    "loadingSubcategories": "جاري تحميل الفئات الفرعية...",
+    "noSubcategories": "لا توجد فئات فرعية متاحة.",
+    "selectCategoryFirst": "اختر فئة أولًا.",
+    "multipleSubcategories": "يمكنك اختيار أكثر من فئة فرعية.",
+    "subcategoryRequired": "اختر فئة فرعية واحدة على الأقل.",
+
+    "selectedSubcategories": "الفئات الفرعية المحددة",
+
+    "descriptionTitle": "الوصف",
+    "descriptionSubtitle": "أضف معلومات عن المنتج",
+    "descriptionPlaceholder": "صف المنتج والمميزات وتعليمات الاستخدام...",
+
+    "cancel": "إلغاء",
+    "saving": "جاري الحفظ...",
+    "saveChanges": "حفظ التغييرات",
+    "addProductAction": "إضافة المنتج"
+  },
+
+  "users": {
+    "management": "إدارة المستخدمين",
+    "description": "إدارة المستخدمين ومعلومات حساباتهم",
+
+    "addUser": "إضافة مستخدم",
+    "addNewUser": "إضافة مستخدم جديد",
+    "editUser": "تعديل المستخدم",
+
+    "createDescription": "إنشاء حساب مستخدم جديد",
+    "updateDescription": "تحديث معلومات حساب المستخدم",
+
+    "user": "المستخدم",
+    "username": "اسم المستخدم",
+    "email": "البريد الإلكتروني",
+
+    "enterUsername": "أدخل اسم المستخدم",
+    "emailPlaceholder": "example@email.com",
+    "enterPassword": "أدخل كلمة المرور",
+
+    "usernameRequired": "اسم المستخدم مطلوب",
+    "emailRequired": "البريد الإلكتروني مطلوب",
+    "invalidEmail": "صيغة البريد الإلكتروني غير صحيحة",
+
+    "password": "كلمة المرور",
+    "passwordRequired": "كلمة المرور مطلوبة",
+    "passwordMinLength": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
+    "passwordHint": "8 أحرف على الأقل، وتتضمن حرفًا ورقمًا ورمزًا خاصًا.",
+
+    "showPassword": "إظهار كلمة المرور",
+    "hidePassword": "إخفاء كلمة المرور",
+
+    "createUser": "إنشاء المستخدم",
+    "updateUser": "تحديث المستخدم",
+
+    "editTooltip": "تعديل المستخدم",
+    "deleteTooltip": "حذف المستخدم"
+  },
+
+  "orders": {
+    "title": "الطلبات",
+    "subtitle": "إدارة ومتابعة جميع طلبات العملاء",
+
+    "loading": "جاري تحميل الطلبات...",
+
+    "empty": {
+      "title": "لم يتم العثور على طلبات",
+      "description": "لا توجد طلبات متاحة حتى الآن."
+    },
+
+    "unknownClient": "عميل غير معروف",
+
+    "table": {
+      "customer": "العميل",
+      "date": "التاريخ",
+      "items": "المنتجات",
+      "total": "الإجمالي",
+      "status": "الحالة",
+      "actions": "الإجراءات",
+      "product": "المنتج",
+      "quantity": "الكمية",
+      "unitPrice": "سعر الوحدة"
+    },
+
+    "showDetails": "عرض تفاصيل الطلب",
+    "hideDetails": "إخفاء تفاصيل الطلب",
+
+    "customerInformation": "معلومات العميل",
+    "orderItems": "منتجات الطلب",
+    "noItems": "لم يتم العثور على منتجات.",
+    "orderTotal": "إجمالي الطلب",
+    "cancelOrder": "إلغاء الطلب"
+  }
+}

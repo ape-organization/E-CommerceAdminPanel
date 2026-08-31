@@ -19,6 +19,7 @@ import { Order, OrderItem } from '../../models/order.model';
 import { environment } from '../../../environments/environment';
 import { ConfirmDeleteComponent } from '../../shared/confirm-delete/confirm-delete.component';
 import { MatDialog } from '@angular/material/dialog';
+import { TranslatePipe } from '@ngx-translate/core';
 
 
 // ============================================================
@@ -44,7 +45,7 @@ import { MatDialog } from '@angular/material/dialog';
     MatIconModule,
 
     MatButtonModule,
-
+TranslatePipe,
     MatProgressSpinnerModule,
 
     MatSelectModule,

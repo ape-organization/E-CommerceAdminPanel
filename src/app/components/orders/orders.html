@@ -1,10 +1,7 @@
+
 <div class="orders-page">
 
-
-  <!-- ===================================================== -->
   <!-- HEADER -->
-  <!-- ===================================================== -->
-
   <header class="page-header">
 
     <div class="header-content">
@@ -12,17 +9,16 @@
       <div>
 
         <h1>
-
           <mat-icon>
             receipt_long
           </mat-icon>
 
-          Orders
+          {{ 'orders.title' | translate }}
 
         </h1>
 
         <p>
-          Manage and monitor all customer orders
+          {{ 'orders.subtitle' | translate }}
         </p>
 
       </div>
@@ -32,10 +28,7 @@
   </header>
 
 
-  <!-- ===================================================== -->
   <!-- ERROR -->
-  <!-- ===================================================== -->
-
   @if (
     !loading() &&
     errorMessage()
@@ -56,7 +49,7 @@
         type="button"
         (click)="loadOrders()">
 
-        Try Again
+        {{ 'common.tryAgain' | translate }}
 
       </button>
 
@@ -65,22 +58,15 @@
   }
 
 
-  <!-- ===================================================== -->
   <!-- LOADING -->
-  <!-- ===================================================== -->
-
-  @if (
-    loading()
-  ) {
+  @if (loading()) {
 
     <div class="loading-container">
 
-      <mat-spinner
-        diameter="45">
-      </mat-spinner>
+      <mat-spinner diameter="45"></mat-spinner>
 
       <p>
-        Loading orders...
+        {{ 'orders.loading' | translate }}
       </p>
 
     </div>
@@ -88,10 +74,7 @@
   }
 
 
-  <!-- ===================================================== -->
   <!-- EMPTY -->
-  <!-- ===================================================== -->
-
   @if (
     !loading() &&
     !errorMessage() &&
@@ -105,11 +88,11 @@
       </mat-icon>
 
       <h2>
-        No Orders Found
+        {{ 'orders.empty.title' | translate }}
       </h2>
 
       <p>
-        There are no orders available yet.
+        {{ 'orders.empty.description' | translate }}
       </p>
 
       <button
@@ -121,7 +104,7 @@
           refresh
         </mat-icon>
 
-        Refresh
+        {{ 'common.refresh' | translate }}
 
       </button>
 
@@ -130,10 +113,7 @@
   }
 
 
-  <!-- ===================================================== -->
   <!-- ORDERS -->
-  <!-- ===================================================== -->
-
   @if (
     !loading() &&
     !errorMessage() &&
@@ -142,50 +122,23 @@
 
     <div class="orders-table-container">
 
-
       <table class="orders-table">
-
-
-        <!-- =============================================== -->
-        <!-- HEADER -->
-        <!-- =============================================== -->
 
         <thead>
 
           <tr>
 
-            <th>
-              Customer
-            </th>
-
-            <th>
-              Date
-            </th>
-
-            <th>
-              Items
-            </th>
-
-            <th>
-              Total
-            </th>
-
-            <th>
-              Status
-            </th>
-
-            <th>
-              Actions
-            </th>
+            <th>{{ 'orders.table.customer' | translate }}</th>
+            <th>{{ 'orders.table.date' | translate }}</th>
+            <th>{{ 'orders.table.items' | translate }}</th>
+            <th>{{ 'orders.table.total' | translate }}</th>
+            <th>{{ 'orders.table.status' | translate }}</th>
+            <th>{{ 'orders.table.actions' | translate }}</th>
 
           </tr>
 
         </thead>
 
-
-        <!-- =============================================== -->
-        <!-- BODY -->
-        <!-- =============================================== -->
 
         <tbody>
 
@@ -194,42 +147,28 @@
             track order.id
           ) {
 
-
-            <!-- =========================================== -->
-            <!-- ORDER ROW -->
-            <!-- =========================================== -->
-
             <tr
               class="order-row"
-              [class.expanded]="
-                isExpanded(order.id)
-              ">
-
+              [class.expanded]="isExpanded(order.id)"
+            >
 
               <!-- CUSTOMER -->
-
               <td>
 
                 <strong>
-                  {{ order.clientName || 'Unknown Client' }}
+                  {{ order.clientName || ('orders.unknownClient' | translate) }}
                 </strong>
 
               </td>
 
 
               <!-- DATE -->
-
               <td>
 
                 <div class="date-cell">
 
                   <strong>
-
-                    {{
-                      order.orderDate
-                        | date:'dd/MM/yyyy'
-                    }}
-
+                    {{ order.orderDate | date:'dd/MM/yyyy' }}
                   </strong>
 
                 </div>
@@ -238,7 +177,6 @@
 
 
               <!-- ITEMS -->
-
               <td>
 
                 <span class="items-count">
@@ -255,22 +193,16 @@
 
 
               <!-- TOTAL -->
-
               <td>
 
                 <div class="total-cell">
 
                   <strong>
-
-                    {{
-                      order.totalAmount
-                        | number:'1.2-2'
-                    }}
-
+                    {{ order.totalAmount | number:'1.2-2' }}
                   </strong>
 
                   <small>
-                    EGP
+                    {{ 'common.egp' | translate }}
                   </small>
 
                 </div>
@@ -279,14 +211,12 @@
 
 
               <!-- STATUS -->
-
               <td>
 
                 <span
                   class="status-badge"
-                  [ngClass]="
-                    getStatusClass(order.status)
-                  ">
+                  [ngClass]="getStatusClass(order.status)"
+                >
 
                   {{ order.status }}
 
@@ -296,29 +226,25 @@
 
 
               <!-- ACTION -->
-
               <td>
 
                 <button
                   mat-icon-button
                   type="button"
-                  (click)="
-                    toggleOrder(order.id)
-                  "
+                  (click)="toggleOrder(order.id)"
                   [attr.aria-label]="
                     isExpanded(order.id)
-                      ? 'Hide order details'
-                      : 'Show order details'
-                  ">
+                      ? ('orders.hideDetails' | translate)
+                      : ('orders.showDetails' | translate)
+                  "
+                >
 
                   <mat-icon>
-
                     {{
                       isExpanded(order.id)
                         ? 'expand_less'
                         : 'expand_more'
                     }}
-
                   </mat-icon>
 
                 </button>
@@ -328,29 +254,18 @@
             </tr>
 
 
-            <!-- =========================================== -->
             <!-- DETAILS -->
-            <!-- =========================================== -->
-
-            @if (
-              isExpanded(order.id)
-            ) {
+            @if (isExpanded(order.id)) {
 
               <tr class="details-row">
 
                 <td colspan="6">
 
-
                   <div class="order-details">
 
 
-                    <!-- ================================= -->
                     <!-- CUSTOMER -->
-                    <!-- ================================= -->
-
-                    <section
-                      class="details-section">
-
+                    <section class="details-section">
 
                       <div class="section-title">
 
@@ -359,20 +274,18 @@
                         </mat-icon>
 
                         <h3>
-                          Customer Information
+                          {{ 'orders.customerInformation' | translate }}
                         </h3>
 
                       </div>
 
 
-                      <div
-                        class="customer-details-grid">
-
+                      <div class="customer-details-grid">
 
                         <div class="detail-item">
 
                           <span>
-                            Name
+                            {{ 'common.name' | translate }}
                           </span>
 
                           <strong>
@@ -385,7 +298,7 @@
                         <div class="detail-item">
 
                           <span>
-                            Phone
+                            {{ 'common.phone' | translate }}
                           </span>
 
                           <strong>
@@ -398,7 +311,7 @@
                         <div class="detail-item">
 
                           <span>
-                            Email
+                            {{ 'common.email' | translate }}
                           </span>
 
                           <strong>
@@ -411,7 +324,7 @@
                         <div class="detail-item">
 
                           <span>
-                            Address
+                            {{ 'common.address' | translate }}
                           </span>
 
                           <strong>
@@ -420,19 +333,13 @@
 
                         </div>
 
-
                       </div>
 
                     </section>
 
 
-                    <!-- ================================= -->
                     <!-- ITEMS -->
-                    <!-- ================================= -->
-
-                    <section
-                      class="details-section">
-
+                    <section class="details-section">
 
                       <div class="section-title">
 
@@ -441,42 +348,26 @@
                         </mat-icon>
 
                         <h3>
-                          Order Items
+                          {{ 'orders.orderItems' | translate }}
                         </h3>
 
                       </div>
 
 
-                      @if (
-                        order.items.length
-                      ) {
+                      @if (order.items.length) {
 
-                        <div
-                          class="items-table-container">
-
+                        <div class="items-table-container">
 
                           <table class="items-table">
-
 
                             <thead>
 
                               <tr>
 
-                                <th>
-                                  Product
-                                </th>
-
-                                <th>
-                                  Quantity
-                                </th>
-
-                                <th>
-                                  Unit Price
-                                </th>
-
-                                <th>
-                                  Total
-                                </th>
+                                <th>{{ 'orders.table.product' | translate }}</th>
+                                <th>{{ 'orders.table.quantity' | translate }}</th>
+                                <th>{{ 'orders.table.unitPrice' | translate }}</th>
+                                <th>{{ 'orders.table.total' | translate }}</th>
 
                               </tr>
 
@@ -492,31 +383,18 @@
 
                                 <tr>
 
-
                                   <!-- PRODUCT -->
-
                                   <td>
 
-                                    <div
-                                      class="product-cell">
+                                    <div class="product-cell">
 
+                                      <div class="product-image">
 
-                                      <div
-                                        class="product-image">
-
-                                        @if (
-                                          item.imageUrl
-                                        ) {
+                                        @if (item.imageUrl) {
 
                                           <img
-                                            [src]="
-                                              getImageUrl(
-                                                item.imageUrl
-                                              )
-                                            "
-                                            [alt]="
-                                              item.productName
-                                            "
+                                            [src]="getImageUrl(item.imageUrl)"
+                                            [alt]="item.productName"
                                           />
 
                                         } @else {
@@ -529,13 +407,8 @@
 
                                       </div>
 
-
                                       <strong>
-
-                                        {{
-                                          item.productName
-                                        }}
-
+                                        {{ item.productName }}
                                       </strong>
 
                                     </div>
@@ -544,50 +417,37 @@
 
 
                                   <!-- QUANTITY -->
-
                                   <td>
 
-                                    <span
-                                      class="quantity-badge">
-
+                                    <span class="quantity-badge">
                                       {{ item.quantity }}
-
                                     </span>
 
                                   </td>
 
 
                                   <!-- UNIT PRICE -->
-
                                   <td>
 
-                                    {{
-                                      item.unitPrice
-                                        | number:'1.2-2'
-                                    }}
+                                    {{ item.unitPrice | number:'1.2-2' }}
 
-                                    EGP
+                                    {{ 'common.egp' | translate }}
 
                                   </td>
 
 
                                   <!-- TOTAL -->
-
                                   <td>
 
                                     <strong>
 
-                                      {{
-                                        item.totalPrice
-                                          | number:'1.2-2'
-                                      }}
+                                      {{ item.totalPrice | number:'1.2-2' }}
 
-                                      EGP
+                                      {{ 'common.egp' | translate }}
 
                                     </strong>
 
                                   </td>
-
 
                                 </tr>
 
@@ -608,7 +468,7 @@
                           </mat-icon>
 
                           <span>
-                            No items found.
+                            {{ 'orders.noItems' | translate }}
                           </span>
 
                         </div>
@@ -618,65 +478,48 @@
                     </section>
 
 
-                    <!-- ================================= -->
                     <!-- FOOTER -->
-                    <!-- ================================= -->
-
-                    <div
-                      class="order-details-footer">
-
-
-                      <!-- TOTAL -->
+                    <div class="order-details-footer">
 
                       <div class="details-total">
 
                         <span>
-                          Order Total
+                          {{ 'orders.orderTotal' | translate }}
                         </span>
 
                         <strong>
 
-                          {{
-                            order.totalAmount
-                              | number:'1.2-2'
-                          }}
+                          {{ order.totalAmount | number:'1.2-2' }}
 
-                          EGP
+                          {{ 'common.egp' | translate }}
 
                         </strong>
 
                       </div>
 
 
-
-
-                      <!-- CANCEL -->
-
                       @if (
-                        order.status.toLowerCase() !==
-                        'cancelled'
+                        order.status.toLowerCase() !== 'cancelled'
                       ) {
 
                         <button
                           mat-stroked-button
                           class="cancel-btn"
                           type="button"
-                          (click)="
-                            cancelOrder(order)
-                          ">
+                          (click)="cancelOrder(order)"
+                        >
 
                           <mat-icon>
                             cancel
                           </mat-icon>
 
-                          Cancel Order
+                          {{ 'orders.cancelOrder' | translate }}
 
                         </button>
 
                       }
 
                     </div>
-
 
                   </div>
 
@@ -693,10 +536,7 @@
       </table>
 
 
-      <!-- ================================================= -->
       <!-- PAGINATION -->
-      <!-- ================================================= -->
-
       <div class="orders-pagination">
 
         <mat-paginator
@@ -705,11 +545,11 @@
           [pageSize]="pageSize()"
           [pageSizeOptions]="pageSizeOptions"
           [showFirstLastButtons]="true"
-          (page)="onPageChange($event)">
+          (page)="onPageChange($event)"
+        >
         </mat-paginator>
 
       </div>
-
 
     </div>
 

@@ -1,257 +1,403 @@
+<div
+  class="layout-wrapper"
+  [dir]="currentLanguage() === 'ar' ? 'rtl' : 'ltr'"
+>
 
-<mat-sidenav-container class="sidenav-container">
-
-  <mat-sidenav
-    #drawer
-    class="sidenav"
-    fixedInViewport
-    [attr.role]="isMobile() ? 'dialog' : 'navigation'"
-    [mode]="isMobile() ? 'over' : 'side'"
-    [opened]="!isMobile()"
+  <mat-sidenav-container
+    class="sidenav-container"
   >
 
-    <!-- Brand -->
-    <div class="mobile-brand">
-      <div class="mobile-brand-icon">
-        ✦
+    <!-- ===================================================== -->
+    <!-- SIDENAV -->
+    <!-- ===================================================== -->
+
+    <mat-sidenav
+      #drawer
+      class="sidenav"
+      fixedInViewport
+      [attr.role]="isMobile() ? 'dialog' : 'navigation'"
+      [mode]="isMobile() ? 'over' : 'side'"
+      [opened]="!isMobile()"
+    >
+
+      <!-- BRAND -->
+
+      <div class="mobile-brand">
+
+        <div class="mobile-brand-icon">
+          ✦
+        </div>
+
+        <span>
+          {{ 'common.cosmetics' | translate }}
+        </span>
+
       </div>
 
-      <span>Cosmetics</span>
-    </div>
 
-    <mat-nav-list>
+      <!-- MENU -->
 
-      <a
-        mat-list-item
-        routerLink="/admin/dashboard"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-        (click)="closeMobileDrawer(drawer)"
-      >
-        <mat-icon matListItemIcon>home</mat-icon>
-        <span matListItemTitle class="item"
-       
-        >Home</span>
-      </a>
+      <mat-nav-list>
 
-      <a
-        mat-list-item
-        routerLink="/admin/products"
-        routerLinkActive="active"
-        (click)="closeMobileDrawer(drawer)"
-      >
-        <mat-icon matListItemIcon>inventory_2</mat-icon>
-        <span matListItemTitle class="item">Products</span>
-      </a>
-
-      <a
-        mat-list-item
-        routerLink="/admin/categories"
-        routerLinkActive="active"
-        (click)="closeMobileDrawer(drawer)"
-      >
-        <mat-icon matListItemIcon>category</mat-icon>
-        <span matListItemTitle class="item">Categories</span>
-      </a>
-<a
-        mat-list-item
-        routerLink="/admin/subCategories"
-        routerLinkActive="active"
-        (click)="closeMobileDrawer(drawer)"
-      >
-        <mat-icon matListItemIcon>subject</mat-icon>
-        <span matListItemTitle class="item">Sub Categories</span>
-      </a>
-      <a
-        mat-list-item
-        routerLink="/admin/brand"
-        routerLinkActive="active"
-        (click)="closeMobileDrawer(drawer)"
-      >
-<mat-icon matListItemIcon>storefront</mat-icon>
-        <span matListItemTitle class="item">Brands</span>
-      </a>
-      <a
-        mat-list-item
-        routerLink="/admin/users"
-        routerLinkActive="active"
-        (click)="closeMobileDrawer(drawer)"
-      >
-        <mat-icon matListItemIcon>supervised_user_circle</mat-icon>
-        <span matListItemTitle class="item">users</span>
-      </a>
-        <a
-        mat-list-item
-        routerLink="/admin/orders"
-        routerLinkActive="active"
-        (click)="closeMobileDrawer(drawer)"
-      >
-        <mat-icon matListItemIcon>receipt_long</mat-icon>
-        <span matListItemTitle class="item">orders</span>
-      </a>
-      <mat-divider></mat-divider>
-
-     <!--  @if (authService.isAdmin()) {
         <a
           mat-list-item
-          routerLink="/admin"
+          routerLink="/admin/dashboard"
           routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
           (click)="closeMobileDrawer(drawer)"
         >
+
           <mat-icon matListItemIcon>
-            admin_panel_settings
+            home
           </mat-icon>
 
-          <span matListItemTitle>
-            Admin
+          <span matListItemTitle class="item">
+            {{ 'nav.home' | translate }}
           </span>
-        </a>
-      } -->
 
-      @if (!isLoggedIn()) {
+        </a>
+
+
         <a
           mat-list-item
-          routerLink="/login"
+          routerLink="/admin/products"
           routerLinkActive="active"
           (click)="closeMobileDrawer(drawer)"
         >
-          <mat-icon matListItemIcon>login</mat-icon>
+
+          <mat-icon matListItemIcon>
+            inventory_2
+          </mat-icon>
 
           <span matListItemTitle class="item">
-            Login
+            {{ 'nav.products' | translate }}
           </span>
-        </a>
-      }
 
-      @if (isLoggedIn()) {
+        </a>
+
+
         <a
           mat-list-item
-          (click)="logout(drawer)"
+          routerLink="/admin/categories"
+          routerLinkActive="active"
+          (click)="closeMobileDrawer(drawer)"
         >
-          <mat-icon matListItemIcon>logout</mat-icon>
+
+          <mat-icon matListItemIcon>
+            category
+          </mat-icon>
 
           <span matListItemTitle class="item">
-            Logout
+            {{ 'nav.categories' | translate }}
           </span>
+
         </a>
-      }
-
-    </mat-nav-list>
-
-  </mat-sidenav>
 
 
-  <!-- Main content -->
-  <mat-sidenav-content>
-
-    <mat-toolbar class="nav-toolbar">
-
-      <!-- Mobile hamburger -->
-      @if (isMobile()) {
-        <button
-          type="button"
-          aria-label="Toggle navigation"
-          mat-icon-button
-          class="menu-button"
-          (click)="drawer.toggle()"
+        <a
+          mat-list-item
+          routerLink="/admin/subCategories"
+          routerLinkActive="active"
+          (click)="closeMobileDrawer(drawer)"
         >
-          <mat-icon>menu</mat-icon>
-        </button>
-      }
+
+          <mat-icon matListItemIcon>
+            subject
+          </mat-icon>
+
+          <span matListItemTitle class="item">
+            {{ 'nav.subCategories' | translate }}
+          </span>
+
+        </a>
 
 
-      <!-- Brand -->
-             @if (isMobile()) {
+        <a
+          mat-list-item
+          routerLink="/admin/brand"
+          routerLinkActive="active"
+          (click)="closeMobileDrawer(drawer)"
+        >
 
-      <a
-        routerLink="/products"
-        class="brand"
-      >
-        <span class="brand-symbol">
-          ✦
-        </span>
+          <mat-icon matListItemIcon>
+            storefront
+          </mat-icon>
 
-        <span class="brand-name">
-          {{ title() }}
-        </span>
-      </a>
-    }
+          <span matListItemTitle class="item">
+            {{ 'nav.brands' | translate }}
+          </span>
 
-    
+        </a>
 
 
-      <span class="spacer"></span>
+        <a
+          mat-list-item
+          routerLink="/admin/users"
+          routerLinkActive="active"
+          (click)="closeMobileDrawer(drawer)"
+        >
+
+          <mat-icon matListItemIcon>
+            supervised_user_circle
+          </mat-icon>
+
+          <span matListItemTitle class="item">
+            {{ 'nav.users' | translate }}
+          </span>
+
+        </a>
 
 
-      <!-- Actions -->
-      <div class="nav-actions">
+        <a
+          mat-list-item
+          routerLink="/admin/orders"
+          routerLinkActive="active"
+          (click)="closeMobileDrawer(drawer)"
+        >
 
-        @if (!isMobile()) {
+          <mat-icon matListItemIcon>
+            receipt_long
+          </mat-icon>
 
-          <button
-            mat-icon-button
-            routerLink="/cart"
-            class="cart-button"
-            aria-label="Shopping cart"
+          <span matListItemTitle class="item">
+            {{ 'nav.orders' | translate }}
+          </span>
+
+        </a>
+
+
+        <mat-divider></mat-divider>
+
+
+        <!-- LOGIN -->
+
+        @if (!isLoggedIn()) {
+
+          <a
+            mat-list-item
+            routerLink="/login"
+            routerLinkActive="active"
+            (click)="closeMobileDrawer(drawer)"
           >
-            <mat-icon>
-              shopping_bag
+
+            <mat-icon matListItemIcon>
+              login
             </mat-icon>
-          </button>
 
+            <span matListItemTitle class="item">
+              {{ 'common.login' | translate }}
+            </span>
 
-          @if (authService.isAdmin()) {
-            <button
-              mat-button
-              routerLink="/admin"
-              class="admin-button"
-            >
-              <mat-icon>
-                admin_panel_settings
-              </mat-icon>
-
-              ADMIN
-            </button>
-          }
-
-
-          @if (!isLoggedIn()) {
-            <button
-              mat-button
-              routerLink="/login"
-              class="login-button"
-            >
-              LOGIN
-            </button>
-          }
-
-
-          @if (isLoggedIn()) {
-            <button
-              mat-button
-              (click)="authService.logout()"
-              class="logout-button"
-            >
-              <mat-icon>
-                logout
-              </mat-icon>
-
-              LOGOUT
-            </button>
-          }
+          </a>
 
         }
 
-      </div>
 
-    </mat-toolbar>
+        <!-- LOGOUT -->
+
+        @if (isLoggedIn()) {
+
+          <a
+            mat-list-item
+            (click)="logout(drawer)"
+          >
+
+            <mat-icon matListItemIcon>
+              logout
+            </mat-icon>
+
+            <span matListItemTitle class="item">
+              {{ 'common.logout' | translate }}
+            </span>
+
+          </a>
+
+        }
+
+      </mat-nav-list>
+
+    </mat-sidenav>
 
 
-    <!-- Page -->
-    <main class="page-content">
-      <router-outlet></router-outlet>
-    </main>
+    <!-- ===================================================== -->
+    <!-- MAIN CONTENT -->
+    <!-- ===================================================== -->
 
-  </mat-sidenav-content>
+    <mat-sidenav-content>
 
-</mat-sidenav-container>
+      <!-- =================================================== -->
+      <!-- TOOLBAR -->
+      <!-- =================================================== -->
+
+      <mat-toolbar class="nav-toolbar">
+
+
+        <!-- MOBILE MENU -->
+
+        @if (isMobile()) {
+
+          <button
+            type="button"
+            mat-icon-button
+            class="menu-button"
+            [attr.aria-label]="
+              'nav.toggleNavigation' | translate
+            "
+            (click)="drawer.toggle()"
+          >
+
+            <mat-icon>
+              menu
+            </mat-icon>
+
+          </button>
+
+        }
+
+
+        <!-- MOBILE BRAND -->
+
+        @if (isMobile()) {
+
+          <a
+            class="brand"
+          >
+
+            <span class="brand-symbol">
+              ✦
+            </span>
+
+            <span class="brand-name">
+              {{ title() }}
+            </span>
+
+          </a>
+  <!-- LANGUAGE -->
+
+            <button
+              mat-button
+              class="language-button"
+              type="button"
+              (click)="toggleLanguage()"
+              [attr.aria-label]="
+                'common.changeLanguage' | translate
+              "
+            >
+
+              <mat-icon>
+                translate
+              </mat-icon>
+
+              {{
+                currentLanguage() === 'en'
+                  ? 'العربية'
+                  : 'English'
+              }}
+
+            </button>
+        }
+
+
+        <span class="spacer"></span>
+
+
+        <!-- ================================================= -->
+        <!-- ACTIONS -->
+        <!-- ================================================= -->
+
+        <div class="nav-actions">
+
+          @if (!isMobile()) {
+
+
+
+            <!-- LANGUAGE -->
+
+            <button
+              mat-button
+              class="language-button"
+              type="button"
+              (click)="toggleLanguage()"
+              [attr.aria-label]="
+                'common.changeLanguage' | translate
+              "
+            >
+
+              <mat-icon>
+                translate
+              </mat-icon>
+
+              {{
+                currentLanguage() === 'en'
+                  ? 'العربية'
+                  : 'English'
+              }}
+
+            </button>
+
+
+
+            <!-- LOGIN -->
+
+            @if (!isLoggedIn()) {
+
+              <button
+                mat-button
+                routerLink="/login"
+                class="login-button"
+              >
+
+                {{ 'common.login' | translate }}
+
+              </button>
+
+            }
+
+
+            <!-- LOGOUT -->
+
+            @if (isLoggedIn()) {
+
+              <button
+                mat-button
+                class="logout-button"
+                type="button"
+                (click)="logout(drawer)"
+              >
+
+                <mat-icon>
+                  logout
+                </mat-icon>
+
+                {{ 'common.logout' | translate }}
+
+              </button>
+
+            }
+
+          }
+
+        </div>
+
+      </mat-toolbar>
+
+
+      <!-- =================================================== -->
+      <!-- CHILD PAGE -->
+      <!-- =================================================== -->
+
+      <main class="page-content">
+
+  <div class="page-container">
+
+    <router-outlet></router-outlet>
+
+  </div>
+
+</main>
+
+    </mat-sidenav-content>
+
+  </mat-sidenav-container>
+
+</div>

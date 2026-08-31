@@ -4,6 +4,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 import { OrderService } from '../../../services/order.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 interface DashboardOrder {
   id: number;
@@ -17,7 +18,8 @@ interface DashboardOrder {
 
   imports: [
     CommonModule,
-    MatIconModule
+    MatIconModule,
+    TranslatePipe
   ],
 
   templateUrl: './admin-dashboard.component.html',

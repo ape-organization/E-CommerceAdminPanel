@@ -1,3 +1,4 @@
+
 <div class="modal-overlay">
 
   <div class="modal-container">
@@ -40,7 +41,7 @@
         class="close-button"
         (click)="onCancel()"
         [disabled]="isSubmitting()"
-        aria-label="Close"
+        [attr.aria-label]="'common.close' | translate"
       >
 
         <mat-icon>
@@ -81,7 +82,7 @@
                 [src]="imagePreview()"
                 [alt]="
                   categoryForm.get('name')?.value ||
-                  'Category image'
+                  ('categories.categoryImage' | translate)
                 "
                 class="category-image-preview"
               />
@@ -98,7 +99,7 @@
                 </mat-icon>
 
                 <span>
-                  Choose Image
+                  {{ 'categories.chooseImage' | translate }}
                 </span>
 
               </div>
@@ -113,7 +114,7 @@
               </mat-icon>
 
               <span>
-                Change Image
+                {{ 'categories.changeImage' | translate }}
               </span>
 
             </div>
@@ -129,9 +130,6 @@
             (change)="onImageSelected($event)"
           />
 
-
-         
-
         </div>
 
 
@@ -142,16 +140,15 @@
         <mat-form-field
           appearance="outline"
         >
-    <mat-icon matPrefix class="icon">
+
+          <mat-icon matPrefix class="icon">
             category
           </mat-icon>
-        
 
-        
           <input
             matInput
             formControlName="name"
-            placeholder="Enter category name"
+            [placeholder]="'categories.enterCategoryName' | translate"
           />
 
 
@@ -162,7 +159,7 @@
           ) {
 
             <mat-error class="error">
-              Name is required
+              {{ 'categories.nameRequired' | translate }}
             </mat-error>
 
           }
@@ -176,20 +173,17 @@
 
         <mat-form-field
           appearance="outline"
-         
         >
-    <mat-icon matPrefix class="icon">
+
+          <mat-icon matPrefix class="icon">
             description
           </mat-icon>
 
 
-        
-          
-
           <textarea
             matInput
             formControlName="description"
-            placeholder="Enter category description"
+            [placeholder]="'categories.enterCategoryDescription' | translate"
             rows="2"
           ></textarea>
 
@@ -233,7 +227,7 @@
           [disabled]="isSubmitting()"
         >
 
-          CANCEL
+          {{ 'common.cancel' | translate }}
 
         </button>
 

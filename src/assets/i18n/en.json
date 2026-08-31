@@ -1,0 +1,302 @@
+
+{
+  "common": {
+    "cosmetics": "Cosmetics",
+    "login": "LOGIN",
+    "logout": "LOGOUT",
+    "admin": "ADMIN",
+    "cancel": "CANCEL",
+    "save": "SAVE",
+    "saving": "SAVING...",
+    "create": "CREATE",
+    "update": "UPDATE",
+    "add": "ADD",
+    "edit": "EDIT",
+    "delete": "DELETE",
+    "refresh": "Refresh",
+    "tryAgain": "Try Again",
+    "name": "Name",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "egp": "EGP",
+    "close": "Close",
+    "actions": "Actions"
+  },
+
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "categories": "Categories",
+    "subCategories": "Sub Categories",
+    "brands": "Brands",
+
+    "users": "Users",
+    "orders": "Orders",
+    "toggleNavigation": "Toggle navigation",
+    "shoppingCart": "Shopping cart"
+  },
+
+  "dashboard": {
+    "adminDashboard": "ADMIN DASHBOARD",
+    "salesOverview": "Sales Overview",
+    "description": "Track your store sales and revenue distribution.",
+
+    "totalSales": "TOTAL SALES",
+    "activeOrders": "Active orders",
+
+    "totalRevenue": "TOTAL REVENUE",
+    "revenueFromSales": "Revenue from sales",
+
+    "partnerShare": "PARTNER SHARE",
+    "partnerShareDescription": "30% of total revenue",
+
+    "yourShare": "YOUR SHARE",
+    "yourShareDescription": "70% of total revenue",
+
+    "error": "An error occurred while loading dashboard data."
+  },
+
+  "brands": {
+    "management": "BRAND MANAGEMENT",
+    "description": "Manage your cosmetic brands",
+
+    "addBrand": "Add Brand",
+    "addNewBrand": "Add New Brand",
+    "editBrand": "Edit Brand",
+
+    "createDescription": "Create a new cosmetic brand",
+    "updateDescription": "Update brand information",
+
+    "brand": "Brand",
+    "chooseImage": "Choose Image",
+    "changeImage": "Change Image",
+
+    "enterBrandName": "Enter brand name",
+    "brandImage": "Brand image",
+
+    "brandNameRequired": "Brand name is required",
+
+    "createBrand": "CREATE BRAND",
+    "updateBrand": "UPDATE BRAND"
+  },
+
+  "categories": {
+    "management": "Category Management",
+    "description": "Manage your product categories",
+
+    "addCategory": "Add Category",
+    "addNewCategory": "Add New Category",
+    "editCategory": "Edit Category",
+
+    "createDescription": "Create a new product category",
+    "updateDescription": "Update category information",
+
+    "category": "Category",
+    "descriptionColumn": "Description",
+    "noDescription": "No description available",
+
+    "chooseImage": "Choose Image",
+    "changeImage": "Change Image",
+
+    "enterCategoryName": "Enter category name",
+    "enterCategoryDescription": "Enter category description",
+
+    "nameRequired": "Name is required"
+  },
+
+  "subCategories": {
+    "management": "Subcategory Management",
+    "description": "Manage your store subcategories",
+
+    "addSubcategory": "Add Subcategory",
+    "editSubcategory": "Edit Subcategory",
+
+    "subcategory": "Subcategory",
+    "category": "Category",
+
+    "selectCategory": "Category",
+    "enterSubcategoryName": "Enter subcategory name",
+"enterName":"Enter name",
+    "noCategories": "No categories available.",
+
+    "categoryRequired": "Please select a category.",
+    "nameRequired": "Subcategory name is required.",
+    "minLength": "Name must contain at least 2 characters.",
+    "maxLength": "Name cannot exceed 100 characters."
+  },
+
+  "products": {
+    "management": "PRODUCT MANAGEMENT",
+    "title": "Products",
+    "description": "Manage your cosmetics products, prices, stock and classification",
+
+    "addProduct": "Add Product",
+    "editProduct": "Edit Product",
+    "addNewProduct": "Add New Product",
+
+    "updateInformation": "Update your product information",
+    "createDescription": "Create a new product for your cosmetics store",
+
+    "searchPlaceholder": "Search products...",
+    "searchProducts": "Search products",
+
+    "loading": "Loading products...",
+    "noProducts": "No Products Found",
+    "noProductsMatch": "No products match your search.",
+    "startAdding": "Start by adding your first product.",
+
+    "product": "Product",
+    "brand": "Brand",
+    "price": "Price",
+    "discount": "Discount",
+    "stock": "Stock",
+    "classification": "Classification",
+    "actions": "Actions",
+
+    "noBrand": "No Brand",
+    "noClassification": "No classification",
+
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+
+    "image": "Product Image",
+    "uploadImage": "Upload Image",
+    "changeImage": "Change Image",
+    "imageDescription": "Add a clear image of your product.",
+    "imageFormats": "JPG, PNG or WEBP",
+    "maximumSize": "Maximum size: 5 MB",
+
+    "basicInformation": "Basic Information",
+    "basicInformationDescription": "Enter the main product details",
+
+    "productName": "Product Name",
+    "productNamePlaceholder": "e.g. Vitamin C Serum",
+    "productNameRequired": "Product name is required.",
+    "productNameTooLong": "Product name is too long.",
+
+    "pricePlaceholder": "0.00",
+    "priceRequired": "Price is required.",
+    "priceNegative": "Price cannot be negative.",
+
+    "discountPlaceholder": "0",
+    "discountNegative": "Discount cannot be negative.",
+    "discountMax": "Discount cannot exceed 100%.",
+
+    "stockQuantity": "Stock Quantity",
+    "stockRequired": "Stock quantity is required.",
+    "stockNegative": "Stock cannot be negative.",
+
+    "discountedPrice": "DISCOUNTED PRICE",
+
+    "stockStatus": "Stock Status",
+    "productAvailable": "Product is available for customers",
+    "productUnavailable": "Product is currently unavailable",
+
+    "classificationTitle": "Product Classification",
+    "classificationDescription": "Select the brand, category and subcategories",
+
+    "selectBrand": "Brand",
+    "loadingBrands": "Loading brands...",
+    "noBrands": "No brands available.",
+    "brandRequired": "Please select a brand.",
+
+    "selectCategory": "Category",
+    "loadingCategories": "Loading categories...",
+    "noCategories": "No categories available.",
+    "categoryRequired": "Please select a category.",
+
+    "subcategories": "Subcategories",
+    "subcategory": "subcategory",
+    "subcategoriesPlural": "subcategories",
+    "loadingSubcategories": "Loading subcategories...",
+    "noSubcategories": "No subcategories available.",
+    "selectCategoryFirst": "Select a category first.",
+    "multipleSubcategories": "You can select multiple subcategories.",
+    "subcategoryRequired": "Select at least one subcategory.",
+
+    "selectedSubcategories": "SELECTED SUBCATEGORIES",
+
+    "descriptionTitle": "Description",
+    "descriptionSubtitle": "Add information about your product",
+    "descriptionPlaceholder": "Describe the product, benefits, usage instructions...",
+
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+    "addProductAction": "Add Product"
+  },
+
+  "users": {
+    "management": "User Management",
+    "description": "Manage users and their account information",
+
+    "addUser": "Add User",
+    "addNewUser": "Add New User",
+    "editUser": "Edit User",
+
+    "createDescription": "Create a new user account",
+    "updateDescription": "Update user account information",
+
+    "user": "User",
+    "username": "Username",
+    "email": "Email",
+
+    "enterUsername": "Enter username",
+    "emailPlaceholder": "example@email.com",
+    "enterPassword": "Enter password",
+
+    "usernameRequired": "Username is required",
+    "emailRequired": "Email is required",
+    "invalidEmail": "Invalid email format",
+
+    "password": "Password",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 6 characters",
+    "passwordHint": "Min. 8 characters, including a letter, number, and special character.",
+
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+
+    "createUser": "CREATE USER",
+    "updateUser": "UPDATE USER",
+
+    "editTooltip": "Edit User",
+    "deleteTooltip": "Delete User"
+  },
+
+  "orders": {
+    "title": "Orders",
+    "subtitle": "Manage and monitor all customer orders",
+
+    "loading": "Loading orders...",
+
+    "empty": {
+      "title": "No Orders Found",
+      "description": "There are no orders available yet."
+    },
+
+    "unknownClient": "Unknown Client",
+
+    "table": {
+      "customer": "Customer",
+      "date": "Date",
+      "items": "Items",
+      "total": "Total",
+      "status": "Status",
+      "actions": "Actions",
+      "product": "Product",
+      "quantity": "Quantity",
+      "unitPrice": "Unit Price"
+    },
+
+    "showDetails": "Show order details",
+    "hideDetails": "Hide order details",
+
+    "customerInformation": "Customer Information",
+    "orderItems": "Order Items",
+    "noItems": "No items found.",
+    "orderTotal": "Order Total",
+    "cancelOrder": "Cancel Order"
+  }
+}

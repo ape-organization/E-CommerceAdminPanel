@@ -41,6 +41,7 @@ import { Product } from '../../../../models/product.model';
 import { Brand } from '../../../../models/Brand.model';
 import { Category } from '../../../../models/category.model';
 import { SubCategory } from '../../../../models/subCategory.model';
+import { TranslatePipe } from '@ngx-translate/core';
 
 
 
@@ -53,6 +54,7 @@ import { SubCategory } from '../../../../models/subCategory.model';
   standalone: true,
 
   imports: [
+    TranslatePipe,
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,

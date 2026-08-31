@@ -19,6 +19,7 @@ import { AddBrand } from '../add-brand/add-brand';
 import { ConfirmDeleteComponent } from '../../../../shared/confirm-delete/confirm-delete.component';
 
 import { environment } from '../../../../../environments/environment';
+import { translate, TranslatePipe } from '@ngx-translate/core';
 
 
 @Component({
@@ -28,7 +29,8 @@ import { environment } from '../../../../../environments/environment';
 
   imports: [
     SharedModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    TranslatePipe
   ],
 
   templateUrl: './brand-management.html',

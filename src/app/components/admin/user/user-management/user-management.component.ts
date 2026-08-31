@@ -14,12 +14,13 @@ import { User } from '../../../../models/user.model';
 
 import { AddUserComponent } from '../add-user/add-user.component';
 import { ConfirmDeleteComponent } from '../../../../shared/confirm-delete/confirm-delete.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 
 @Component({
   selector: 'app-user-management',
   standalone: true,
-  imports: [SharedModule],
+  imports: [SharedModule,TranslatePipe],
   templateUrl: './user-management.component.html',
   styleUrl: './user-management.component.scss'
 })

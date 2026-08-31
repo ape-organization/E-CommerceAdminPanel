@@ -64,6 +64,7 @@ import {
 import {
   Product
 } from '../../../../models/product.model';
+import { TranslatePipe } from '@ngx-translate/core';
 
 
 // ============================================================
@@ -75,6 +76,7 @@ import {
   standalone: true,
 
   imports: [
+    TranslatePipe,
     CommonModule,
     FormsModule,
     MatButtonModule,

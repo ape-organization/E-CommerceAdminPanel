@@ -1,3 +1,4 @@
+
 <div class="management-container">
 
   <!-- HEADER -->
@@ -10,8 +11,8 @@
       </div>
 
       <div>
-        <h2>Category Management</h2>
-        <p>Manage your product categories</p>
+        <h2>{{ 'categories.management' | translate }}</h2>
+        <p>{{ 'categories.description' | translate }}</p>
       </div>
 
     </div>
@@ -24,7 +25,7 @@
 
       <mat-icon>add</mat-icon>
 
-      Add Category
+      {{ 'categories.addCategory' | translate }}
 
     </button>
 
@@ -43,7 +44,7 @@
       <ng-container matColumnDef="name">
 
         <th mat-header-cell *matHeaderCellDef>
-          Category
+          {{ 'categories.category' | translate }}
         </th>
 
         <td
@@ -87,7 +88,7 @@
       <ng-container matColumnDef="description">
 
         <th mat-header-cell *matHeaderCellDef>
-          Description
+          {{ 'categories.description' | translate }}
         </th>
 
         <td
@@ -95,7 +96,10 @@
           *matCellDef="let category"
           class="description">
 
-          {{ category.description || 'No description available' }}
+          {{
+            category.description ||
+            ('categories.noDescription' | translate)
+          }}
 
         </td>
 
@@ -110,7 +114,7 @@
           *matHeaderCellDef
           class="actions-header">
 
-          Actions
+          {{ 'common.actions' | translate }}
 
         </th>
 
@@ -123,7 +127,6 @@
             mat-icon-button
             class="edit-btn"
             type="button"
-            matTooltip="Edit category"
             (click)="editCategory(category)">
 
             <mat-icon>edit</mat-icon>
@@ -134,7 +137,6 @@
             mat-icon-button
             class="delete-btn"
             type="button"
-            matTooltip="Delete category"
             (click)="deleteCategory(category.id)">
 
             <mat-icon>delete</mat-icon>

@@ -1,3 +1,4 @@
+
 <div class="modal-overlay">
 
   <div class="modal-container">
@@ -44,7 +45,7 @@
         class="close-button"
         (click)="cancel()"
         [disabled]="saving()"
-        aria-label="Close"
+        [attr.aria-label]="'common.close' | translate"
       >
 
         <mat-icon>
@@ -77,7 +78,7 @@
         >
 
           <mat-label class="icon">
-            Category
+            {{ 'subCategories.category' | translate }}
           </mat-label>
 
           <mat-icon matPrefix class="icon">
@@ -111,7 +112,7 @@
 
               <mat-option disabled>
 
-                No categories available.
+                {{ 'subCategories.noCategories' | translate }}
 
               </mat-option>
 
@@ -127,7 +128,7 @@
 
             <mat-error class="error">
 
-              Please select a category.
+              {{ 'subCategories.categoryRequired' | translate }}
 
             </mat-error>
 
@@ -144,7 +145,6 @@
           appearance="outline"
         >
 
-
           <mat-icon matPrefix class="icon">
             label
           </mat-icon>
@@ -152,11 +152,9 @@
           <input
             matInput
             formControlName="name"
-            placeholder="Enter subcategory name"
+            [placeholder]="'subCategories.enterName' | translate"
             maxlength="100"
           />
-
-
 
 
           @if (
@@ -166,7 +164,7 @@
 
             <mat-error class="error">
 
-              Subcategory name is required.
+              {{ 'subCategories.nameRequired' | translate }}
 
             </mat-error>
 
@@ -180,7 +178,7 @@
 
             <mat-error class="error">
 
-              Name must contain at least 2 characters.
+              {{ 'subCategories.minLength' | translate }}
 
             </mat-error>
 
@@ -194,7 +192,7 @@
 
             <mat-error class="error">
 
-              Name cannot exceed 100 characters.
+              {{ 'subCategories.maxLength' | translate }}
 
             </mat-error>
 
@@ -222,7 +220,7 @@
           [disabled]="saving()"
         >
 
-          CANCEL
+          {{ 'common.cancel' | translate }}
 
         </button>
 

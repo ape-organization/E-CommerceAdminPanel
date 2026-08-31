@@ -1,11 +1,70 @@
- /* ============================================================
-    BASE LAYOUT
-    ============================================================ */
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.layout-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
 .sidenav-container {
+  width: 100%;
   min-height: 100vh;
 
   background: var(--color-background);
+
+  overflow: hidden;
+}
+
+
+/* ============================================================
+   SIDENAV CONTENT
+   ============================================================ */
+
+mat-sidenav-content {
+  min-width: 0;
+  max-width: 100%;
+
+  box-sizing: border-box;
+
+  overflow-x: hidden;
+}
+
+
+/* ============================================================
+   PAGE CONTENT
+   ============================================================ */
+
+.page-content {
+  width: 100%;
+  max-width: 100%;
+
+  min-width: 0;
+
+  min-height: calc(100vh - 68px);
+
+  padding: 1.5rem 2rem;
+
+  box-sizing: border-box;
+
+  overflow-x: hidden;
+}
+
+
+/* ============================================================
+   PAGE CONTAINER
+   ============================================================ */
+
+.page-container {
+  width: 100%;
+  max-width: 1600px;
+
+  margin: 0 auto;
+
+  box-sizing: border-box;
 }
 
 
@@ -49,6 +108,8 @@
 
   font-size: 1.15rem;
   font-weight: 600;
+
+  box-sizing: border-box;
 }
 
 .mobile-brand-icon {
@@ -58,6 +119,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  flex-shrink: 0;
 
   border-radius: 50%;
 
@@ -145,7 +208,11 @@
   display: flex;
   align-items: center;
 
+  width: 100%;
+
   padding: 0 1.75rem;
+
+  box-sizing: border-box;
 
   background: rgba(255, 255, 255, 0.96);
 
@@ -188,6 +255,8 @@
   align-items: center;
   justify-content: center;
 
+  flex-shrink: 0;
+
   border-radius: 50%;
 
   background: var(--color-surface-soft);
@@ -215,6 +284,7 @@
 
 .spacer {
   flex: 1 1 auto;
+  min-width: 0;
 }
 
 
@@ -224,9 +294,12 @@
 
 .nav-actions {
   display: flex;
+
   align-items: center;
 
   gap: 0.25rem;
+
+  flex-shrink: 0;
 }
 
 
@@ -250,7 +323,33 @@
 
 
 /* ============================================================
-   ADMIN BUTTON
+   LANGUAGE
+   ============================================================ */
+
+.language-button {
+  display: inline-flex !important;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  color: var(--color-primary) !important;
+
+  font-size: 0.72rem;
+
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.language-button mat-icon {
+  font-size: 20px;
+}
+
+
+/* ============================================================
+   ADMIN
    ============================================================ */
 
 .admin-button {
@@ -263,16 +362,19 @@
   color: var(--color-primary) !important;
 
   font-size: 0.72rem;
+
   font-weight: 700;
+
+  white-space: nowrap;
 }
 
-.admin-button mat-icon {
+.language-button mat-icon {
   color: var(--color-accent);
 
   font-size: 19px;
 }
 
-.admin-button:hover {
+.language-button:hover {
   color: var(--color-accent) !important;
 
   background: var(--color-surface-soft);
@@ -280,7 +382,7 @@
 
 
 /* ============================================================
-   LOGIN BUTTON
+   LOGIN
    ============================================================ */
 
 .login-button {
@@ -293,6 +395,7 @@
   color: var(--color-surface) !important;
 
   font-size: 0.72rem;
+
   font-weight: 700;
 
   letter-spacing: 0.5px;
@@ -310,7 +413,7 @@
 
 
 /* ============================================================
-   LOGOUT BUTTON
+   LOGOUT
    ============================================================ */
 
 .logout-button {
@@ -323,7 +426,10 @@
   color: var(--color-error) !important;
 
   font-size: 0.72rem;
+
   font-weight: 700;
+
+  white-space: nowrap;
 }
 
 .logout-button mat-icon {
@@ -336,26 +442,19 @@
 
 
 /* ============================================================
-   MOBILE MENU BUTTON
+   MOBILE MENU
    ============================================================ */
 
 .menu-button {
-  margin-right: 0.4rem;
+  margin-inline-end: 0.4rem;
 
   color: var(--color-primary);
+
+  flex-shrink: 0;
 }
 
 .menu-button:hover {
   color: var(--color-accent);
-}
-
-
-/* ============================================================
-   PAGE CONTENT
-   ============================================================ */
-
-.page-content {
-  min-height: calc(100vh - 68px);
 }
 
 
@@ -382,6 +481,12 @@
 
   .page-content {
     min-height: calc(100vh - 60px);
+
+    padding: 1rem;
+  }
+
+  .page-container {
+    max-width: 100%;
   }
 
   .sidenav {

@@ -1,3 +1,4 @@
+
 <div class="management-container">
 
   <!-- HEADER -->
@@ -10,8 +11,8 @@
       </div>
 
       <div>
-        <h2>BRAND MANAGEMENT</h2>
-        <p>Manage your cosmetic brands</p>
+        <h2>{{ 'brands.management' | translate }}</h2>
+        <p>{{ 'brands.description' | translate }}</p>
       </div>
 
     </div>
@@ -23,7 +24,7 @@
       (click)="showAddBrand()">
 
       <mat-icon>add</mat-icon>
-      Add Brand
+      {{ 'brands.addBrand' | translate }}
 
     </button>
 
@@ -41,7 +42,7 @@
       <ng-container matColumnDef="name">
 
         <th mat-header-cell *matHeaderCellDef>
-          Brand
+          {{ 'nav.brands' | translate }}
         </th>
 
         <td mat-cell *matCellDef="let brand">
@@ -82,7 +83,7 @@
           *matHeaderCellDef
           class="actions-header">
 
-          Actions
+          {{ 'common.actions' | translate }}
 
         </th>
 
@@ -95,7 +96,6 @@
             mat-icon-button
             class="edit-btn"
             type="button"
-            matTooltip="Edit brand"
             (click)="editBrand(brand)">
 
             <mat-icon>edit</mat-icon>
@@ -106,7 +106,6 @@
             mat-icon-button
             class="delete-btn"
             type="button"
-            matTooltip="Delete brand"
             (click)="deleteBrand(brand.id)">
 
             <mat-icon>delete</mat-icon>

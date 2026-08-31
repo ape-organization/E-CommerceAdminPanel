@@ -21,6 +21,7 @@ import { AddCategoryComponent } from '../add-category/add-category.component';
 import { ConfirmDeleteComponent } from '../../../../shared/confirm-delete/confirm-delete.component';
 
 import { environment } from '../../../../../environments/environment';
+import { TranslatePipe } from '@ngx-translate/core';
 
 
 @Component({
@@ -29,7 +30,8 @@ import { environment } from '../../../../../environments/environment';
 
   imports: [
     SharedModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    TranslatePipe
   ],
 
   templateUrl: './category-management.component.html',

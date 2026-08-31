@@ -19,6 +19,7 @@ import {
 import { SharedModule } from '../../../../shared/shared.module';
 import { UserService } from '../../../../services/user.service';
 import { User } from '../../../../models/user.model';
+import { TranslatePipe } from '@ngx-translate/core';
 
 
 interface AddUserDialogData {
@@ -30,7 +31,7 @@ interface AddUserDialogData {
 @Component({
   selector: 'app-add-user',
   standalone: true,
-  imports: [SharedModule],
+  imports: [SharedModule,TranslatePipe],
   templateUrl: './add-user.component.html',
   styleUrl: './add-user.component.scss'
 })

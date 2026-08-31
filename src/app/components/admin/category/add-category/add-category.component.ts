@@ -32,6 +32,7 @@ import {
 import { firstValueFrom } from 'rxjs';
 
 import { CategoryService } from '../../../../services/category.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 
 @Component({
@@ -40,6 +41,7 @@ import { CategoryService } from '../../../../services/category.service';
   standalone: true,
 
   imports: [
+    TranslatePipe,
     CommonModule,
     ReactiveFormsModule,
     MatButtonModule,
