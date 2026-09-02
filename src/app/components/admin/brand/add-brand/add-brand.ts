@@ -43,9 +43,16 @@ import {
 } from 'rxjs';
 
 import {
+  TranslatePipe
+} from '@ngx-translate/core';
+
+import {
   BrandService
 } from '../../../../services/brand.service';
-import { TranslatePipe } from '@ngx-translate/core';
+
+import {
+  LanguageService
+} from '../../../../services/language.service';
 
 
 @Component({
@@ -79,12 +86,28 @@ export class AddBrand implements OnInit {
   private readonly brandService =
     inject(BrandService);
 
+  readonly languageService =
+    inject(LanguageService);
+
 
   // =====================================================
   // FORM
   // =====================================================
 
-  brandForm: FormGroup;
+  readonly brandForm: FormGroup =
+    this.fb.group({
+
+      nameAr: [
+        '',
+        Validators.required
+      ],
+
+      nameEn: [
+        '',
+        Validators.required
+      ]
+
+    });
 
 
   // =====================================================
@@ -116,19 +139,7 @@ export class AddBrand implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public readonly data: any
 
-  ) {
-
-    this.brandForm =
-      this.fb.group({
-
-        name: [
-          '',
-          Validators.required
-        ]
-
-      });
-
-  }
+  ) {}
 
 
   // =====================================================
@@ -144,8 +155,11 @@ export class AddBrand implements OnInit {
 
       this.brandForm.patchValue({
 
-        name:
-          this.data.brand.name || ''
+        nameAr:
+          this.data.brand.nameAr || '',
+
+        nameEn:
+          this.data.brand.nameEn || ''
 
       });
 
@@ -173,18 +187,13 @@ export class AddBrand implements OnInit {
       event.target as HTMLInputElement;
 
 
-    if (
-      !input.files ||
-      input.files.length === 0
-    ) {
-
-      return;
-
-    }
-
-
     const file =
-      input.files[0];
+      input.files?.[0];
+
+
+    if (!file) {
+      return;
+    }
 
 
     // ===================================================
@@ -196,7 +205,7 @@ export class AddBrand implements OnInit {
     ) {
 
       this.errorMessage.set(
-        'Please select a valid image file.'
+        'brands.invalidImage'
       );
 
       input.value = '';
@@ -219,7 +228,7 @@ export class AddBrand implements OnInit {
     ) {
 
       this.errorMessage.set(
-        'Image size must be less than 5 MB.'
+        'brands.imageTooLarge'
       );
 
       input.value = '';
@@ -230,7 +239,7 @@ export class AddBrand implements OnInit {
 
 
     // ===================================================
-    // SAVE SELECTED FILE
+    // SAVE FILE
     // ===================================================
 
     this.selectedImage.set(file);
@@ -296,12 +305,32 @@ export class AddBrand implements OnInit {
 
 
       // =================================================
-      // NAME
+      // NAMES
       // =================================================
 
+      const nameAr =
+        this.brandForm
+          .get('nameAr')
+          ?.value
+          ?.trim() ?? '';
+
+
+      const nameEn =
+        this.brandForm
+          .get('nameEn')
+          ?.value
+          ?.trim() ?? '';
+
+
       formData.append(
-        'Name',
-        this.brandForm.get('name')?.value
+        'NameAr',
+        nameAr
+      );
+
+
+      formData.append(
+        'NameEn',
+        nameEn
       );
 
 
@@ -347,7 +376,7 @@ export class AddBrand implements OnInit {
         if (!response) {
 
           this.errorMessage.set(
-            'Brand update failed.'
+            'brands.updateFailed'
           );
 
           this.isSubmitting.set(false);
@@ -378,7 +407,7 @@ export class AddBrand implements OnInit {
         if (!response) {
 
           this.errorMessage.set(
-            'Brand creation failed.'
+            'brands.createFailed'
           );
 
           this.isSubmitting.set(false);
@@ -395,9 +424,7 @@ export class AddBrand implements OnInit {
       // =================================================
 
       this.dialogRef.close({
-
         status: true
-
       });
 
     }
@@ -412,9 +439,8 @@ export class AddBrand implements OnInit {
 
 
       this.errorMessage.set(
-        'Something went wrong while saving the brand.'
+        'brands.saveError'
       );
-
 
       this.isSubmitting.set(false);
 
@@ -430,9 +456,7 @@ export class AddBrand implements OnInit {
   onCancel(): void {
 
     this.dialogRef.close({
-
       status: false
-
     });
 
   }

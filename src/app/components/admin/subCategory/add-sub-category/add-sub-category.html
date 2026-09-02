@@ -98,7 +98,7 @@
                 [value]="category.id"
               >
 
-                {{ category.name }}
+                {{ category.nameEn }}
 
               </mat-option>
 
@@ -151,15 +151,15 @@
 
           <input
             matInput
-            formControlName="name"
-            [placeholder]="'subCategories.enterName' | translate"
+            formControlName="nameAr"
+            [placeholder]="'subCategories.enterNameAr' | translate"
             maxlength="100"
           />
 
 
           @if (
-            form.get('name')?.hasError('required') &&
-            form.get('name')?.touched
+            form.get('nameAr')?.hasError('required') &&
+            form.get('nameAr')?.touched
           ) {
 
             <mat-error class="error">
@@ -172,8 +172,8 @@
 
 
           @if (
-            form.get('name')?.hasError('minlength') &&
-            form.get('name')?.touched
+            form.get('nameAr')?.hasError('minlength') &&
+            form.get('nameAr')?.touched
           ) {
 
             <mat-error class="error">
@@ -186,8 +186,8 @@
 
 
           @if (
-            form.get('name')?.hasError('maxlength') &&
-            form.get('name')?.touched
+            form.get('nameAr')?.hasError('maxlength') &&
+            form.get('nameAr')?.touched
           ) {
 
             <mat-error class="error">
@@ -199,7 +199,64 @@
           }
 
         </mat-form-field>
+<mat-form-field
+          appearance="outline"
+        >
 
+          <mat-icon matPrefix class="icon">
+            label
+          </mat-icon>
+
+          <input
+            matInput
+            formControlName="nameEn"
+            [placeholder]="'subCategories.enterNameEn' | translate"
+            maxlength="100"
+          />
+
+
+          @if (
+            form.get('nameEn')?.hasError('required') &&
+            form.get('nameEn')?.touched
+          ) {
+
+            <mat-error class="error">
+
+              {{ 'subCategories.nameRequired' | translate }}
+
+            </mat-error>
+
+          }
+
+
+          @if (
+            form.get('nameEn')?.hasError('minlength') &&
+            form.get('nameEn')?.touched
+          ) {
+
+            <mat-error class="error">
+
+              {{ 'subCategories.minLength' | translate }}
+
+            </mat-error>
+
+          }
+
+
+          @if (
+            form.get('nameEn')?.hasError('maxlength') &&
+            form.get('nameEn')?.touched
+          ) {
+
+            <mat-error class="error">
+
+              {{ 'subCategories.maxLength' | translate }}
+
+            </mat-error>
+
+          }
+
+        </mat-form-field>
 
       </div>
 

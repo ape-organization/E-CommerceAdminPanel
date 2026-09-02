@@ -296,20 +296,20 @@ export class ProductManagementComponent
         return currentProducts.filter(
           product => {
 
-            const name =
-              product.name
+            const nameEn =
+              product.nameEn
                 ?.toLowerCase()
                 .includes(term);
 
 
-            const description =
-              product.description
+            const descriptionEn =
+              product.descriptionEn
                 ?.toLowerCase()
                 .includes(term);
 
 
             const brand =
-              product.brand?.name
+              product.brand?.nameEn
                 ?.toLowerCase()
                 .includes(term);
 
@@ -333,8 +333,8 @@ export class ProductManagementComponent
 
 
             return !!(
-              name ||
-              description ||
+              nameEn ||
+              descriptionEn ||
               brand ||
               subCategory ||
               category
@@ -579,7 +579,7 @@ export class ProductManagementComponent
           response:
             PagedResponse<Product>
         ) => {
-
+console.log(response)
           const items =
             Array.isArray(
               response?.items
@@ -799,7 +799,7 @@ export class ProductManagementComponent
       .subscribe({
 
         next: products => {
-
+console.log(products)
           const results =
             Array.isArray(
               products

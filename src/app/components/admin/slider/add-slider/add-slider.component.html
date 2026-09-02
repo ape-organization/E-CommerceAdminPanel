@@ -14,7 +14,7 @@
         <div class="title-icon">
 
           <mat-icon>
-            category
+            home
           </mat-icon>
 
         </div>
@@ -23,11 +23,11 @@
         <div>
 
           <h2>
-            {{ dialogTitle() }}
+            Slider
           </h2>
 
           <p>
-            {{ dialogDescription() }}
+          Add slider for the home page 
           </p>
 
         </div>
@@ -58,7 +58,7 @@
          ===================================================== -->
 
     <form
-      [formGroup]="categoryForm"
+      [formGroup]="sliderForm"
       (ngSubmit)="onSubmit()"
     >
 
@@ -81,8 +81,8 @@
               <img
                 [src]="imagePreview()"
                 [alt]="
-                  categoryForm.get('name')?.value ||
-                  ('categories.categoryImage' | translate)
+                  sliderForm.get('name')?.value ||
+                  ('slider.sliderImage' | translate)
                 "
                 class="category-image-preview"
               />
@@ -99,7 +99,7 @@
                 </mat-icon>
 
                 <span>
-                  {{ 'categories.chooseImage' | translate }}
+                  {{ 'sliders.chooseImage' | translate }}
                 </span>
 
               </div>
@@ -114,7 +114,7 @@
               </mat-icon>
 
               <span>
-                {{ 'categories.changeImage' | translate }}
+                {{ 'sliders.changeImage' | translate }}
               </span>
 
             </div>
@@ -132,67 +132,6 @@
 
         </div>
 
-
-        <!-- =================================================
-             CATEGORY NAME
-             ================================================= -->
-
-        <mat-form-field
-          appearance="outline"
-        >
-
-          <mat-icon matPrefix class="icon">
-            category
-          </mat-icon>
-
-          <input
-            matInput
-            formControlName="nameAr"
-            [placeholder]="'categories.enterCategoryNameAr' | translate"
-          />
-
-
-          @if (
-            categoryForm
-              .get('nameAr')
-              ?.hasError('required')
-          ) {
-
-            <mat-error class="error">
-              {{ 'categories.nameRequired' | translate }}
-            </mat-error>
-
-          }
-
-        </mat-form-field>
- <mat-form-field
-          appearance="outline"
-        >
-
-          <mat-icon matPrefix class="icon">
-            category
-          </mat-icon>
-
-          <input
-            matInput
-            formControlName="nameEn"
-            [placeholder]="'categories.enterCategoryNameEn' | translate"
-          />
-
-
-          @if (
-            categoryForm
-              .get('nameEn')
-              ?.hasError('required')
-          ) {
-
-            <mat-error class="error">
-              {{ 'categories.nameRequired' | translate }}
-            </mat-error>
-
-          }
-
-        </mat-form-field>
 
      
         <!-- =================================================
@@ -242,7 +181,7 @@
           type="submit"
           class="submit-button"
           [disabled]="
-            categoryForm.invalid ||
+            sliderForm.invalid ||
             isSubmitting()
           "
         >

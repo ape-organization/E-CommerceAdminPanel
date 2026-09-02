@@ -9,6 +9,7 @@ import { BaseLayout } from './components/base-layout/base-layout';
 import { AllSubCategory } from './components/admin/subCategory/all-sub-category/all-sub-category';
 import { Orders } from './components/orders/orders';
 import { BrandManagement } from './components/admin/brand/brand-management/brand-management';
+import { SliderManagementComponent } from './components/admin/slider/slider-management/slider-management.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -21,7 +22,7 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
             { path: 'dashboard', component: AdminDashboardComponent },
-
+ { path: 'slider', component: SliderManagementComponent },
       { path: 'products', component: ProductManagementComponent },
       { path: 'categories', component: CategoryManagementComponent },
             { path: 'brand', component: BrandManagement },

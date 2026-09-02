@@ -10,8 +10,10 @@ export interface SubCategoryResponse {
 
 export interface Product {
 id: number;
-  name: string;
-  description?: string | null;
+  nameEn: string;
+  descriptionEn?: string | null;
+  nameAr: string;
+  descriptionAr?: string | null;
   price: number;
   isInStock: boolean;
   discountPercentage?: number | null;

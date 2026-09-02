@@ -106,19 +106,18 @@ export class AddSubCategory implements OnInit {
         Validators.required
       ],
 
-      name: [
+      nameEn: [
         '',
         [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(100)
+          Validators.required
         ]
       ],
-
-      description: [
+       nameAr: [
         '',
-        Validators.maxLength(500)
-      ]
+        [
+          Validators.required
+        ]
+      ],
 
     });
 
@@ -206,11 +205,11 @@ export class AddSubCategory implements OnInit {
       categoryId:
         subcategory.categoryId ?? null,
 
-      name:
-        subcategory.name ?? '',
-
-      description:
-        subcategory.description ?? ''
+      nameEn:
+        subcategory.nameEn ?? '',
+nameAr:
+        subcategory.nameAr ?? '',
+     
 
     });
 
@@ -268,11 +267,11 @@ export class AddSubCategory implements OnInit {
       categoryId:
         Number(value.categoryId),
 
-      name:
-        value.name?.trim() ?? '',
-
-      description:
-        value.description?.trim() || null
+      nameEn:
+        value.nameEn?.trim() ?? '',
+ nameAr:
+        value.nameAr?.trim() ?? '',
+     
 
     };
 

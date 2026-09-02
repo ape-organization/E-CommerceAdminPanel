@@ -1,22 +1,17 @@
-
 <div class="modal-overlay">
 
   <div class="modal-container">
 
-    <!-- =========================================
-         HEADER
-         ========================================= -->
+    <!-- ========================================= -->
+    <!-- HEADER -->
+    <!-- ========================================= -->
 
     <div class="modal-header">
 
       <div class="header-title">
 
         <div class="title-icon">
-
-          <mat-icon>
-            verified
-          </mat-icon>
-
+          <mat-icon>verified</mat-icon>
         </div>
 
         <div>
@@ -32,8 +27,8 @@
           <p>
             {{
               data.add
-                ? ('brands.createDescription' | translate)
-                : ('brands.updateDescription' | translate)
+                ? ('brands.addBrandDescription' | translate)
+                : ('brands.editBrandDescription' | translate)
             }}
           </p>
 
@@ -42,13 +37,13 @@
       </div>
 
 
+      <!-- CLOSE -->
       <button
         mat-icon-button
         type="button"
         class="close-button"
         (click)="onCancel()"
-        [attr.aria-label]="'common.close' | translate"
-      >
+        [attr.aria-label]="'common.close' | translate">
 
         <mat-icon>
           close
@@ -59,195 +54,258 @@
     </div>
 
 
-    <!-- =========================================
-         FORM
-         ========================================= -->
+    <!-- ========================================= -->
+    <!-- FORM -->
+    <!-- ========================================= -->
 
     <form
       [formGroup]="brandForm"
-      (ngSubmit)="onSubmit()"
-    >
+      (ngSubmit)="onSubmit()">
 
       <div class="form-content">
 
 
-        <!-- =====================================
-             IMAGE
-             ===================================== -->
+        <!-- ===================================== -->
+        <!-- IMAGE -->
+        <!-- ===================================== -->
 
-        <div class="image-upload-section">
+       <!-- ========================================= -->
+<!-- IMAGE UPLOAD -->
+<!-- ========================================= -->
 
-          <div
-            class="image-preview-wrapper"
-            (click)="fileInput.click()"
-          >
+<div class="image-upload-section">
 
-            <!-- Existing / selected image -->
+  <!-- IMAGE PREVIEW -->
+  <div
+    class="image-preview-wrapper"
+    (click)="fileInput.click()">
 
-            <img
-              *ngIf="imagePreview()"
-              [src]="imagePreview()"
-              [alt]="
-                brandForm.get('name')?.value ||
-                ('brands.brandImage' | translate)
-              "
-              class="brand-image-preview"
-            />
-
-
-            <!-- Empty -->
-
-            <div
-              *ngIf="!imagePreview()"
-              class="image-placeholder"
-            >
-
-              <mat-icon>
-                cloud_upload
-              </mat-icon>
-
-              <span>
-                {{ 'brands.chooseImage' | translate }}
-              </span>
-
-            </div>
+    <!-- IMAGE -->
+    <img
+      *ngIf="imagePreview(); else imagePlaceholder"
+      [src]="imagePreview()!"
+      [alt]="
+        languageService.currentLanguage() === 'ar'
+          ? (brandForm.get('nameAr')?.value || ('brands.brandImage' | translate))
+          : (brandForm.get('nameEn')?.value || ('brands.brandImage' | translate))
+      "
+      class="brand-image-preview"
+    />
 
 
-            <!-- Hover -->
+    <!-- PLACEHOLDER -->
+    <ng-template #imagePlaceholder>
 
-            <div class="image-hover-overlay">
+      <div class="image-placeholder">
 
-              <mat-icon>
-                photo_camera
-              </mat-icon>
+        <mat-icon>
+          image
+        </mat-icon>
 
-              <span>
-                {{ 'brands.changeImage' | translate }}
-              </span>
+        <span>
+          {{ 'brands.brandImage' | translate }}
+        </span>
 
-            </div>
+      </div>
 
-          </div>
-
-
-          <!-- Hidden file input -->
-
-          <input
-            #fileInput
-            type="file"
-            accept="image/*"
-            hidden
-            (change)="onImageSelected($event)"
-          />
-
-        </div>
+    </ng-template>
 
 
-        <!-- =====================================
-             NAME
-             ===================================== -->
+    <!-- HOVER -->
+    <div class="image-hover-overlay">
 
-        <mat-form-field appearance="outline">
+      <mat-icon>
+        cloud_upload
+      </mat-icon>
 
-          <mat-icon matPrefix class="icon">
-            verified
-          </mat-icon>
+      <span>
+        {{ 'brands.changeImage' | translate }}
+      </span>
+
+    </div>
+
+
+    <!-- HIDDEN FILE INPUT -->
+    <input
+      #fileInput
+      type="file"
+      accept="image/*"
+      (change)="onImageSelected($event)"
+      hidden
+    />
+
+  </div>
+
+
+  <!-- UPLOAD DESCRIPTION -->
+  <div>
+
+    <strong>
+      {{ 'brands.uploadImage' | translate }}
+    </strong>
+
+    <p>
+      {{ 'brands.imageHint' | translate }}
+    </p>
+
+  </div>
+
+</div>
+
+
+        <!-- ===================================== -->
+        <!-- ENGLISH NAME -->
+        <!-- ===================================== -->
+
+        <mat-form-field
+          appearance="outline">
+
+          <mat-label>
+            {{ 'brands.nameEn' | translate }}
+          </mat-label>
 
           <input
             matInput
-            formControlName="name"
-            [placeholder]="'brands.enterBrandName' | translate"
+            type="text"
+            formControlName="nameEn"
+            [placeholder]="
+              'brands.nameEnPlaceholder' | translate
+            "
+            autocomplete="off"
           />
 
 
+          <!-- REQUIRED ERROR -->
           <mat-error
-            class="error"
             *ngIf="
-              brandForm
-                .get('name')
-                ?.hasError('required')
-            "
-          >
+              brandForm.get('nameEn')?.hasError('required') &&
+              brandForm.get('nameEn')?.touched
+            ">
 
-            {{ 'brands.brandNameRequired' | translate }}
+            {{ 'brands.nameEnRequired' | translate }}
 
           </mat-error>
 
         </mat-form-field>
 
 
-        <!-- =====================================
-             ERROR
-             ===================================== -->
+        <!-- ===================================== -->
+        <!-- ARABIC NAME -->
+        <!-- ===================================== -->
+
+        <mat-form-field
+          appearance="outline"
+          dir="rtl">
+
+          <mat-label>
+            {{ 'brands.nameAr' | translate }}
+          </mat-label>
+
+          <input
+            matInput
+            type="text"
+            formControlName="nameAr"
+            [placeholder]="
+              'brands.nameArPlaceholder' | translate
+            "
+            autocomplete="off"
+            dir="rtl"
+          />
+
+
+          <!-- REQUIRED ERROR -->
+          <mat-error
+            *ngIf="
+              brandForm.get('nameAr')?.hasError('required') &&
+              brandForm.get('nameAr')?.touched
+            ">
+
+            {{ 'brands.nameArRequired' | translate }}
+
+          </mat-error>
+
+        </mat-form-field>
+
+
+        <!-- ===================================== -->
+        <!-- ERROR MESSAGE -->
+        <!-- ===================================== -->
 
         <div
           *ngIf="errorMessage()"
-          class="error-message"
-        >
+          class="error-message">
 
           <mat-icon>
             error_outline
           </mat-icon>
 
           <span>
-            {{ errorMessage() }}
+            {{ errorMessage()! | translate }}
           </span>
 
         </div>
 
-      </div>
+
+        <!-- ===================================== -->
+        <!-- ACTIONS -->
+        <!-- ===================================== -->
+
+        <div class="modal-actions">
 
 
-      <!-- =========================================
-           ACTIONS
-           ========================================= -->
+          <!-- CANCEL -->
+          <button
+            mat-button
+            type="button"
+            class="cancel-button"
+            (click)="onCancel()"
+            [disabled]="isSubmitting()">
 
-      <div class="modal-actions">
+            {{ 'common.cancel' | translate }}
 
-        <button
-          mat-button
-          type="button"
-          class="cancel-button"
-          (click)="onCancel()"
-        >
-
-          {{ 'common.cancel' | translate }}
-
-        </button>
+          </button>
 
 
-        <button
-          mat-raised-button
-          type="submit"
-          class="submit-button"
-          [disabled]="
-            brandForm.invalid ||
-            isSubmitting()
-          "
-        >
-
-          <mat-icon>
-
-            {{
-              data.add
-                ? 'add'
-                : 'save'
-            }}
-
-          </mat-icon>
+          <!-- SUBMIT -->
+          <button
+            mat-raised-button
+            type="submit"
+            class="submit-button"
+            [disabled]="isSubmitting() || brandForm.invalid">
 
 
-          {{
-            isSubmitting()
-              ? ('common.saving' | translate)
-              : (
-                  data.add
-                    ? ('brands.createBrand' | translate)
-                    : ('brands.updateBrand' | translate)
-                )
-          }}
+            <!-- NORMAL ICON -->
+            <mat-icon *ngIf="!isSubmitting()">
 
-        </button>
+              {{
+                data.add
+                  ? 'add'
+                  : 'save'
+              }}
+
+            </mat-icon>
+
+
+            <!-- LOADING ICON -->
+            <mat-icon *ngIf="isSubmitting()">
+              hourglass_empty
+            </mat-icon>
+
+
+            <!-- TEXT -->
+            <span>
+
+              {{
+                data.add
+                  ? ('common.add' | translate)
+                  : ('common.save' | translate)
+              }}
+
+            </span>
+
+          </button>
+
+        </div>
 
       </div>
 

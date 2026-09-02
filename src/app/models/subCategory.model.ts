@@ -1,7 +1,7 @@
 export interface SubCategory {
   id: number;
-  name: string;
-  description?: string;
+  nameAr: string;
+  nameEn: string;
   categoryId: number;
   categoryName?: string;
   productIds?: number[];

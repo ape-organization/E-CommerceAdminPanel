@@ -274,14 +274,18 @@ export class AddProductComponent implements OnInit {
     this.productForm =
       this.fb.group({
 
-        name: [
+        nameEn: [
           '',
           [
-            Validators.required,
-            Validators.maxLength(200)
+            Validators.required
           ]
         ],
-
+ nameAr: [
+          '',
+          [
+            Validators.required
+          ]
+        ],
         price: [
           null,
           [
@@ -325,10 +329,14 @@ export class AddProductComponent implements OnInit {
           Validators.required
         ],
 
-        description: [
+        descriptionEn: [
           ''
         ]
+,
 
+        descriptionAr: [
+          ''
+        ]
       });
   }
 
@@ -829,9 +837,10 @@ export class AddProductComponent implements OnInit {
 
     this.productForm.patchValue({
 
-      name:
-        product.name ?? '',
-
+      nameEn:
+        product.nameEn ?? '',
+nameAr:
+        product.nameAr ?? '',
       price:
         product.price ?? 0,
 
@@ -853,8 +862,10 @@ export class AddProductComponent implements OnInit {
       subCategoryIds:
         [],
 
-      description:
-        product.description ?? ''
+      descriptionEn:
+        product.descriptionEn ?? '',
+        descriptionAr:
+        product.descriptionAr ?? ''
 
     });
 
@@ -1164,17 +1175,20 @@ export class AddProductComponent implements OnInit {
         .getRawValue();
 
 
-    const productName =
+    const productNameEn =
       String(
-        value.name ?? ''
+        value.nameEn ?? ''
       ).trim();
-
+ const productNameAr =
+      String(
+        value.nameAr ?? ''
+      ).trim();
 
     // --------------------------------------------------------
     // NAME VALIDATION
     // --------------------------------------------------------
 
-    if (!productName) {
+    if (!productNameEn && !productNameAr) {
 
       this.errorMessage.set(
         'Product name is required.'
@@ -1208,7 +1222,7 @@ export class AddProductComponent implements OnInit {
 
       this.productService
         .checkProductExists(
-          productName
+          productNameEn
         )
         .subscribe({
 
@@ -1430,20 +1444,31 @@ export class AddProductComponent implements OnInit {
     // ========================================================
 
     formData.append(
-      'Name',
+      'NameAr',
       String(
-        value.name ?? ''
+        value.nameAr ?? ''
       ).trim()
     );
 
-
     formData.append(
-      'Description',
+      'NameEn',
       String(
-        value.description ?? ''
-      )
+        value.nameEn ?? ''
+      ).trim()
     );
 
+    formData.append(
+      'DescriptionAr',
+      String(
+        value.descriptionAr ?? ''
+      )
+    );
+ formData.append(
+      'DescriptionEn',
+      String(
+        value.descriptionEn ?? ''
+      )
+    );
 
     formData.append(
       'Price',
@@ -1636,7 +1661,7 @@ export class AddProductComponent implements OnInit {
             Number(subCategory.id) ===
             Number(id)
         )
-        ?.name ??
+        ?.nameEn ??
       'Selected'
     );
   }

@@ -164,7 +164,22 @@
           </span>
 
         </a>
+<a
+          mat-list-item
+          routerLink="/admin/slider"
+          routerLinkActive="active"
+          (click)="closeMobileDrawer(drawer)"
+        >
 
+          <mat-icon matListItemIcon>
+            image
+          </mat-icon>
+
+          <span matListItemTitle class="item">
+            {{ 'nav.slider' | translate }}
+          </span>
+
+        </a>
 
         <mat-divider></mat-divider>
 

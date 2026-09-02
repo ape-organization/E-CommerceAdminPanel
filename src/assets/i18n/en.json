@@ -78,7 +78,12 @@
     "brandNameRequired": "Brand name is required",
 
     "createBrand": "CREATE BRAND",
-    "updateBrand": "UPDATE BRAND"
+    "updateBrand": "UPDATE BRAND",
+
+      "invalidImage": "Please select a valid image file.",
+    "imageTooLarge": "Image size must be less than 5 MB.",
+    "saveError": "Something went wrong while saving the brand.",
+     "deleteConfirmation": "Are you sure you want to delete this brand?"
   },
 
   "categories": {

@@ -31,12 +31,12 @@ import {
 
 import { firstValueFrom } from 'rxjs';
 
-import { CategoryService } from '../../../../services/category.service';
 import { TranslatePipe } from '@ngx-translate/core';
+import { SliderService } from '../../../../services/slider.service';
 
 
 @Component({
-  selector: 'app-add-category',
+  selector: 'app-add-slider',
 
   standalone: true,
 
@@ -51,12 +51,12 @@ import { TranslatePipe } from '@ngx-translate/core';
   ],
 
   templateUrl:
-    './add-category.component.html',
+    './add-slider.component.html',
 
   styleUrl:
-    './add-category.component.scss'
+    './add-slider.component.scss'
 })
-export class AddCategoryComponent
+export class AddSliderComponent
   implements OnInit {
 
 
@@ -67,11 +67,11 @@ export class AddCategoryComponent
   private readonly fb =
     inject(FormBuilder);
 
-  private readonly categoryService =
-    inject(CategoryService);
+  private readonly sliderService =
+    inject(SliderService);
 
   private readonly dialogRef =
-    inject(MatDialogRef<AddCategoryComponent>);
+    inject(MatDialogRef<AddSliderComponent>);
 
 
   // =========================================================
@@ -90,17 +90,9 @@ export class AddCategoryComponent
   // FORM
   // =========================================================
 
-  readonly categoryForm: FormGroup =
+  readonly sliderForm: FormGroup =
     this.fb.group({
 
-      nameEn: [
-        '',
-        Validators.required
-      ],
- nameAr: [
-        '',
-        Validators.required
-      ]
 
     });
 
@@ -132,20 +124,6 @@ export class AddCategoryComponent
     );
 
 
-  readonly dialogTitle =
-    computed(() =>
-      this.isAdd()
-        ? 'Add New Category'
-        : 'Edit Category'
-    );
-
-
-  readonly dialogDescription =
-    computed(() =>
-      this.isAdd()
-        ? 'Create a new product category'
-        : 'Update category information'
-    );
 
 
   readonly submitText =
@@ -158,8 +136,8 @@ export class AddCategoryComponent
       }
 
       return this.isAdd()
-        ? 'CREATE CATEGORY'
-        : 'UPDATE CATEGORY';
+        ? 'CREATE SLIDER'
+        : 'UPDATE SLIDER';
 
     });
 
@@ -180,22 +158,16 @@ export class AddCategoryComponent
 
     if (
       !this.isAdd() &&
-      this.data?.category
+      this.data?.slider
     ) {
 
-      this.categoryForm.patchValue({
-
-        nameAr:
-          this.data.category.nameAr ?? '',
-
-         nameEn:
-          this.data.category.nameEn ?? '',
+      this.sliderForm.patchValue({
 
       });
 
 
       this.imagePreview.set(
-        this.data.category.imageUrl ?? null
+        this.data.slider.imageUrl ?? null
       );
 
     }
@@ -316,11 +288,11 @@ export class AddCategoryComponent
   async onSubmit(): Promise<void> {
 
     if (
-      this.categoryForm.invalid ||
+      this.sliderForm.invalid ||
       this.isSubmitting()
     ) {
 
-      this.categoryForm.markAllAsTouched();
+      this.sliderForm.markAllAsTouched();
 
       return;
 
@@ -336,24 +308,6 @@ export class AddCategoryComponent
 
       const formData =
         new FormData();
-
-
-      // =====================================================
-      // NAME
-      // =====================================================
-
-      formData.append(
-        'NameAr',
-        this.categoryForm
-          .get('nameAr')
-          ?.value ?? ''
-      );
-  formData.append(
-        'NameEn',
-        this.categoryForm
-          .get('nameEn')
-          ?.value ?? ''
-      );
 
     
       // =====================================================
@@ -381,24 +335,24 @@ export class AddCategoryComponent
 
       if (
         !this.isAdd() &&
-        this.data?.category
+        this.data?.slider
       ) {
 
-        const categoryId =
-          this.data.category.id;
+        const sliderId =
+          this.data.slider.id;
 
 
         formData.append(
           'Id',
-          categoryId.toString()
+          sliderId.toString()
         );
 
 
         const response =
           await firstValueFrom(
 
-            this.categoryService.updateCategory(
-              categoryId,
+            this.sliderService.updateSlider(
+              sliderId,
               formData
             )
 
@@ -408,7 +362,7 @@ export class AddCategoryComponent
         if (!response) {
 
           throw new Error(
-            'Category update failed.'
+            'Slider update failed.'
           );
 
         }
@@ -425,7 +379,7 @@ export class AddCategoryComponent
         const response =
           await firstValueFrom(
 
-            this.categoryService.addCategory(
+            this.sliderService.addSlider(
               formData
             )
 
@@ -459,7 +413,7 @@ export class AddCategoryComponent
     catch (error) {
 
       console.error(
-        'Error saving category:',
+        'Error saving image:',
         error
       );
 
@@ -467,7 +421,7 @@ export class AddCategoryComponent
       this.errorMessage.set(
         error instanceof Error
           ? error.message
-          : 'Something went wrong while saving the category.'
+          : 'Something went wrong while saving the image.'
       );
 
       this.isSubmitting.set(false);

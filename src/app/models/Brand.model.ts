@@ -2,7 +2,8 @@ export interface Brand {
 
   id: number;
 
-  name: string;
+  nameAr: string;
+  nameEn: string;
 
   imageUrl?: string | null;
 isDeleted?: boolean;

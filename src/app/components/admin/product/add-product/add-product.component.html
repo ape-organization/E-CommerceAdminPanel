@@ -176,7 +176,7 @@
 
 
       <!-- ================================================= -->
-      <!-- NAME -->
+      <!-- NAME arabic -->
       <!-- ================================================= -->
 
       <mat-form-field
@@ -189,12 +189,12 @@
 
         <input
           matInput
-          formControlName="name"
-          [placeholder]="'products.productNamePlaceholder' | translate"
+          formControlName="nameAr"
+          [placeholder]="'products.productNamePlaceholderAr' | translate"
         />
 
         @if (
-          productForm.get('name')?.hasError('required')
+          productForm.get('nameAr')?.hasError('required')
         ) {
 
           <mat-error>
@@ -204,7 +204,7 @@
         }
 
         @if (
-          productForm.get('name')?.hasError('maxlength')
+          productForm.get('nameAr')?.hasError('maxlength')
         ) {
 
           <mat-error>
@@ -214,7 +214,45 @@
         }
 
       </mat-form-field>
+ <!-- ================================================= -->
+      <!-- NAME english -->
+      <!-- ================================================= -->
 
+      <mat-form-field
+        appearance="outline"
+        class="full-width">
+
+        <mat-icon matPrefix>
+          inventory_2
+        </mat-icon>
+
+        <input
+          matInput
+          formControlName="nameEn"
+          [placeholder]="'products.productNameEnPlaceholder' | translate"
+        />
+
+        @if (
+          productForm.get('nameEn')?.hasError('required')
+        ) {
+
+          <mat-error>
+            {{ 'products.productNameRequired' | translate }}
+          </mat-error>
+
+        }
+
+        @if (
+          productForm.get('nameEn')?.hasError('maxlength')
+        ) {
+
+          <mat-error>
+            {{ 'products.productNameTooLong' | translate }}
+          </mat-error>
+
+        }
+
+      </mat-form-field>
 
       <!-- ================================================= -->
       <!-- PRICE -->
@@ -560,7 +598,7 @@
               <mat-option
                 [value]="brand.id">
 
-                {{ brand.name }}
+                {{ brand.nameEn }}
 
               </mat-option>
 
@@ -629,7 +667,7 @@
               <mat-option
                 [value]="category.id">
 
-                {{ category.name }}
+                {{ category.nameEn }}
 
               </mat-option>
 
@@ -738,7 +776,7 @@
               <mat-option
                 [value]="subCategory.id">
 
-                {{ subCategory.name }}
+                {{ subCategory.nameEn }}
 
               </mat-option>
 
@@ -916,12 +954,27 @@
       <textarea
         matInput
         rows="4"
-        formControlName="description"
-        [placeholder]="'products.descriptionPlaceholder' | translate"
+        formControlName="descriptionEn"
+        [placeholder]="'products.descriptionPlaceholderEn' | translate"
       ></textarea>
 
     </mat-form-field>
+  <mat-form-field
+      appearance="outline"
+      class="full-width">
 
+      <mat-icon matPrefix>
+        notes
+      </mat-icon>
+
+      <textarea
+        matInput
+        rows="4"
+        formControlName="descriptionAr"
+        [placeholder]="'products.descriptionPlaceholderAr' | translate"
+      ></textarea>
+
+    </mat-form-field>
 
     <!-- =================================================== -->
     <!-- ERROR -->

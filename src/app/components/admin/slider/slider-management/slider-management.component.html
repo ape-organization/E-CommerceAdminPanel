@@ -1,0 +1,149 @@
+
+<div class="management-container">
+
+  <!-- HEADER -->
+  <header class="header-actions">
+
+    <div class="page-heading">
+
+      <div class="heading-icon">
+        <mat-icon>home</mat-icon>
+      </div>
+
+      <div>
+        <h2>{{ 'sliders.management' | translate }}</h2>
+        <p>{{ 'sliders.description' | translate }}</p>
+      </div>
+
+    </div>
+
+    <button
+      mat-raised-button
+      class="add-slider-btn"
+      type="button"
+      (click)="showAddSlider()">
+
+      <mat-icon>add</mat-icon>
+
+      {{ 'sliders.addSlider' | translate }}
+
+    </button>
+
+  </header>
+
+
+  <!-- TABLE -->
+  <div class="table-responsive">
+
+    <table
+      mat-table
+      [dataSource]="paginatedCategories()">
+
+
+      <!-- SLIDER -->
+      <ng-container matColumnDef="name">
+
+        <th mat-header-cell *matHeaderCellDef>
+          {{ 'sliders.slider' | translate }}
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let slider"
+          class="category-name">
+
+          <div class="category-name-wrapper">
+
+            <div class="category-image-wrapper">
+
+              @if (slider.imageUrl) {
+
+                <img
+                  class="category-image"
+                  [src]="getImageUrl(slider.imageUrl)"
+                  >
+
+              } @else {
+
+                <mat-icon class="category-image-placeholder">
+                  home
+                </mat-icon>
+
+              }
+
+            </div>
+
+          
+
+          </div>
+
+        </td>
+
+      </ng-container>
+
+
+
+      <!-- ACTIONS -->
+      <ng-container matColumnDef="actions">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          class="actions-header">
+
+          {{ 'common.actions' | translate }}
+
+        </th>
+
+        <td
+          mat-cell
+          *matCellDef="let slider"
+          class="actions-cell">
+
+          <button
+            mat-icon-button
+            class="edit-btn"
+            type="button"
+            (click)="editSlider(slider)">
+
+            <mat-icon>edit</mat-icon>
+
+          </button>
+
+        
+
+        </td>
+
+      </ng-container>
+
+
+      <!-- ROWS -->
+      <tr
+        mat-header-row
+        *matHeaderRowDef="displayedColumns">
+      </tr>
+
+      <tr
+        mat-row
+        *matRowDef="
+          let row;
+          columns: displayedColumns;
+        ">
+      </tr>
+
+    </table>
+
+
+    <!-- PAGINATION -->
+    <mat-paginator
+      [length]="sliders().length"
+      [pageIndex]="pageIndex()"
+      [pageSize]="pageSize()"
+      [pageSizeOptions]="[5, 10, 25, 50]"
+      showFirstLastButtons
+      (page)="onPageChange($event)">
+    </mat-paginator>
+
+  </div>
+
+</div>

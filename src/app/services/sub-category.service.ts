@@ -85,7 +85,8 @@ export class SubCategoryService {
   update(
     id: number,
     data: {
-      name: string;
+      nameEn: string;
+      nameAr:string;
       categoryId: number;
     }
   ): Observable<any> {

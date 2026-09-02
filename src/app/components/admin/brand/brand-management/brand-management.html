@@ -1,4 +1,3 @@
-
 <div class="management-container">
 
   <!-- HEADER -->
@@ -11,12 +10,19 @@
       </div>
 
       <div>
-        <h2>{{ 'brands.management' | translate }}</h2>
-        <p>{{ 'brands.description' | translate }}</p>
+        <h2>
+          {{ 'brands.management' | translate }}
+        </h2>
+
+        <p>
+          {{ 'brands.description' | translate }}
+        </p>
       </div>
 
     </div>
 
+
+    <!-- ADD BRAND -->
     <button
       mat-raised-button
       class="add-brand-btn"
@@ -24,6 +30,7 @@
       (click)="showAddBrand()">
 
       <mat-icon>add</mat-icon>
+
       {{ 'brands.addBrand' | translate }}
 
     </button>
@@ -38,34 +45,60 @@
       mat-table
       [dataSource]="dataSource()">
 
+      <!-- ===================================================== -->
       <!-- BRAND -->
+      <!-- ===================================================== -->
+
       <ng-container matColumnDef="name">
 
-        <th mat-header-cell *matHeaderCellDef>
+        <th
+          mat-header-cell
+          *matHeaderCellDef>
+
           {{ 'nav.brands' | translate }}
+
         </th>
 
-        <td mat-cell *matCellDef="let brand">
+
+        <td
+          mat-cell
+          *matCellDef="let brand">
 
           <div class="brand-wrapper">
 
+            <!-- BRAND IMAGE -->
             <div class="brand-image-wrapper">
 
               <img
                 *ngIf="brand.imageUrl"
                 [src]="getImageUrl(brand.imageUrl)"
-                [alt]="brand.name"
+                [alt]="
+                  languageService.currentLanguage() === 'ar'
+                    ? brand.nameAr
+                    : brand.nameEn
+                "
                 class="brand-image"
               />
 
-              <mat-icon *ngIf="!brand.imageUrl">
+              <mat-icon
+                *ngIf="!brand.imageUrl">
+
                 image
+
               </mat-icon>
 
             </div>
 
+
+            <!-- BRAND NAME -->
             <span class="brand-name">
-              {{ brand.name }}
+
+              {{
+                languageService.currentLanguage() === 'ar'
+                  ? brand.nameAr
+                  : brand.nameEn
+              }}
+
             </span>
 
           </div>
@@ -75,7 +108,10 @@
       </ng-container>
 
 
+      <!-- ===================================================== -->
       <!-- ACTIONS -->
+      <!-- ===================================================== -->
+
       <ng-container matColumnDef="actions">
 
         <th
@@ -87,28 +123,39 @@
 
         </th>
 
+
         <td
           mat-cell
           *matCellDef="let brand"
           class="actions-cell">
 
+
+          <!-- EDIT -->
           <button
             mat-icon-button
             class="edit-btn"
             type="button"
-            (click)="editBrand(brand)">
+            (click)="editBrand(brand)"
+            [attr.aria-label]="'common.edit' | translate">
 
-            <mat-icon>edit</mat-icon>
+            <mat-icon>
+              edit
+            </mat-icon>
 
           </button>
 
+
+          <!-- DELETE -->
           <button
             mat-icon-button
             class="delete-btn"
             type="button"
-            (click)="deleteBrand(brand.id)">
+            (click)="deleteBrand(brand.id)"
+            [attr.aria-label]="'common.delete' | translate">
 
-            <mat-icon>delete</mat-icon>
+            <mat-icon>
+              delete
+            </mat-icon>
 
           </button>
 
@@ -117,11 +164,19 @@
       </ng-container>
 
 
-      <!-- ROWS -->
+      <!-- ===================================================== -->
+      <!-- HEADER ROW -->
+      <!-- ===================================================== -->
+
       <tr
         mat-header-row
         *matHeaderRowDef="displayedColumns">
       </tr>
+
+
+      <!-- ===================================================== -->
+      <!-- DATA ROW -->
+      <!-- ===================================================== -->
 
       <tr
         mat-row
@@ -131,10 +186,32 @@
         ">
       </tr>
 
+
+      <!-- ===================================================== -->
+      <!-- NO DATA -->
+      <!-- ===================================================== -->
+
+      <tr
+        class="mat-row"
+        *matNoDataRow>
+
+        <td
+          class="mat-cell no-data"
+          [attr.colspan]="displayedColumns.length">
+
+          {{ 'common.noData' | translate }}
+
+        </td>
+
+      </tr>
+
     </table>
 
 
+    <!-- ======================================================= -->
     <!-- PAGINATION -->
+    <!-- ======================================================= -->
+
     <mat-paginator
       [length]="brands().length"
       [pageSize]="pageSize()"
@@ -142,6 +219,7 @@
       [pageSizeOptions]="[5, 10, 25]"
       showFirstLastButtons
       (page)="onPageChange($event)">
+
     </mat-paginator>
 
   </div>

@@ -10,22 +10,22 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 import { MatDialog } from '@angular/material/dialog';
 
-import { CategoryService } from '../../../../services/category.service';
 
 import { Category } from '../../../../models/category.model';
 
 import { SharedModule } from '../../../../shared/shared.module';
 
-import { AddCategoryComponent } from '../add-category/add-category.component';
 
 import { ConfirmDeleteComponent } from '../../../../shared/confirm-delete/confirm-delete.component';
 
 import { environment } from '../../../../../environments/environment';
 import { TranslatePipe } from '@ngx-translate/core';
+import { SliderService } from '../../../../services/slider.service';
+import { AddSliderComponent } from '../add-slider/add-slider.component';
 
 
 @Component({
-  selector: 'app-category-management',
+  selector: 'app-slider-management',
   standalone: true,
 
   imports: [
@@ -34,14 +34,14 @@ import { TranslatePipe } from '@ngx-translate/core';
     TranslatePipe
   ],
 
-  templateUrl: './category-management.component.html',
+  templateUrl: './slider-management.component.html',
 
-  styleUrl: './category-management.component.scss'
+  styleUrl: './slider-management.component.scss'
 })
-export class CategoryManagementComponent implements OnInit {
+export class SliderManagementComponent implements OnInit {
 
-  private readonly categoryService =
-    inject(CategoryService);
+  private readonly sliderService =
+    inject(SliderService);
 
   private readonly dialog =
     inject(MatDialog);
@@ -51,8 +51,8 @@ export class CategoryManagementComponent implements OnInit {
   // DATA
   // ==========================================================
 
-  readonly categories =
-    signal<Category[]>([]);
+  readonly sliders =
+    signal<any>([]);
 
 
   // ==========================================================
@@ -68,12 +68,12 @@ export class CategoryManagementComponent implements OnInit {
 
   readonly paginatedCategories = computed(() => {
 
-    const categories = this.categories();
+    const sliders = this.sliders();
 
     const start =
       this.pageIndex() * this.pageSize();
 
-    return categories.slice(
+    return sliders.slice(
       start,
       start + this.pageSize()
     );
@@ -87,7 +87,7 @@ export class CategoryManagementComponent implements OnInit {
 
   readonly displayedColumns = [
     'name',
-    'description',
+   
     'actions'
   ];
 
@@ -97,7 +97,7 @@ export class CategoryManagementComponent implements OnInit {
   // ==========================================================
 
   ngOnInit(): void {
-    this.loadCategories();
+    this.loadSliders();
   }
 
 
@@ -105,17 +105,17 @@ export class CategoryManagementComponent implements OnInit {
   // LOAD
   // ==========================================================
 
-  loadCategories(): void {
+  loadSliders(): void {
 
-    this.categoryService
-      .getCategories()
+    this.sliderService
+      .getSliders()
       .subscribe({
 
-        next: categories => {
-console.log(categories)
-          this.categories.set(
-            Array.isArray(categories)
-              ? categories
+        next: sliders => {
+console.log(sliders)
+          this.sliders.set(
+            Array.isArray(sliders)
+              ? sliders
               : []
           );
 
@@ -126,7 +126,7 @@ console.log(categories)
         error: error => {
 
           console.error(
-            'Error loading categories:',
+            'Error loading sliders:',
             error
           );
 
@@ -156,9 +156,9 @@ console.log(categories)
   // ADD
   // ==========================================================
 
-  showAddCategory(): void {
+  showAddSlider(): void {
 
-    this.openCategoryDialog(
+    this.openSliderDialog(
       true
     );
   }
@@ -168,25 +168,25 @@ console.log(categories)
   // EDIT
   // ==========================================================
 
-  editCategory(
-    category: Category
+  editSlider(
+    slider: any
   ): void {
 
-    this.openCategoryDialog(
+    this.openSliderDialog(
       false,
-      category
+      slider
     );
   }
 
 
-  private openCategoryDialog(
+  private openSliderDialog(
     add: boolean,
-    category: Category | null = null
+    slider: any | null = null
   ): void {
 
     this.dialog
       .open(
-        AddCategoryComponent,
+        AddSliderComponent,
         {
 
           width: '500px',
@@ -196,9 +196,9 @@ console.log(categories)
           disableClose: true,
 
           data: {
-            category,
+            slider,
             add,
-            categories: this.categories()
+            categories: this.sliders()
           }
 
         }
@@ -207,67 +207,14 @@ console.log(categories)
       .subscribe(result => {
 
         if (result?.status) {
-          this.loadCategories();
+          this.loadSliders();
         }
 
       });
   }
 
 
-  // ==========================================================
-  // DELETE
-  // ==========================================================
 
-  deleteCategory(
-    id: number
-  ): void {
-
-    this.dialog
-      .open(
-        ConfirmDeleteComponent,
-        {
-          data:
-            'Are you sure you want to delete this category?'
-        }
-      )
-      .afterClosed()
-      .subscribe(result => {
-
-        if (!result?.status) {
-          return;
-        }
-
-        this.categoryService
-          .deleteCategory(id)
-          .subscribe({
-
-            next: () => {
-
-              this.categories.update(
-                categories =>
-                  categories.filter(
-                    category =>
-                      category.id !== id
-                  )
-              );
-
-              this.fixPageAfterDelete();
-
-            },
-
-            error: error => {
-
-              console.error(
-                'Error deleting category:',
-                error
-              );
-
-            }
-
-          });
-
-      });
-  }
 
 
   // ==========================================================
@@ -279,7 +226,7 @@ console.log(categories)
     const lastPage = Math.max(
       0,
       Math.ceil(
-        this.categories().length /
+        this.sliders().length /
         this.pageSize()
       ) - 1
     );

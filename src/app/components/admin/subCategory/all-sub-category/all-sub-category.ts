@@ -141,7 +141,7 @@ export class AllSubCategory implements OnInit {
       .subscribe({
 
         next: categories => {
-
+console.log(categories)
           this.categories.set(
             Array.isArray(categories)
               ? categories
@@ -321,7 +321,8 @@ export class AllSubCategory implements OnInit {
   createSubcategory(
     data: {
       categoryId: number;
-      name: string;
+      nameEn: string;
+      nameAr:string
    
     }
   ): void {
@@ -333,8 +334,9 @@ export class AllSubCategory implements OnInit {
       categoryId:
         data.categoryId,
 
-      name:
-        data.name
+      nameAr:
+        data.nameAr,
+        nameEn:data.nameEn
 
     };
 
@@ -378,7 +380,8 @@ export class AllSubCategory implements OnInit {
 
     data: {
       categoryId: number;
-      name: string;
+      nameAr: string;
+      nameEn:string;
     }
 
   ): void {
@@ -390,8 +393,9 @@ export class AllSubCategory implements OnInit {
       categoryId:
         data.categoryId,
 
-      name:
-        data.name
+      nameAr:
+        data.nameAr,
+        nameEn:data.nameEn
 
     };
 
@@ -526,7 +530,7 @@ export class AllSubCategory implements OnInit {
       this.categories().find(
         category =>
           category.id === categoryId
-      )?.name
+      )?.nameEn
       ?? 'Unknown'
     );
 

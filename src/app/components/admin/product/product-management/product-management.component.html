@@ -187,7 +187,7 @@
 
                   <img
                     [src]="getImageUrl(product.imageUrl)"
-                    [alt]="product.name" />
+                    [alt]="product.nameEn" />
 
                 } @else {
 
@@ -200,7 +200,7 @@
               <div class="product-name">
 
                 <strong>
-                  {{ product.name }}
+                  {{ product.nameEn }}
                 </strong>
 
                 <span>
@@ -225,7 +225,7 @@
 
           <td mat-cell *matCellDef="let product">
 
-            {{ product.brand?.name || ('products.noBrand' | translate) }}
+            {{ product.brand?.nameEn || ('products.noBrand' | translate) }}
 
           </td>
 
@@ -368,7 +368,7 @@
               ) {
 
                 <span class="category-chip">
-                  {{ subCategory.name }}
+                  {{ subCategory.nameEn }}
                 </span>
 
               }
