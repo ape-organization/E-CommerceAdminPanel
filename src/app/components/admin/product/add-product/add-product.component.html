@@ -15,11 +15,10 @@
 
       <div class="header-text">
 
-        <span class="header-eyebrow">
-          {{ 'products.managementTitle' | translate }}
-        </span>
+      
 
         <h2>
+          
           {{
             isEditing()
               ? ('products.editProduct' | translate)
@@ -30,8 +29,8 @@
         <p>
           {{
             isEditing()
-              ? ('products.updateProductInformation' | translate)
-              : ('products.createNewProduct' | translate)
+              ? ('products.editProduct' | translate)
+              : ('products.addProduct' | translate)
           }}
         </p>
 
@@ -103,12 +102,10 @@
             </mat-icon>
 
             <span>
-              {{ 'products.uploadImage' | translate }}
+              {{ 'products.productImage' | translate }}
             </span>
 
-            <small>
-              {{ 'products.supportedImageFormats' | translate }}
-            </small>
+       
 
           </div>
 
@@ -126,21 +123,7 @@
       />
 
 
-      <div class="image-info">
-
-        <strong>
-          {{ 'products.productImage' | translate }}
-        </strong>
-
-        <span>
-          {{ 'products.imageDescription' | translate }}
-        </span>
-
-        <small>
-          {{ 'products.maximumImageSize' | translate }}
-        </small>
-
-      </div>
+     
 
     </div>
 
@@ -598,7 +581,7 @@
               <mat-option
                 [value]="brand.id">
 
-                {{ brand.nameEn }}
+                {{ brand.nameEn }} - {{ brand.nameAr }}
 
               </mat-option>
 
@@ -667,7 +650,7 @@
               <mat-option
                 [value]="category.id">
 
-                {{ category.nameEn }}
+                {{ category.nameEn }} -{{ category.nameAr }}
 
               </mat-option>
 
@@ -776,7 +759,7 @@
               <mat-option
                 [value]="subCategory.id">
 
-                {{ subCategory.nameEn }}
+                {{ subCategory.nameEn }} -  {{ subCategory.nameAr }}
 
               </mat-option>
 
@@ -828,23 +811,6 @@
 
           <mat-hint>
             {{ 'products.loadingSubcategories' | translate }}
-          </mat-hint>
-
-        }
-
-
-        <!-- =============================================== -->
-        <!-- NORMAL HINT -->
-        <!-- =============================================== -->
-
-        @if (
-          selectedCategoryId() &&
-          !isLoadingSubCategories() &&
-          filteredSubCategories().length > 0
-        ) {
-
-          <mat-hint>
-            {{ 'products.multipleSubcategoriesHint' | translate }}
           </mat-hint>
 
         }
@@ -934,9 +900,7 @@
           {{ 'products.description' | translate }}
         </h3>
 
-        <p>
-          {{ 'products.addProductInformation' | translate }}
-        </p>
+      
 
       </div>
 
@@ -953,7 +917,7 @@
 
       <textarea
         matInput
-        rows="4"
+        rows="2"
         formControlName="descriptionEn"
         [placeholder]="'products.descriptionPlaceholderEn' | translate"
       ></textarea>
@@ -969,7 +933,7 @@
 
       <textarea
         matInput
-        rows="4"
+        rows="2"
         formControlName="descriptionAr"
         [placeholder]="'products.descriptionPlaceholderAr' | translate"
       ></textarea>

@@ -24,13 +24,13 @@
             }}
           </h2>
 
-          <p>
+         <!--  <p>
             {{
               data.add
                 ? ('brands.addBrandDescription' | translate)
                 : ('brands.editBrandDescription' | translate)
             }}
-          </p>
+          </p> -->
 
         </div>
 
@@ -137,18 +137,6 @@
   </div>
 
 
-  <!-- UPLOAD DESCRIPTION -->
-  <div>
-
-    <strong>
-      {{ 'brands.uploadImage' | translate }}
-    </strong>
-
-    <p>
-      {{ 'brands.imageHint' | translate }}
-    </p>
-
-  </div>
 
 </div>
 
@@ -195,7 +183,7 @@
 
         <mat-form-field
           appearance="outline"
-          dir="rtl">
+         >
 
           <mat-label>
             {{ 'brands.nameAr' | translate }}
@@ -209,7 +197,6 @@
               'brands.nameArPlaceholder' | translate
             "
             autocomplete="off"
-            dir="rtl"
           />
 
 

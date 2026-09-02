@@ -23,12 +23,14 @@
         <div>
 
           <h2>
-            Slider
+              {{
+            isEditing()
+              ? ('sliders.addSlider' | translate)
+              : ('sliders.editSlider' | translate)
+          }}
           </h2>
 
-          <p>
-          Add slider for the home page 
-          </p>
+        
 
         </div>
 
@@ -187,10 +189,14 @@
         >
 
           <mat-icon>
-            {{ submitIcon() }}
+            save
           </mat-icon>
 
-          {{ submitText() }}
+           {{
+            isEditing()
+              ? ('sliders.addSlider' | translate)
+              : ('sliders.editSlider' | translate)
+          }}
 
         </button>
 

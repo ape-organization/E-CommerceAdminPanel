@@ -99,10 +99,14 @@
 
             <span class="category-name-text">
 
-              {{ subcategory.name }}
+              {{ subcategory.nameEn }}
 
             </span>
+ <span class="category-name-text">
 
+              {{ subcategory.nameAr }}
+
+            </span>
           </div>
 
         </td>
@@ -181,7 +185,6 @@
             class="edit-btn"
             type="button"
             (click)="editSubcategory(subcategory)"
-            [matTooltip]="'common.edit' | translate"
             [attr.aria-label]="'common.edit' | translate"
           >
 
@@ -199,7 +202,6 @@
             class="delete-btn"
             type="button"
             (click)="deleteSubcategory(subcategory.id)"
-            [matTooltip]="'common.delete' | translate"
             [attr.aria-label]="'common.delete' | translate"
           >
 

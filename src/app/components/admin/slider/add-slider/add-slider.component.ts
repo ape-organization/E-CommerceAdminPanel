@@ -33,6 +33,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { SliderService } from '../../../../services/slider.service';
+import { environment } from '../../../../../environments/environment';
 
 
 @Component({
@@ -114,60 +115,25 @@ export class AddSliderComponent
     signal(false);
 
 
-  // =========================================================
-  // DERIVED STATE
-  // =========================================================
-
-  readonly isAdd =
-    computed(() =>
-      this.data?.add === true
-    );
-
-
-
-
-  readonly submitText =
-    computed(() => {
-
-      if (this.isSubmitting()) {
-
-        return 'SAVING...';
-
-      }
-
-      return this.isAdd()
-        ? 'CREATE SLIDER'
-        : 'UPDATE SLIDER';
-
-    });
-
-
-  readonly submitIcon =
-    computed(() =>
-      this.isAdd()
-        ? 'add'
-        : 'save'
-    );
-
 
   // =========================================================
   // INIT
   // =========================================================
-
+  isEditing=signal(false)
   ngOnInit(): void {
-
+console.log(this.data)
+this.isEditing.set(this.data?.add)
     if (
-      !this.isAdd() &&
+      !this.isEditing() &&
       this.data?.slider
     ) {
 
       this.sliderForm.patchValue({
 
       });
-
-
+var image=environment.imageBaseUrl+this.data.slider.imageUrl
       this.imagePreview.set(
-        this.data.slider.imageUrl ?? null
+      image  ?? null
       );
 
     }
@@ -334,7 +300,7 @@ export class AddSliderComponent
       // =====================================================
 
       if (
-        !this.isAdd() &&
+        !this.isEditing() &&
         this.data?.slider
       ) {
 
@@ -357,7 +323,7 @@ export class AddSliderComponent
             )
 
           );
-
+console.log(response)
 
         if (!response) {
 
@@ -384,12 +350,12 @@ export class AddSliderComponent
             )
 
           );
-
+console.log(response)
 
         if (!response) {
 
           throw new Error(
-            'Category creation failed.'
+            'Slider creation failed.'
           );
 
         }

@@ -182,6 +182,7 @@ export class AddProductComponent implements OnInit {
       this.data?.isEditing === true
     );
 
+    
 
   readonly hasImage =
     computed(() =>

@@ -87,7 +87,7 @@ export class CategoryManagementComponent implements OnInit {
 
   readonly displayedColumns = [
     'name',
-    'description',
+  
     'actions'
   ];
 
@@ -196,6 +196,7 @@ console.log(categories)
           disableClose: true,
 
           data: {
+            
             category,
             add,
             categories: this.categories()

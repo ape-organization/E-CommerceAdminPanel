@@ -23,12 +23,17 @@
         <div>
 
           <h2>
-            {{ dialogTitle() }}
+          
+            {{
+            isEditing()
+              ? ('categories.addCategory' | translate)
+              : ('categories.editCategory' | translate)
+          }}
           </h2>
 
-          <p>
+       <!--    <p>
             {{ dialogDescription() }}
-          </p>
+          </p> -->
 
         </div>
 
@@ -148,7 +153,7 @@
           <input
             matInput
             formControlName="nameAr"
-            [placeholder]="'categories.enterCategoryNameAr' | translate"
+            [placeholder]="'categories.nameArPlaceholder' | translate"
           />
 
 
@@ -159,7 +164,7 @@
           ) {
 
             <mat-error class="error">
-              {{ 'categories.nameRequired' | translate }}
+              {{ 'categories.nameArRequired' | translate }}
             </mat-error>
 
           }
@@ -176,7 +181,7 @@
           <input
             matInput
             formControlName="nameEn"
-            [placeholder]="'categories.enterCategoryNameEn' | translate"
+            [placeholder]="'categories.nameEnPlaceholder' | translate"
           />
 
 
@@ -187,7 +192,7 @@
           ) {
 
             <mat-error class="error">
-              {{ 'categories.nameRequired' | translate }}
+              {{ 'categories.nameEnRequired' | translate }}
             </mat-error>
 
           }
@@ -248,11 +253,15 @@
         >
 
           <mat-icon>
-            {{ submitIcon() }}
+            save
           </mat-icon>
 
-          {{ submitText() }}
-
+         
+  {{
+            isEditing()
+              ? ('categories.addCategory' | translate)
+              : ('categories.editCategory' | translate)
+          }}
         </button>
 
       </div>

@@ -93,7 +93,6 @@ export class AddSubCategory implements OnInit {
   readonly saving =
     signal(false);
 
-
   // ==========================================================
   // FORM
   // ==========================================================
@@ -140,53 +139,15 @@ export class AddSubCategory implements OnInit {
   // COMPUTED-STYLE GETTERS
   // ==========================================================
 
-  get isEditing(): boolean {
-    return this.data?.isEditing === true;
-  }
-
-
-  get dialogTitle(): string {
-
-    return this.isEditing
-      ? 'Edit Subcategory'
-      : 'Add Subcategory';
-
-  }
-
-
-  get dialogDescription(): string {
-
-    return this.isEditing
-      ? 'Update the subcategory information.'
-      : 'Create a new subcategory.';
-
-  }
-
-
-  get submitText(): string {
-
-    return this.isEditing
-      ? 'UPDATE SUBCATEGORY'
-      : 'ADD SUBCATEGORY';
-
-  }
-
-
-  get submitIcon(): string {
-
-    return this.isEditing
-      ? 'save'
-      : 'add';
-
-  }
-
-
+   isEditing=signal(false)
+     
+  
   // ==========================================================
   // INIT
   // ==========================================================
 
   ngOnInit(): void {
-
+this.isEditing.set(this.data?.isEditing)
     const subcategory =
       this.data?.subcategory;
 

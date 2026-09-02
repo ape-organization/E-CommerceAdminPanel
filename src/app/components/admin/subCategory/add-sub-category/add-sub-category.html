@@ -23,12 +23,15 @@
         <div>
 
           <h2>
-            {{ dialogTitle }}
+           
+              {{
+            isEditing()
+              ? ('subCategories.editSubcategory' | translate)
+              : ('subCategories.addSubcategory' | translate)
+          }}
           </h2>
 
-          <p>
-            {{ dialogDescription }}
-          </p>
+        
 
         </div>
 
@@ -152,7 +155,7 @@
           <input
             matInput
             formControlName="nameAr"
-            [placeholder]="'subCategories.enterNameAr' | translate"
+            [placeholder]="'subCategories.nameArPlaceholder' | translate"
             maxlength="100"
           />
 
@@ -164,7 +167,7 @@
 
             <mat-error class="error">
 
-              {{ 'subCategories.nameRequired' | translate }}
+              {{ 'subCategories.nameArRequired' | translate }}
 
             </mat-error>
 
@@ -210,7 +213,7 @@
           <input
             matInput
             formControlName="nameEn"
-            [placeholder]="'subCategories.enterNameEn' | translate"
+            [placeholder]="'subCategories.nameEnPlaceholder' | translate"
             maxlength="100"
           />
 
@@ -222,7 +225,7 @@
 
             <mat-error class="error">
 
-              {{ 'subCategories.nameRequired' | translate }}
+              {{ 'subCategories.nameEnRequired' | translate }}
 
             </mat-error>
 
@@ -295,10 +298,14 @@
         >
 
           <mat-icon>
-            {{ submitIcon }}
+          save
           </mat-icon>
 
-          {{ submitText }}
+              {{
+            isEditing()
+              ? ('subCategories.editSubcategory' | translate)
+              : ('subCategories.addSubcategory' | translate)
+          }}
 
         </button>
 

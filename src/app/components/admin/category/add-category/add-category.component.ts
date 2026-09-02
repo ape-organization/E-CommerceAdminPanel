@@ -33,6 +33,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { CategoryService } from '../../../../services/category.service';
 import { TranslatePipe } from '@ngx-translate/core';
+import { environment } from '../../../../../environments/environment';
 
 
 @Component({
@@ -123,63 +124,13 @@ export class AddCategoryComponent
 
 
   // =========================================================
-  // DERIVED STATE
-  // =========================================================
-
-  readonly isAdd =
-    computed(() =>
-      this.data?.add === true
-    );
-
-
-  readonly dialogTitle =
-    computed(() =>
-      this.isAdd()
-        ? 'Add New Category'
-        : 'Edit Category'
-    );
-
-
-  readonly dialogDescription =
-    computed(() =>
-      this.isAdd()
-        ? 'Create a new product category'
-        : 'Update category information'
-    );
-
-
-  readonly submitText =
-    computed(() => {
-
-      if (this.isSubmitting()) {
-
-        return 'SAVING...';
-
-      }
-
-      return this.isAdd()
-        ? 'CREATE CATEGORY'
-        : 'UPDATE CATEGORY';
-
-    });
-
-
-  readonly submitIcon =
-    computed(() =>
-      this.isAdd()
-        ? 'add'
-        : 'save'
-    );
-
-
-  // =========================================================
   // INIT
   // =========================================================
-
+ isEditing=signal(false);
   ngOnInit(): void {
-
+this.isEditing.set(this.data.add)
     if (
-      !this.isAdd() &&
+      !this.isEditing() &&
       this.data?.category
     ) {
 
@@ -193,9 +144,9 @@ export class AddCategoryComponent
 
       });
 
-
+var image=environment.imageBaseUrl+this.data.category.imageUrl
       this.imagePreview.set(
-        this.data.category.imageUrl ?? null
+        image ?? null
       );
 
     }
@@ -380,7 +331,7 @@ export class AddCategoryComponent
       // =====================================================
 
       if (
-        !this.isAdd() &&
+        !this.isEditing() &&
         this.data?.category
       ) {
 
@@ -404,7 +355,7 @@ export class AddCategoryComponent
 
           );
 
-
+console.log(response)
         if (!response) {
 
           throw new Error(

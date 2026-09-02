@@ -21,10 +21,14 @@
     "address": "العنوان",
     "egp": "جنيه",
     "close": "إغلاق",
-    "actions": "الإجراءات"
+    "actions": "الإجراءات",
+     "uploadImage": "رفع صورة",
+    "changeImage": "تغيير الصورة"
   },
 
   "nav": {
+    "slider":"شرائح العرض",
+
     "home": "الرئيسية",
     "products": "المنتجات",
     "categories": "الفئات",
@@ -60,6 +64,13 @@
     "management": "إدارة العلامات التجارية",
     "description": "إدارة العلامات التجارية لمستحضرات التجميل",
 
+    "nameEn":"الاسم باللغه الانجليزيه",
+"nameEnPlaceholder":"ادخل الاسم باللغه الانجليزيه",
+"nameEnRequired":"الاسم الانجليزي مطلوب ",
+    "nameAr":"الاسم باللغه العربية",
+    "nameArPlaceholder":"ادخل الاسك باللفه العربية",
+"nameArRequired":"الاسم العربي مطلوب",
+
     "addBrand": "إضافة علامة تجارية",
     "addNewBrand": "إضافة علامة تجارية جديدة",
     "editBrand": "تعديل العلامة التجارية",
@@ -82,11 +93,17 @@
     "imageTooLarge": "يجب أن يكون حجم الصورة أقل من 5 ميجابايت.",
     "saveError": "حدث خطأ أثناء حفظ العلامة التجارية.",
     "deleteConfirmation": "هل أنت متأكد أنك تريد حذف هذه العلامة التجارية؟"
-  },
+  }, 
 
   "categories": {
     "management": "إدارة الفئات",
     "description": "إدارة فئات المنتجات",
+  "nameEn":"الاسم باللغه الانجليزيه",
+"nameEnPlaceholder":"ادخل الاسم باللغه الانجليزيه",
+"nameEnRequired":"الاسم الانجليزي مطلوب ",
+    "nameAr":"الاسم باللغه العربية",
+    "nameArPlaceholder":"ادخل الاسك باللفه العربية",
+"nameArRequired":"الاسم العربي مطلوب",
 
     "addCategory": "إضافة فئة",
     "addNewCategory": "إضافة فئة جديدة",
@@ -109,6 +126,13 @@
   },
 
   "subCategories": {
+     "nameEn":"الاسم باللغه الانجليزيه",
+"nameEnPlaceholder":"ادخل الاسم باللغه الانجليزيه",
+"nameEnRequired":"الاسم الانجليزي مطلوب ",
+    "nameAr":"الاسم باللغه العربية",
+    "nameArPlaceholder":"ادخل الاسك باللفه العربية",
+"nameArRequired":"الاسم العربي مطلوب",
+
     "management": "إدارة الفئات الفرعية",
     "description": "إدارة الفئات الفرعية للمتجر",
 
@@ -137,18 +161,23 @@
     "addProduct": "إضافة منتج",
     "editProduct": "تعديل المنتج",
     "addNewProduct": "إضافة منتج جديد",
-
-    "updateInformation": "تحديث معلومات المنتج",
+"productNamePlaceholderAr":"اسم المنتج باللغه العربية",
+"productNameEnPlaceholder":"اسم المنتج باللغه الانجليزية",
+"enterMainProductDetails":"ادخل بيانات المنتج الاساسية",
+    "productImage": "تحديث صوره المنتج",
     "createDescription": "إنشاء منتج جديد لمتجر مستحضرات التجميل",
-
+"productClassification":"تصنيف المنتج",
+"selectClassification":"اختار التصنيف",
     "searchPlaceholder": "البحث عن المنتجات...",
     "searchProducts": "البحث عن المنتجات",
-
+"category":"الفئة",
+"descriptionPlaceholderEn":"ادخل التصنيف بالانجليزيه",
+"descriptionPlaceholderAr":"ادخل التصنيف بالعربية",
     "loading": "جاري تحميل المنتجات...",
     "noProducts": "لم يتم العثور على منتجات",
     "noProductsMatch": "لا توجد منتجات تطابق بحثك.",
     "startAdding": "ابدأ بإضافة منتجك الأول.",
-
+"noSubcategoriesAvailable":"لا فئات فرعية متوفره",
     "product": "المنتج",
     "brand": "العلامة التجارية",
     "price": "السعر",
@@ -164,8 +193,7 @@
     "outOfStock": "غير متوفر",
 
     "image": "صورة المنتج",
-    "uploadImage": "رفع صورة",
-    "changeImage": "تغيير الصورة",
+   
     "imageDescription": "أضف صورة واضحة للمنتج.",
     "imageFormats": "JPG أو PNG أو WEBP",
     "maximumSize": "الحد الأقصى للحجم: 5 ميجابايت",
@@ -229,8 +257,18 @@
     "saveChanges": "حفظ التغييرات",
     "addProductAction": "إضافة المنتج"
   },
+"sliders": {
+    "slider": "الصور",
+    "management": "ادارة الصور الاساسيه",
+    "description": "ادر السلايدرو اضف الصور له ",
+ "editSlider": "تعديل الصوره",
+    "addSlider": "اضافه صوره",
+    "chooseImage": "اختار صوره"
 
+    
+  },
   "users": {
+    "createUserDescription": "إدارة المستخدمين ومعلومات حساباتهم",
     "management": "إدارة المستخدمين",
     "description": "إدارة المستخدمين ومعلومات حساباتهم",
 

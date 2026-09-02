@@ -21,7 +21,9 @@
     "address": "Address",
     "egp": "EGP",
     "close": "Close",
-    "actions": "Actions"
+    "actions": "Actions",
+     "uploadImage": "Upload Image",
+    "changeImage": "Change Image"
   },
 
   "nav": {
@@ -30,7 +32,7 @@
     "categories": "Categories",
     "subCategories": "Sub Categories",
     "brands": "Brands",
-
+"slider":"Slider",
     "users": "Users",
     "orders": "Orders",
     "toggleNavigation": "Toggle navigation",
@@ -72,7 +74,14 @@
     "chooseImage": "Choose Image",
     "changeImage": "Change Image",
 
+"nameEn":"English name ",
+"nameEnPlaceholder":"Enter english brand name",
+"nameEnRequired":"Brand english name is required",
     "enterBrandName": "Enter brand name",
+    "nameAr":"Arabic name",
+    "nameArPlaceholder":"Enter arabic brand name",
+"nameArRequired":"Brand english name is required",
+
     "brandImage": "Brand image",
 
     "brandNameRequired": "Brand name is required",
@@ -84,11 +93,20 @@
     "imageTooLarge": "Image size must be less than 5 MB.",
     "saveError": "Something went wrong while saving the brand.",
      "deleteConfirmation": "Are you sure you want to delete this brand?"
-  },
+  },  
 
   "categories": {
     "management": "Category Management",
     "description": "Manage your product categories",
+
+"nameEn":"English name ",
+"nameEnPlaceholder":"Enter english  name",
+"nameEnRequired":"English name is required",
+    "enterBrandName": "Enter brand name",
+    "nameAr":"Arabic name",
+    "nameArPlaceholder":"Enter arabic  name",
+"nameArRequired":" Arabic name is required",
+
 
     "addCategory": "Add Category",
     "addNewCategory": "Add New Category",
@@ -111,6 +129,15 @@
   },
 
   "subCategories": {
+"nameEn":"English name ",
+"nameEnPlaceholder":"Enter english  name",
+"nameEnRequired":"English name is required",
+    "enterBrandName": "Enter brand name",
+    "nameAr":"Arabic name",
+    "nameArPlaceholder":"Enter arabic  name",
+"nameArRequired":" Arabic name is required",
+
+
     "management": "Subcategory Management",
     "description": "Manage your store subcategories",
 
@@ -139,13 +166,19 @@
     "addProduct": "Add Product",
     "editProduct": "Edit Product",
     "addNewProduct": "Add New Product",
-
-    "updateInformation": "Update your product information",
+"productNamePlaceholderAr":"Product arabic name",
+"productNameEnPlaceholder":"Product English name",   
+"productImage": "product image",
     "createDescription": "Create a new product for your cosmetics store",
-
+"enterMainProductDetails":"Enter Main Product Details",
+"productClassification":"Product Classification",
+"selectClassification":"Select Classification",
     "searchPlaceholder": "Search products...",
     "searchProducts": "Search products",
-
+"category":"Category",
+"descriptionPlaceholderEn":"English description",
+"descriptionPlaceholderAr":"Arabic description",
+"multipleSubcategoriesHint":"Multiple Subcategories Hint",
     "loading": "Loading products...",
     "noProducts": "No Products Found",
     "noProductsMatch": "No products match your search.",
@@ -166,8 +199,7 @@
     "outOfStock": "Out of Stock",
 
     "image": "Product Image",
-    "uploadImage": "Upload Image",
-    "changeImage": "Change Image",
+   
     "imageDescription": "Add a clear image of your product.",
     "imageFormats": "JPG, PNG or WEBP",
     "maximumSize": "Maximum size: 5 MB",
@@ -219,7 +251,7 @@
     "selectCategoryFirst": "Select a category first.",
     "multipleSubcategories": "You can select multiple subcategories.",
     "subcategoryRequired": "Select at least one subcategory.",
-
+"noSubcategoriesAvailable":"No Subcategories Available",
     "selectedSubcategories": "SELECTED SUBCATEGORIES",
 
     "descriptionTitle": "Description",
@@ -233,6 +265,7 @@
   },
 
   "users": {
+    "createUserDescription": "Manage users and their account information",
     "management": "User Management",
     "description": "Manage users and their account information",
 
@@ -269,7 +302,17 @@
     "editTooltip": "Edit User",
     "deleteTooltip": "Delete User"
   },
+ "sliders": {
+    "slider": "Images",
+    "management": "Slider Management",
+    "description": "Manage slider and its images ",
 
+    "addSlider": "Add Image",
+    "editSlider": "Edit Image",
+    "chooseImage": "Choose Image"
+
+    
+  },
   "orders": {
     "title": "Orders",
     "subtitle": "Manage and monitor all customer orders",

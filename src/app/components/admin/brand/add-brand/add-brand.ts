@@ -53,6 +53,7 @@ import {
 import {
   LanguageService
 } from '../../../../services/language.service';
+import { environment } from '../../../../../environments/environment';
 
 
 @Component({
@@ -165,9 +166,10 @@ export class AddBrand implements OnInit {
 
 
       // Existing image
+var image=environment.imageBaseUrl+this.data.brand.imageUrl
 
       this.imagePreview.set(
-        this.data.brand.imageUrl || null
+        image|| null
       );
 
     }
