@@ -86,8 +86,9 @@ export class CategoryManagementComponent implements OnInit {
   // ==========================================================
 
   readonly displayedColumns = [
-    'name',
-  
+    'image',
+  'nameEn',
+  'nameAr',
     'actions'
   ];
 

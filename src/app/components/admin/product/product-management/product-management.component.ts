@@ -443,6 +443,8 @@ export class ProductManagementComponent
 
   readonly displayedColumns = [
     'image',
+    'nameEn',
+    'nameAr',
     'brand',
     'price',
     'discount',

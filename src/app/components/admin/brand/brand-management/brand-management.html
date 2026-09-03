@@ -49,13 +49,13 @@
       <!-- BRAND -->
       <!-- ===================================================== -->
 
-      <ng-container matColumnDef="name">
+      <ng-container matColumnDef="image">
 
         <th
           mat-header-cell
           *matHeaderCellDef>
 
-          {{ 'nav.brands' | translate }}
+       
 
         </th>
 
@@ -90,6 +90,31 @@
             </div>
 
 
+                  </div>
+
+        </td>
+
+      </ng-container>
+<ng-container matColumnDef="nameEn">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef>
+
+          {{ 'brands.nameEn' | translate }}
+
+        </th>
+
+
+        <td
+          mat-cell
+          *matCellDef="let brand">
+
+          <div class="brand-wrapper">
+
+         
+
+
             <!-- BRAND NAME -->
             <span class="brand-name">
 
@@ -98,6 +123,30 @@
               }}
 
             </span>
+          </div>
+
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="nameAr">
+
+        <th
+          mat-header-cell
+          *matHeaderCellDef>
+
+          {{ 'brands.nameAr' | translate }}
+
+        </th>
+
+
+        <td
+          mat-cell
+          *matCellDef="let brand">
+
+          <div class="brand-wrapper">
+
+
+
  <span class="brand-name">
 
               {{
@@ -111,7 +160,6 @@
         </td>
 
       </ng-container>
-
 
       <!-- ===================================================== -->
       <!-- ACTIONS -->

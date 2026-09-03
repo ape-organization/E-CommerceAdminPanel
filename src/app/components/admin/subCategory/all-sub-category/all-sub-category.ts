@@ -110,7 +110,9 @@ export class AllSubCategory implements OnInit {
   // ==========================================================
 
   readonly displayedColumns = [
-    'name',
+    'image',
+    'nameEn',
+    'nameAr',
     'category',
    
     'actions'

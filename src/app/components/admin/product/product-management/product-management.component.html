@@ -174,12 +174,12 @@
         <ng-container matColumnDef="image">
 
           <th mat-header-cell *matHeaderCellDef>
-            {{ 'products.product' | translate }}
+       
           </th>
 
           <td mat-cell *matCellDef="let product">
 
-            <div class="product-info">
+         
 
               <div class="product-image">
 
@@ -197,25 +197,50 @@
 
               </div>
 
-              <div class="product-name">
+          
+
+          </td>
+
+        </ng-container>
+ <ng-container matColumnDef="nameEn">
+
+            <th mat-header-cell *matHeaderCellDef>
+            {{ 'brands.nameEn' | translate }}
+          </th>
+
+          <td mat-cell *matCellDef="let product">
+
+          
 
                 <strong>
                   {{ product.nameEn }}
                 </strong>
+              
+
+            
+
+          </td>
+
+        </ng-container>
+ <ng-container matColumnDef="nameAr">
+
+          <th mat-header-cell *matHeaderCellDef>
+            {{ 'brands.nameAr' | translate }}
+          </th>
+
+          <td mat-cell *matCellDef="let product">
+
+
  <strong>
                   {{ product.nameAr }}
                 </strong>
               
 
-              </div>
-
-            </div>
+              
 
           </td>
 
         </ng-container>
-
-
         <!-- BRAND -->
         <ng-container matColumnDef="brand">
 
