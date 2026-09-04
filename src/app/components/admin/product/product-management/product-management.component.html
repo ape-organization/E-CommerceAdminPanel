@@ -251,7 +251,7 @@
           <td mat-cell *matCellDef="let product">
 
             {{ product.brand?.nameEn || ('products.noBrand' | translate) }}
-{{ product.brand?.nameAr || ('products.noBrand' | translate) }}
+
           </td>
 
         </ng-container>
@@ -393,7 +393,7 @@
               ) {
 
                 <span class="category-chip">
-                  {{ subCategory.nameEn }} -{{ subCategory.nameAr }}
+                  {{ subCategory.nameEn }} 
                 </span>
 
               }

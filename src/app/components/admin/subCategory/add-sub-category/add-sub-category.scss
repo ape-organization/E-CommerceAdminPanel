@@ -273,7 +273,21 @@ form {
   color:
     var(--color-accent) !important;
 }
+/* =========================================
+   MATERIAL INPUT TEXT SPACING
+   ========================================= */
 
+::ng-deep .mat-mdc-form-field .mat-mdc-text-field-wrapper {
+  padding-inline: 8px !important;
+}
+
+::ng-deep .mat-mdc-form-field .mat-mdc-form-field-infix {
+  padding-inline: 4px !important;
+}
+
+::ng-deep .mat-mdc-form-field .mat-mdc-input-element {
+  padding-inline: 0 !important;
+}
 
 /* =========================================================
    INPUT / SELECT

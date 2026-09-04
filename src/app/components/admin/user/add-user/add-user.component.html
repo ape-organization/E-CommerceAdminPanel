@@ -57,9 +57,9 @@
         <!-- Username -->
         <mat-form-field appearance="outline">
 
-          <mat-icon matPrefix>
-            person
-          </mat-icon>
+         <mat-label>
+            {{ 'brands.name' | translate }}
+          </mat-label>
 
           <input
             matInput
@@ -80,9 +80,9 @@
         <!-- Email -->
         <mat-form-field appearance="outline">
 
-          <mat-icon matPrefix>
-            email
-          </mat-icon>
+          <mat-label>
+            {{ 'users.email' | translate }}
+          </mat-label>
 
           <input
             matInput
@@ -114,9 +114,9 @@
           appearance="outline"
         >
 
-          <mat-icon matPrefix>
-            lock
-          </mat-icon>
+           <mat-label>
+            {{ 'users.password' | translate }}
+          </mat-label>
 
           <input
             matInput

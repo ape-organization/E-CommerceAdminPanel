@@ -88,7 +88,8 @@
             </mat-icon>
 
             <span>
-              {{ 'products.changeImage' | translate }}
+
+              {{ 'common.changeImage' | translate }}
             </span>
 
           </div>
@@ -166,9 +167,9 @@
         appearance="outline"
         class="full-width">
 
-        <mat-icon matPrefix>
-          inventory_2
-        </mat-icon>
+        <mat-label >
+            {{ 'products.nameAr' | translate }}
+          </mat-label>
 
         <input
           matInput
@@ -205,9 +206,9 @@
         appearance="outline"
         class="full-width">
 
-        <mat-icon matPrefix>
-          inventory_2
-        </mat-icon>
+        <mat-label >
+            {{ 'products.nameEn' | translate }}
+          </mat-label>
 
         <input
           matInput
@@ -244,14 +245,9 @@
       <mat-form-field
         appearance="outline">
 
-        <span
-          matPrefix
-          class="currency-prefix">
-
-          {{ 'common.egp' | translate }}
-
-        </span>
-
+ <mat-label class="currency-prefix">
+            {{ 'common.egp' | translate }}
+          </mat-label>
         <input
           matInput
           type="number"
@@ -291,9 +287,9 @@
       <mat-form-field
         appearance="outline">
 
-        <mat-icon matPrefix>
-          percent
-        </mat-icon>
+       <mat-label>
+            {{ 'products.discount' | translate }}
+          </mat-label>
 
         <input
           matInput
@@ -343,9 +339,9 @@
           {{ 'products.stockQuantity' | translate }}
         </mat-label>
 
-        <mat-icon matPrefix>
+       <!--  <mat-icon matPrefix >
           inventory
-        </mat-icon>
+        </mat-icon> -->
 
         <input
           matInput
@@ -911,9 +907,9 @@
       appearance="outline"
       class="full-width">
 
-      <mat-icon matPrefix>
-        notes
-      </mat-icon>
+     <mat-label >
+            {{ 'products.descriptionEn' | translate }}
+          </mat-label>
 
       <textarea
         matInput
@@ -927,9 +923,9 @@
       appearance="outline"
       class="full-width">
 
-      <mat-icon matPrefix>
-        notes
-      </mat-icon>
+       <mat-label >
+            {{ 'products.descriptionAr' | translate }}
+          </mat-label>
 
       <textarea
         matInput

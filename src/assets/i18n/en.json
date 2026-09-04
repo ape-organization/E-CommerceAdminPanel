@@ -162,7 +162,8 @@
     "management": "PRODUCT MANAGEMENT",
     "title": "Products",
     "description": "Manage your cosmetics products, prices, stock and classification",
-
+"descriptionEn":"English description",
+"descriptionAr":"Arabic description",
     "addProduct": "Add Product",
     "editProduct": "Edit Product",
     "addNewProduct": "Add New Product",
@@ -203,7 +204,6 @@
     "imageDescription": "Add a clear image of your product.",
     "imageFormats": "JPG, PNG or WEBP",
     "maximumSize": "Maximum size: 5 MB",
-
     "basicInformation": "Basic Information",
     "basicInformationDescription": "Enter the main product details",
 
@@ -219,7 +219,8 @@
     "discountPlaceholder": "0",
     "discountNegative": "Discount cannot be negative.",
     "discountMax": "Discount cannot exceed 100%.",
-
+"nameAr":"Arabic name",
+"nameEn":"English name ",
     "stockQuantity": "Stock Quantity",
     "stockRequired": "Stock quantity is required.",
     "stockNegative": "Stock cannot be negative.",
