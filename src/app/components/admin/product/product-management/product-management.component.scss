@@ -1119,3 +1119,16 @@
   }
 
 }
+:host-context([dir='rtl']) .filter-box {
+  padding-right: 0;
+  padding-left: 12px;
+}
+
+:host-context([dir='rtl']) .filter-box select {
+  padding: 0 0 0 32px;
+}
+
+:host-context([dir='rtl']) .filter-box::after {
+  right: auto;
+  left: 12px;
+}
