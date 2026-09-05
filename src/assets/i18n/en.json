@@ -164,6 +164,8 @@
   },
 
   "products": {
+    "Pagination":"Products are displayed in pages to make browsing faster. Use the page controls below the table to move between pages or change the number of products shown per page.",
+    "loadingProducts":"loadingProducts",
     "management": "PRODUCT MANAGEMENT",
     "title": "Products",
     "description": "Manage your cosmetics products, prices, stock and classification",

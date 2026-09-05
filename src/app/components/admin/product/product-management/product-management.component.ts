@@ -46,14 +46,6 @@ import {
 } from '@angular/material/tooltip';
 
 import {
-  MatFormFieldModule
-} from '@angular/material/form-field';
-
-import {
-  MatSelectModule
-} from '@angular/material/select';
-
-import {
   ProductService,
   PagedResponse
 } from '../../../../services/product.service';
@@ -79,10 +71,6 @@ import {
 } from '@ngx-translate/core';
 
 
-// ============================================================
-// COMPONENT
-// ============================================================
-
 @Component({
   selector: 'app-product-management',
   standalone: true,
@@ -97,20 +85,13 @@ import {
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatTableModule,
-    MatTooltipModule,
-    MatFormFieldModule,
-    MatSelectModule
+    MatTooltipModule
   ],
 
-  templateUrl:
-    './product-management.component.html',
-
-  styleUrl:
-    './product-management.component.scss'
+  templateUrl: './product-management.component.html',
+  styleUrl: './product-management.component.scss'
 })
-export class ProductManagementComponent
-  implements OnInit {
-
+export class ProductManagementComponent implements OnInit {
 
   // ==========================================================
   // SERVICES
@@ -124,7 +105,7 @@ export class ProductManagementComponent
 
 
   // ==========================================================
-  // BACKEND PAGE SIZE
+  // API PAGE SIZE
   // ==========================================================
 
   private readonly apiPageSize = 100;
@@ -171,10 +152,16 @@ export class ProductManagementComponent
 
   // ==========================================================
   // API PAGE CACHE
+  //
+  // IMPORTANT:
+  // This MUST be a signal.
+  // A normal Map does not trigger computed() updates.
   // ==========================================================
 
   private readonly pageCache =
-    new Map<number, Product[]>();
+    signal<Map<number, Product[]>>(
+      new Map<number, Product[]>()
+    );
 
 
   // ==========================================================
@@ -182,47 +169,43 @@ export class ProductManagementComponent
   // ==========================================================
 
   readonly allProductsLoaded =
-    computed(() =>
-      this.totalPages() > 0 &&
-      this.hasMore() === false &&
-      this.pageCache.size >= this.totalPages()
-    );
+    computed(() => {
+
+      const pages =
+        this.totalPages();
+
+      const cache =
+        this.pageCache();
+
+      return (
+        pages > 0 &&
+        !this.hasMore() &&
+        cache.size >= pages
+      );
+
+    });
 
 
   // ==========================================================
   // ALL CACHED PRODUCTS
   // ==========================================================
 
-  /*
-   * IMPORTANT:
-   *
-   * Do NOT use this.products() for filter options.
-   *
-   * this.products() normally contains only the current
-   * API page.
-   *
-   * The filter options should use everything that has
-   * already been loaded into pageCache.
-   */
-
   readonly allCachedProducts =
     computed(() => {
+
+      const cache =
+        this.pageCache();
 
       const allProducts: Product[] = [];
 
       const pages =
-        Array.from(
-          this.pageCache.keys()
-        ).sort(
-          (a, b) => a - b
-        );
+        Array.from(cache.keys())
+          .sort((a, b) => a - b);
 
-      for (
-        const page of pages
-      ) {
+      for (const page of pages) {
 
         allProducts.push(
-          ...(this.pageCache.get(page) ?? [])
+          ...(cache.get(page) ?? [])
         );
 
       }
@@ -235,12 +218,6 @@ export class ProductManagementComponent
   // ==========================================================
   // LOCAL FILTERS
   // ==========================================================
-
-  /*
-   * Empty string means:
-   *
-   * ALL
-   */
 
   readonly selectedCategory =
     signal('');
@@ -284,11 +261,10 @@ export class ProductManagementComponent
         ) {
 
           const categoryName =
-            subCategory.categoryName?.trim();
+            subCategory.categoryName
+              ?.trim();
 
-          if (
-            categoryName
-          ) {
+          if (categoryName) {
 
             categories.add(
               categoryName
@@ -300,12 +276,10 @@ export class ProductManagementComponent
 
       }
 
-      return Array.from(
-        categories
-      ).sort(
-        (a, b) =>
+      return Array.from(categories)
+        .sort((a, b) =>
           a.localeCompare(b)
-      );
+        );
 
     });
 
@@ -325,7 +299,6 @@ export class ProductManagementComponent
       const subCategories =
         new Set<string>();
 
-
       for (
         const product of this.allCachedProducts()
       ) {
@@ -336,48 +309,26 @@ export class ProductManagementComponent
         ) {
 
           const subCategoryName =
-            subCategory.nameEn?.trim();
+            subCategory.nameEn
+              ?.trim();
 
           const categoryName =
             subCategory.categoryName
               ?.trim()
               .toLowerCase();
 
-
-          if (
-            !subCategoryName
-          ) {
-
+          if (!subCategoryName) {
             continue;
-
           }
 
-
-          /*
-           * No category selected:
-           *
-           * show all subcategories.
-           */
-
-          if (
-            !selectedCategory
-          ) {
+          if (!selectedCategory) {
 
             subCategories.add(
               subCategoryName
             );
 
             continue;
-
           }
-
-
-          /*
-           * Category selected:
-           *
-           * only show subcategories belonging
-           * to that category.
-           */
 
           if (
             categoryName ===
@@ -394,13 +345,10 @@ export class ProductManagementComponent
 
       }
 
-
-      return Array.from(
-        subCategories
-      ).sort(
-        (a, b) =>
+      return Array.from(subCategories)
+        .sort((a, b) =>
           a.localeCompare(b)
-      );
+        );
 
     });
 
@@ -420,11 +368,10 @@ export class ProductManagementComponent
       ) {
 
         const brandName =
-          product.brand?.nameEn?.trim();
+          product.brand?.nameEn
+            ?.trim();
 
-        if (
-          brandName
-        ) {
+        if (brandName) {
 
           brands.add(
             brandName
@@ -434,12 +381,10 @@ export class ProductManagementComponent
 
       }
 
-      return Array.from(
-        brands
-      ).sort(
-        (a, b) =>
+      return Array.from(brands)
+        .sort((a, b) =>
           a.localeCompare(b)
-      );
+        );
 
     });
 
@@ -508,156 +453,140 @@ export class ProductManagementComponent
           .trim()
           .toLowerCase();
 
-
       const currentProducts =
         this.products();
 
 
-      return currentProducts.filter(
-        product => {
+      return currentProducts.filter(product => {
 
+        // ====================================================
+        // SEARCH
+        // ====================================================
 
-          // ==================================================
-          // SEARCH
-          // ==================================================
+        let matchesSearch = true;
 
-          let matchesSearch =
-            true;
+        if (term) {
 
+          const nameEn =
+            product.nameEn
+              ?.toLowerCase()
+              .includes(term);
 
-          if (
-            term
-          ) {
+          const nameAr =
+            product.nameAr
+              ?.toLowerCase()
+              .includes(term);
 
-            const nameEn =
-              product.nameEn
+          const descriptionEn =
+            product.descriptionEn
+              ?.toLowerCase()
+              .includes(term);
+
+          const descriptionAr =
+            product.descriptionAr
+              ?.toLowerCase()
+              .includes(term);
+
+          const brandName =
+            product.brand?.nameEn
+              ?.toLowerCase()
+              .includes(term);
+
+          const subCategoryName =
+            product.subCategories?.some(sub =>
+              sub.nameEn
                 ?.toLowerCase()
-                .includes(term);
-
-            const descriptionEn =
-              product.descriptionEn
+                .includes(term) ||
+              sub.nameAr
                 ?.toLowerCase()
-                .includes(term);
+                .includes(term)
+            );
 
-            const brandName =
-              product.brand?.nameEn
+          const categoryName =
+            product.subCategories?.some(sub =>
+              sub.categoryName
                 ?.toLowerCase()
-                .includes(term);
+                .includes(term)
+            );
 
-            const subCategoryName =
-              product.subCategories?.some(
-                sub =>
-                  sub.nameEn
-                    ?.toLowerCase()
-                    .includes(term) ||
-                  sub.nameAr
-                    ?.toLowerCase()
-                    .includes(term)
-              );
-
-            const categoryName =
-              product.subCategories?.some(
-                sub =>
-                  sub.categoryName
-                    ?.toLowerCase()
-                    .includes(term)
-              );
-
-
-            matchesSearch =
-              !!(
-                nameEn ||
-                descriptionEn ||
-                brandName ||
-                subCategoryName ||
-                categoryName
-              );
-
-          }
-
-
-          // ==================================================
-          // CATEGORY
-          // ==================================================
-
-          let matchesCategory =
-            true;
-
-
-          if (
-            category
-          ) {
-
-            matchesCategory =
-              !!product.subCategories?.some(
-                sub =>
-                  sub.categoryName
-                    ?.trim()
-                    .toLowerCase() ===
-                  category
-              );
-
-          }
-
-
-          // ==================================================
-          // SUBCATEGORY
-          // ==================================================
-
-          let matchesSubCategory =
-            true;
-
-
-          if (
-            subCategory
-          ) {
-
-            matchesSubCategory =
-              !!product.subCategories?.some(
-                sub =>
-                  (
-                    sub.nameEn ||
-                    sub.nameAr
-                  )
-                    ?.trim()
-                    .toLowerCase() ===
-                  subCategory
-              );
-
-          }
-
-
-          // ==================================================
-          // BRAND
-          // ==================================================
-
-          let matchesBrand =
-            true;
-
-
-          if (
-            brand
-          ) {
-
-            matchesBrand =
-              (
-                product.brand?.nameEn
-                  ?.trim()
-                  .toLowerCase()
-              ) === brand;
-
-          }
-
-
-          return (
-            matchesSearch &&
-            matchesCategory &&
-            matchesSubCategory &&
-            matchesBrand
-          );
+          matchesSearch =
+            !!(
+              nameEn ||
+              nameAr ||
+              descriptionEn ||
+              descriptionAr ||
+              brandName ||
+              subCategoryName ||
+              categoryName
+            );
 
         }
-      );
+
+
+        // ====================================================
+        // CATEGORY
+        // ====================================================
+
+        let matchesCategory = true;
+
+        if (category) {
+
+          matchesCategory =
+            !!product.subCategories?.some(sub =>
+              sub.categoryName
+                ?.trim()
+                .toLowerCase() === category
+            );
+
+        }
+
+
+        // ====================================================
+        // SUBCATEGORY
+        // ====================================================
+
+        let matchesSubCategory = true;
+
+        if (subCategory) {
+
+          matchesSubCategory =
+            !!product.subCategories?.some(sub =>
+              (
+                sub.nameEn ||
+                sub.nameAr
+              )
+                ?.trim()
+                .toLowerCase() ===
+              subCategory
+            );
+
+        }
+
+
+        // ====================================================
+        // BRAND
+        // ====================================================
+
+        let matchesBrand = true;
+
+        if (brand) {
+
+          matchesBrand =
+            product.brand?.nameEn
+              ?.trim()
+              .toLowerCase() === brand;
+
+        }
+
+
+        return (
+          matchesSearch &&
+          matchesCategory &&
+          matchesSubCategory &&
+          matchesBrand
+        );
+
+      });
 
     });
 
@@ -672,73 +601,13 @@ export class ProductManagementComponent
       const filtered =
         this.filteredProducts();
 
-
-      // ======================================================
-      // LOCAL FILTERING
-      // ======================================================
-
-      if (
-        this.isLocalFiltering()
-      ) {
-
-        const start =
-          this.pageIndex() *
-          this.pageSize();
-
-        return filtered.slice(
-          start,
-          start + this.pageSize()
-        );
-
-      }
-
-
-      // ======================================================
-      // API SEARCH
-      // ======================================================
-
-      if (
-        this.isSearchMode()
-      ) {
-
-        const start =
-          this.pageIndex() *
-          this.pageSize();
-
-        return filtered.slice(
-          start,
-          start + this.pageSize()
-        );
-
-      }
-
-
-      // ======================================================
-      // NORMAL API PAGINATION
-      // ======================================================
-
-      const globalStart =
+      const start =
         this.pageIndex() *
         this.pageSize();
 
-
-      const apiStart =
-        (
-          this.currentApiPage() - 1
-        ) *
-        this.apiPageSize;
-
-
-      const localStart =
-        Math.max(
-          0,
-          globalStart - apiStart
-        );
-
-
       return filtered.slice(
-        localStart,
-        localStart + this.pageSize()
+        start,
+        start + this.pageSize()
       );
 
     });
@@ -781,22 +650,15 @@ export class ProductManagementComponent
     afterLoad?: () => void
   ): void {
 
-    if (
-      apiPage < 1
-    ) {
-
+    if (apiPage < 1) {
       return;
-
     }
-
 
     if (
       this.totalPages() > 0 &&
       apiPage > this.totalPages()
     ) {
-
       return;
-
     }
 
 
@@ -805,32 +667,14 @@ export class ProductManagementComponent
     // ========================================================
 
     const cached =
-      this.pageCache.get(
-        apiPage
-      );
+      this.pageCache()
+        .get(apiPage);
 
+    if (cached) {
 
-    if (
-      cached
-    ) {
+      this.products.set(cached);
 
-      this.products.set(
-        cached
-      );
-
-      this.currentApiPage.set(
-        apiPage
-      );
-
-
-      if (
-        apiPage === this.totalPages()
-      ) {
-
-        this.hasMore.set(false);
-
-      }
-
+      this.currentApiPage.set(apiPage);
 
       this.isLoading.set(false);
 
@@ -846,7 +690,6 @@ export class ProductManagementComponent
     // ========================================================
 
     this.isLoading.set(true);
-
     this.errorMessage.set(null);
 
 
@@ -859,8 +702,7 @@ export class ProductManagementComponent
       .subscribe({
 
         next: (
-          response:
-            PagedResponse<Product>
+          response: PagedResponse<Product>
         ) => {
 
           console.log(
@@ -870,18 +712,16 @@ export class ProductManagementComponent
 
 
           const items =
-            Array.isArray(
-              response?.items
-            )
+            Array.isArray(response?.items)
               ? response.items
               : [];
 
 
           // ==================================================
-          // CACHE
+          // UPDATE CACHE
           // ==================================================
 
-          this.pageCache.set(
+          this.updatePageCache(
             apiPage,
             items
           );
@@ -891,13 +731,9 @@ export class ProductManagementComponent
           // CURRENT PRODUCTS
           // ==================================================
 
-          this.products.set(
-            items
-          );
+          this.products.set(items);
 
-          this.currentApiPage.set(
-            apiPage
-          );
+          this.currentApiPage.set(apiPage);
 
 
           // ==================================================
@@ -905,33 +741,16 @@ export class ProductManagementComponent
           // ==================================================
 
           this.totalCount.set(
-            Number(
-              response?.totalCount
-            ) || 0
+            Number(response?.totalCount) || 0
           );
 
           this.totalPages.set(
-            Number(
-              response?.totalPages
-            ) || 0
+            Number(response?.totalPages) || 0
           );
 
           this.hasMore.set(
             !!response?.hasMore
           );
-
-
-          // ==================================================
-          // LAST PAGE
-          // ==================================================
-
-          if (
-            response?.hasMore === false
-          ) {
-
-            this.setAllProducts();
-
-          }
 
 
           this.isLoading.set(false);
@@ -946,7 +765,6 @@ export class ProductManagementComponent
             'Error loading products:',
             error
           );
-
 
           this.products.set([]);
 
@@ -966,6 +784,30 @@ export class ProductManagementComponent
 
 
   // ==========================================================
+  // UPDATE CACHE
+  // ==========================================================
+
+  private updatePageCache(
+    page: number,
+    products: Product[]
+  ): void {
+
+    const newCache =
+      new Map(this.pageCache());
+
+    newCache.set(
+      page,
+      products
+    );
+
+    this.pageCache.set(
+      newCache
+    );
+
+  }
+
+
+  // ==========================================================
   // LOAD ALL PRODUCTS
   // ==========================================================
 
@@ -973,9 +815,7 @@ export class ProductManagementComponent
     afterLoad?: () => void
   ): void {
 
-    if (
-      this.allProductsLoaded()
-    ) {
+    if (this.allProductsLoaded()) {
 
       this.setAllProducts();
 
@@ -991,10 +831,7 @@ export class ProductManagementComponent
     const nextPage =
       this.getNextMissingPage();
 
-
-    if (
-      !nextPage
-    ) {
+    if (!nextPage) {
 
       this.setAllProducts();
 
@@ -1008,7 +845,6 @@ export class ProductManagementComponent
 
 
     this.isLoading.set(true);
-
     this.errorMessage.set(null);
 
 
@@ -1017,38 +853,37 @@ export class ProductManagementComponent
       .subscribe({
 
         next: (
-          response:
-            PagedResponse<Product>
+          response: PagedResponse<Product>
         ) => {
 
           const items =
-            Array.isArray(
-              response?.items
-            )
+            Array.isArray(response?.items)
               ? response.items
               : [];
 
 
-          this.pageCache.set(
+          // ==================================================
+          // CACHE
+          // ==================================================
+
+          this.updatePageCache(
             nextPage,
             items
           );
 
 
           // ==================================================
-          // UPDATE SERVER INFORMATION
+          // SERVER INFORMATION
           // ==================================================
 
           this.totalCount.set(
-            Number(
-              response?.totalCount
-            ) || this.totalCount()
+            Number(response?.totalCount) ||
+            this.totalCount()
           );
 
           this.totalPages.set(
-            Number(
-              response?.totalPages
-            ) || this.totalPages()
+            Number(response?.totalPages) ||
+            this.totalPages()
           );
 
           this.hasMore.set(
@@ -1060,9 +895,7 @@ export class ProductManagementComponent
           // MORE PAGES
           // ==================================================
 
-          if (
-            response?.hasMore
-          ) {
+          if (response?.hasMore) {
 
             this.loadAllProducts(
               afterLoad
@@ -1092,7 +925,6 @@ export class ProductManagementComponent
             error
           );
 
-
           this.errorMessage.set(
             error?.error?.message ||
             error?.message ||
@@ -1117,14 +949,13 @@ export class ProductManagementComponent
     const totalPages =
       this.totalPages();
 
-
-    if (
-      totalPages <= 0
-    ) {
-
+    if (totalPages <= 0) {
       return null;
-
     }
+
+
+    const cache =
+      this.pageCache();
 
 
     for (
@@ -1133,9 +964,7 @@ export class ProductManagementComponent
       page++
     ) {
 
-      if (
-        !this.pageCache.has(page)
-      ) {
+      if (!cache.has(page)) {
 
         return page;
 
@@ -1155,30 +984,20 @@ export class ProductManagementComponent
 
   private setAllProducts(): void {
 
-    const allProducts:
-      Product[] = [];
+    const allProducts: Product[] = [];
 
+    const cache =
+      this.pageCache();
 
     const pages =
-      Array.from(
-        this.pageCache.keys()
-      ).sort(
-        (a, b) => a - b
-      );
+      Array.from(cache.keys())
+        .sort((a, b) => a - b);
 
 
-    for (
-      const page of pages
-    ) {
-
-      const items =
-        this.pageCache.get(
-          page
-        ) ?? [];
-
+    for (const page of pages) {
 
       allProducts.push(
-        ...items
+        ...(cache.get(page) ?? [])
       );
 
     }
@@ -1187,7 +1006,6 @@ export class ProductManagementComponent
     this.products.set(
       allProducts
     );
-
 
     this.currentApiPage.set(1);
 
@@ -1206,9 +1024,7 @@ export class ProductManagementComponent
       value.trim();
 
 
-    this.searchTerm.set(
-      value
-    );
+    this.searchTerm.set(value);
 
     this.pageIndex.set(0);
 
@@ -1217,39 +1033,16 @@ export class ProductManagementComponent
     // EMPTY SEARCH
     // ========================================================
 
-    if (
-      !term
-    ) {
+    if (!term) {
 
-      /*
-       * If filters are active,
-       * make sure all products are available.
-       */
+      if (this.hasLocalFilters()) {
 
-      if (
-        this.hasLocalFilters()
-      ) {
-
-        if (
-          !this.allProductsLoaded()
-        ) {
-
-          this.loadAllProducts();
-
-        } else {
-
-          this.setAllProducts();
-
-        }
+        this.prepareLocalFiltering();
 
         return;
 
       }
 
-
-      /*
-       * No search and no filters.
-       */
 
       this.loadApiPage(1);
 
@@ -1262,9 +1055,7 @@ export class ProductManagementComponent
     // LOCAL SEARCH
     // ========================================================
 
-    if (
-      this.allProductsLoaded()
-    ) {
+    if (this.allProductsLoaded()) {
 
       this.setAllProducts();
 
@@ -1277,9 +1068,7 @@ export class ProductManagementComponent
     // API SEARCH
     // ========================================================
 
-    this.searchProductsFromApi(
-      term
-    );
+    this.searchProductsFromApi(term);
 
   }
 
@@ -1293,7 +1082,6 @@ export class ProductManagementComponent
   ): void {
 
     this.isLoading.set(true);
-
     this.errorMessage.set(null);
 
 
@@ -1303,26 +1091,15 @@ export class ProductManagementComponent
 
         next: products => {
 
-          console.log(
-            'Search products:',
-            products
-          );
-
-
           const results =
-            Array.isArray(
-              products
-            )
+            Array.isArray(products)
               ? products
               : [];
 
 
-          this.products.set(
-            results
-          );
+          this.products.set(results);
 
           this.currentApiPage.set(1);
-
 
           this.totalCount.set(
             results.length
@@ -1345,11 +1122,8 @@ export class ProductManagementComponent
           this.products.set([]);
 
           this.totalCount.set(0);
-
           this.totalPages.set(0);
-
           this.hasMore.set(false);
-
 
           this.errorMessage.set(
             error?.error?.message ||
@@ -1378,25 +1152,12 @@ export class ProductManagementComponent
       value?.trim() ?? '';
 
 
-    /*
-     * Set category.
-     *
-     * Empty string = ALL categories.
-     */
-
     this.selectedCategory.set(
       category
     );
 
 
-    /*
-     * Whenever category changes,
-     * reset subcategory to ALL.
-     *
-     * This prevents an old subcategory from
-     * conflicting with the new category.
-     */
-
+    // Changing category resets subcategory
     this.selectedSubCategory.set('');
 
 
@@ -1419,10 +1180,6 @@ export class ProductManagementComponent
     const subCategory =
       value?.trim() ?? '';
 
-
-    /*
-     * Empty string = ALL subcategories.
-     */
 
     this.selectedSubCategory.set(
       subCategory
@@ -1449,10 +1206,6 @@ export class ProductManagementComponent
       value?.trim() ?? '';
 
 
-    /*
-     * Empty string = ALL brands.
-     */
-
     this.selectedBrand.set(
       brand
     );
@@ -1472,29 +1225,15 @@ export class ProductManagementComponent
 
   private prepareLocalFiltering(): void {
 
-
     // ========================================================
     // NO FILTERS
     // ========================================================
 
-    if (
-      !this.hasLocalFilters()
-    ) {
+    if (!this.hasLocalFilters()) {
 
+      if (this.isSearchMode()) {
 
-      /*
-       * No filters.
-       *
-       * If search is active, keep search behavior.
-       */
-
-      if (
-        this.isSearchMode()
-      ) {
-
-        if (
-          this.allProductsLoaded()
-        ) {
+        if (this.allProductsLoaded()) {
 
           this.setAllProducts();
 
@@ -1511,12 +1250,7 @@ export class ProductManagementComponent
       }
 
 
-      /*
-       * No filters and no search.
-       *
-       * Return to API page 1.
-       */
-
+      // No filters / no search
       this.loadApiPage(1);
 
       return;
@@ -1528,15 +1262,7 @@ export class ProductManagementComponent
     // FILTERS ACTIVE
     // ========================================================
 
-    /*
-     * Filters are local.
-     *
-     * We need every product before filtering.
-     */
-
-    if (
-      this.allProductsLoaded()
-    ) {
+    if (this.allProductsLoaded()) {
 
       this.setAllProducts();
 
@@ -1545,9 +1271,9 @@ export class ProductManagementComponent
     }
 
 
-    /*
-     * Load all API pages.
-     */
+    // ========================================================
+    // LOAD ALL PRODUCTS
+    // ========================================================
 
     this.loadAllProducts();
 
@@ -1561,25 +1287,15 @@ export class ProductManagementComponent
   clearFilters(): void {
 
     this.selectedCategory.set('');
-
     this.selectedSubCategory.set('');
-
     this.selectedBrand.set('');
 
     this.pageIndex.set(0);
 
 
-    /*
-     * Keep search term if one exists.
-     */
+    if (this.isSearchMode()) {
 
-    if (
-      this.isSearchMode()
-    ) {
-
-      if (
-        this.allProductsLoaded()
-      ) {
+      if (this.allProductsLoaded()) {
 
         this.setAllProducts();
 
@@ -1612,25 +1328,9 @@ export class ProductManagementComponent
     this.pageIndex.set(0);
 
 
-    /*
-     * Keep filters active.
-     */
+    if (this.hasLocalFilters()) {
 
-    if (
-      this.hasLocalFilters()
-    ) {
-
-      if (
-        this.allProductsLoaded()
-      ) {
-
-        this.setAllProducts();
-
-      } else {
-
-        this.loadAllProducts();
-
-      }
+      this.prepareLocalFiltering();
 
       return;
 
@@ -1663,27 +1363,11 @@ export class ProductManagementComponent
 
 
     // ========================================================
-    // LOCAL FILTER / LOCAL SEARCH
+    // LOCAL FILTERING / LOCAL SEARCH
     // ========================================================
 
     if (
-      this.isLocalFiltering()
-    ) {
-
-      this.pageIndex.set(
-        newPageIndex
-      );
-
-      return;
-
-    }
-
-
-    // ========================================================
-    // API SEARCH
-    // ========================================================
-
-    if (
+      this.isLocalFiltering() ||
       this.isSearchMode()
     ) {
 
@@ -1712,6 +1396,14 @@ export class ProductManagementComponent
       ) + 1;
 
 
+    const cache =
+      this.pageCache();
+
+
+    // ========================================================
+    // SAME API PAGE
+    // ========================================================
+
     if (
       requiredApiPage ===
       this.currentApiPage()
@@ -1727,18 +1419,14 @@ export class ProductManagementComponent
 
 
     // ========================================================
-    // CHECK CACHE
+    // CACHED PAGE
     // ========================================================
 
     const cached =
-      this.pageCache.get(
-        requiredApiPage
-      );
+      cache.get(requiredApiPage);
 
 
-    if (
-      cached
-    ) {
+    if (cached) {
 
       this.products.set(
         cached
@@ -1752,26 +1440,13 @@ export class ProductManagementComponent
         newPageIndex
       );
 
-
-      if (
-        requiredApiPage ===
-        this.totalPages()
-      ) {
-
-        this.hasMore.set(false);
-
-        this.setAllProducts();
-
-      }
-
-
       return;
 
     }
 
 
     // ========================================================
-    // LOAD API PAGE
+    // LOAD PAGE
     // ========================================================
 
     this.loadApiPage(
@@ -1797,15 +1472,10 @@ export class ProductManagementComponent
   ): number {
 
     const price =
-      Number(
-        product.price
-      ) || 0;
-
+      Number(product.price) || 0;
 
     const discount =
-      Number(
-        product.discountPercentage
-      ) || 0;
+      Number(product.discountPercentage) || 0;
 
 
     return (
@@ -1826,9 +1496,7 @@ export class ProductManagementComponent
 
   addProduct(): void {
 
-    this.openProductDialog(
-      false
-    );
+    this.openProductDialog(false);
 
   }
 
@@ -1863,9 +1531,7 @@ export class ProductManagementComponent
         AddProductComponent,
         {
           width: '900px',
-
           maxWidth: '95vw',
-
           maxHeight: '95vh',
 
           data: {
@@ -1875,19 +1541,15 @@ export class ProductManagementComponent
         }
       )
       .afterClosed()
-      .subscribe(
-        result => {
+      .subscribe(result => {
 
-          if (
-            result
-          ) {
+        if (result) {
 
-            this.refreshProducts();
-
-          }
+          this.refreshProducts();
 
         }
-      );
+
+      });
 
   }
 
@@ -1898,24 +1560,21 @@ export class ProductManagementComponent
 
   private refreshProducts(): void {
 
-    this.pageCache.clear();
+    this.pageCache.set(
+      new Map<number, Product[]>()
+    );
 
     this.totalCount.set(0);
-
     this.totalPages.set(0);
-
     this.hasMore.set(false);
 
     this.currentApiPage.set(1);
-
     this.pageIndex.set(0);
 
     this.searchTerm.set('');
 
     this.selectedCategory.set('');
-
     this.selectedSubCategory.set('');
-
     this.selectedBrand.set('');
 
     this.loadApiPage(1);
@@ -1940,41 +1599,35 @@ export class ProductManagementComponent
         }
       )
       .afterClosed()
-      .subscribe(
-        result => {
+      .subscribe(result => {
 
-          if (
-            !result?.status
-          ) {
-
-            return;
-
-          }
-
-
-          this.productService
-            .deleteProduct(id)
-            .subscribe({
-
-              next: () => {
-
-                this.refreshProducts();
-
-              },
-
-              error: error => {
-
-                this.errorMessage.set(
-                  error?.error?.message ??
-                  'Failed to delete product.'
-                );
-
-              }
-
-            });
-
+        if (!result?.status) {
+          return;
         }
-      );
+
+
+        this.productService
+          .deleteProduct(id)
+          .subscribe({
+
+            next: () => {
+
+              this.refreshProducts();
+
+            },
+
+            error: error => {
+
+              this.errorMessage.set(
+                error?.error?.message ??
+                'Failed to delete product.'
+              );
+
+            }
+
+          });
+
+      });
 
   }
 
@@ -1987,9 +1640,7 @@ export class ProductManagementComponent
     imageUrl?: string | null
   ): string {
 
-    if (
-      !imageUrl
-    ) {
+    if (!imageUrl) {
 
       return (
         'assets/images/product-placeholder.png'
