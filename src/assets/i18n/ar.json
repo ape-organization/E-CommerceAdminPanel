@@ -1,6 +1,10 @@
 
 {
   "common": {
+     "allCategories": "كل التصنيفات",
+    "allSubCategories": "كل التصنيفات الفرعية",
+    "allBrands": "كل العلامات التجارية",
+    "clearFilters": "مسح الفلاتر",
     "cosmetics": "مستحضرات التجميل",
     "login": "تسجيل الدخول",
     "logout": "تسجيل الخروج",

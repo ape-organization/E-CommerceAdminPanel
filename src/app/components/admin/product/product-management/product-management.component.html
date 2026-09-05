@@ -1,7 +1,10 @@
 
 <div class="product-management">
 
+  <!-- ====================================================== -->
   <!-- HEADER -->
+  <!-- ====================================================== -->
+
   <header class="page-header">
 
     <div class="page-heading">
@@ -11,6 +14,7 @@
       </div>
 
       <div>
+
         <span class="heading-label">
           {{ 'products.management' | translate }}
         </span>
@@ -22,9 +26,11 @@
         <p>
           {{ 'products.description' | translate }}
         </p>
+
       </div>
 
     </div>
+
 
     <button
       mat-raised-button
@@ -41,7 +47,10 @@
   </header>
 
 
+  <!-- ====================================================== -->
   <!-- SEARCH -->
+  <!-- ====================================================== -->
+
   <div class="search-wrapper">
 
     <div class="search-box">
@@ -66,7 +75,9 @@
           (click)="clearSearch()"
           [attr.aria-label]="'common.clearSearch' | translate">
 
-          <mat-icon>close</mat-icon>
+          <mat-icon>
+            close
+          </mat-icon>
 
         </button>
 
@@ -77,12 +88,151 @@
   </div>
 
 
+  <!-- ====================================================== -->
+  <!-- LOCAL FILTERS -->
+  <!-- ====================================================== -->
+
+
+<div class="filters-wrapper">
+
+  <!-- CATEGORY -->
+  <div class="search-box filter-box">
+
+    <mat-icon class="search-icon">
+      category
+    </mat-icon>
+
+    <select
+      [ngModel]="selectedCategory()"
+      (ngModelChange)="onCategoryFilterChange($event)"
+      aria-label="Category">
+
+      <option value="">
+        {{ 'common.allCategories' | translate }}
+      </option>
+
+      @for (category of categoryOptions(); track category) {
+        <option [value]="category">
+          {{ category }}
+        </option>
+      }
+
+    </select>
+
+  </div>
+
+
+  <!-- SUBCATEGORY -->
+  <div class="search-box filter-box">
+
+    <mat-icon class="search-icon">
+      account_tree
+    </mat-icon>
+
+    <select
+      [ngModel]="selectedSubCategory()"
+      (ngModelChange)="onSubCategoryFilterChange($event)"
+      [disabled]="subCategoryOptions().length === 0"
+      aria-label="Subcategory">
+
+      <option value="">
+        {{ 'common.allSubCategories' | translate }}
+      </option>
+
+      @for (subCategory of subCategoryOptions(); track subCategory) {
+        <option [value]="subCategory">
+          {{ subCategory }}
+        </option>
+      }
+
+    </select>
+
+  </div>
+
+
+  <!-- BRAND -->
+  <div class="search-box filter-box">
+
+    <mat-icon class="search-icon">
+      sell
+    </mat-icon>
+
+    <select
+      [ngModel]="selectedBrand()"
+      (ngModelChange)="onBrandFilterChange($event)"
+      aria-label="Brand">
+
+      <option value="">
+        {{ 'common.allBrands' | translate }}
+      </option>
+
+      @for (brand of brandOptions(); track brand) {
+        <option [value]="brand">
+          {{ brand }}
+        </option>
+      }
+
+    </select>
+
+  </div>
+
+
+  <!-- CLEAR FILTERS -->
+  @if (hasLocalFilters()) {
+
+    <button
+      type="button"
+      class="clear-filters-btn"
+      (click)="clearFilters()">
+
+      <mat-icon>
+        filter_alt_off
+      </mat-icon>
+
+      {{ 'common.clearFilters' | translate }}
+
+    </button>
+
+  }
+
+</div>
+
+
+
+
+  <!-- ====================================================== -->
+  <!-- ACTIVE FILTER SUMMARY -->
+  <!-- ====================================================== -->
+
+  @if (hasLocalFilters()) {
+
+    <div class="active-filters">
+
+      <mat-icon>
+        filter_alt
+      </mat-icon>
+
+      <span>
+        {{ filteredProducts().length }}
+        {{ 'products.productsFound' | translate }}
+      </span>
+
+    </div>
+
+  }
+
+
+  <!-- ====================================================== -->
   <!-- ERROR -->
+  <!-- ====================================================== -->
+
   @if (errorMessage()) {
 
     <div class="error-message">
 
-      <mat-icon>error_outline</mat-icon>
+      <mat-icon>
+        error_outline
+      </mat-icon>
 
       <span>
         {{ errorMessage() }}
@@ -94,7 +244,9 @@
         (click)="errorMessage.set(null)"
         [attr.aria-label]="'common.dismissError' | translate">
 
-        <mat-icon>close</mat-icon>
+        <mat-icon>
+          close
+        </mat-icon>
 
       </button>
 
@@ -103,12 +255,17 @@
   }
 
 
+  <!-- ====================================================== -->
   <!-- LOADING -->
+  <!-- ====================================================== -->
+
   @if (isLoading()) {
 
     <div class="loading-container">
 
-      <mat-spinner diameter="40"></mat-spinner>
+      <mat-spinner
+        diameter="40">
+      </mat-spinner>
 
       <span>
         {{ 'products.loadingProducts' | translate }}
@@ -119,26 +276,48 @@
   }
 
 
+  <!-- ====================================================== -->
   <!-- EMPTY -->
-  @if (!isLoading() && filteredProducts().length === 0) {
+  <!-- ====================================================== -->
+
+  @if (
+    !isLoading() &&
+    filteredProducts().length === 0
+  ) {
 
     <div class="empty-state">
 
-      <mat-icon>inventory_2</mat-icon>
+      <mat-icon>
+        inventory_2
+      </mat-icon>
 
       <h3>
         {{ 'products.noProductsFound' | translate }}
       </h3>
 
       <p>
-        {{
-          searchTerm()
-            ? ('products.noProductsMatchSearch' | translate)
-            : ('products.startAddingFirstProduct' | translate)
-        }}
+
+        @if (searchTerm()) {
+
+          {{ 'products.noProductsMatchSearch' | translate }}
+
+        } @else if (hasLocalFilters()) {
+
+          {{ 'products.noProductsFound' | translate }}
+
+        } @else {
+
+          {{ 'products.startAddingFirstProduct' | translate }}
+
+        }
+
       </p>
 
-      @if (!searchTerm()) {
+
+      @if (
+        !searchTerm() &&
+        !hasLocalFilters()
+      ) {
 
         <button
           mat-raised-button
@@ -146,9 +325,30 @@
           type="button"
           (click)="addProduct()">
 
-          <mat-icon>add</mat-icon>
+          <mat-icon>
+            add
+          </mat-icon>
 
           {{ 'products.addProduct' | translate }}
+
+        </button>
+
+      }
+
+
+      @if (hasLocalFilters()) {
+
+        <button
+          mat-stroked-button
+          type="button"
+          class="clear-filters-btn"
+          (click)="clearFilters()">
+
+          <mat-icon>
+            filter_alt_off
+          </mat-icon>
+
+          {{ 'common.clearFilters' | translate }}
 
         </button>
 
@@ -159,8 +359,14 @@
   }
 
 
+  <!-- ====================================================== -->
   <!-- TABLE -->
-  @if (!isLoading() && filteredProducts().length > 0) {
+  <!-- ====================================================== -->
+
+  @if (
+    !isLoading() &&
+    filteredProducts().length > 0
+  ) {
 
     <div class="table-wrapper">
 
@@ -170,98 +376,138 @@
         class="products-table">
 
 
-        <!-- PRODUCT -->
+        <!-- ================================================== -->
+        <!-- IMAGE -->
+        <!-- ================================================== -->
+
         <ng-container matColumnDef="image">
 
-          <th mat-header-cell *matHeaderCellDef>
-       
+          <th
+            mat-header-cell
+            *matHeaderCellDef>
           </th>
 
-          <td mat-cell *matCellDef="let product">
+          <td
+            mat-cell
+            *matCellDef="let product">
 
-         
+            <div class="product-image">
 
-              <div class="product-image">
+              @if (product.imageUrl) {
 
-                @if (product.imageUrl) {
+                <img
+                  [src]="getImageUrl(product.imageUrl)"
+                  [alt]="product.nameEn" />
 
-                  <img
-                    [src]="getImageUrl(product.imageUrl)"
-                    [alt]="product.nameEn" />
+              } @else {
 
-                } @else {
+                <mat-icon>
+                  image
+                </mat-icon>
 
-                  <mat-icon>image</mat-icon>
+              }
 
-                }
-
-              </div>
-
-          
+            </div>
 
           </td>
 
         </ng-container>
- <ng-container matColumnDef="nameEn">
 
-            <th mat-header-cell *matHeaderCellDef>
+
+        <!-- ================================================== -->
+        <!-- NAME EN -->
+        <!-- ================================================== -->
+
+        <ng-container matColumnDef="nameEn">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef>
+
             {{ 'brands.nameEn' | translate }}
+
           </th>
 
-          <td mat-cell *matCellDef="let product">
+          <td
+            mat-cell
+            *matCellDef="let product">
 
-          
-
-                <strong>
-                  {{ product.nameEn }}
-                </strong>
-              
-
-            
+            <strong>
+              {{ product.nameEn }}
+            </strong>
 
           </td>
 
         </ng-container>
- <ng-container matColumnDef="nameAr">
 
-          <th mat-header-cell *matHeaderCellDef>
+
+        <!-- ================================================== -->
+        <!-- NAME AR -->
+        <!-- ================================================== -->
+
+        <ng-container matColumnDef="nameAr">
+
+          <th
+            mat-header-cell
+            *matHeaderCellDef>
+
             {{ 'brands.nameAr' | translate }}
+
           </th>
 
-          <td mat-cell *matCellDef="let product">
+          <td
+            mat-cell
+            *matCellDef="let product">
 
-
- <strong>
-                  {{ product.nameAr }}
-                </strong>
-              
-
-              
+            <strong>
+              {{ product.nameAr }}
+            </strong>
 
           </td>
 
         </ng-container>
+
+
+        <!-- ================================================== -->
         <!-- BRAND -->
+        <!-- ================================================== -->
+
         <ng-container matColumnDef="brand">
 
-          <th mat-header-cell *matHeaderCellDef>
+          <th
+            mat-header-cell
+            *matHeaderCellDef>
+
             {{ 'products.brand' | translate }}
+
           </th>
 
-          <td mat-cell *matCellDef="let product">
+          <td
+            mat-cell
+            *matCellDef="let product">
 
-            {{ product.brand?.nameEn || ('products.noBrand' | translate) }}
+            {{
+              product.brand?.nameEn ||
+              ('products.noBrand' | translate)
+            }}
 
           </td>
 
         </ng-container>
 
 
+        <!-- ================================================== -->
         <!-- PRICE -->
+        <!-- ================================================== -->
+
         <ng-container matColumnDef="price">
 
-          <th mat-header-cell *matHeaderCellDef>
+          <th
+            mat-header-cell
+            *matHeaderCellDef>
+
             {{ 'products.price' | translate }}
+
           </th>
 
           <td
@@ -269,18 +515,30 @@
             *matCellDef="let product"
             class="price-cell">
 
-            @if (product.discountPercentage > 0) {
+            @if (
+              product.discountPercentage > 0
+            ) {
 
               <div class="price-wrapper">
 
                 <span class="old-price">
+
                   {{ product.price | number:'1.2-2' }}
+
                   {{ 'common.egp' | translate }}
+
                 </span>
 
+
                 <span class="discounted-price">
-                  {{ getDiscountedPrice(product) | number:'1.2-2' }}
+
+                  {{
+                    getDiscountedPrice(product)
+                      | number:'1.2-2'
+                  }}
+
                   {{ 'common.egp' | translate }}
+
                 </span>
 
               </div>
@@ -288,8 +546,11 @@
             } @else {
 
               <span class="normal-price">
+
                 {{ product.price | number:'1.2-2' }}
+
                 {{ 'common.egp' | translate }}
+
               </span>
 
             }
@@ -299,14 +560,23 @@
         </ng-container>
 
 
+        <!-- ================================================== -->
         <!-- DISCOUNT -->
+        <!-- ================================================== -->
+
         <ng-container matColumnDef="discount">
 
-          <th mat-header-cell *matHeaderCellDef>
+          <th
+            mat-header-cell
+            *matHeaderCellDef>
+
             {{ 'products.discount' | translate }}
+
           </th>
 
-          <td mat-cell *matCellDef="let product">
+          <td
+            mat-cell
+            *matCellDef="let product">
 
             <span
               class="discount-badge"
@@ -328,14 +598,23 @@
         </ng-container>
 
 
+        <!-- ================================================== -->
         <!-- STOCK -->
+        <!-- ================================================== -->
+
         <ng-container matColumnDef="stock">
 
-          <th mat-header-cell *matHeaderCellDef>
+          <th
+            mat-header-cell
+            *matHeaderCellDef>
+
             {{ 'products.stock' | translate }}
+
           </th>
 
-          <td mat-cell *matCellDef="let product">
+          <td
+            mat-cell
+            *matCellDef="let product">
 
             <div class="stock-cell">
 
@@ -346,20 +625,34 @@
                   product.stockQuantity <= 5 &&
                   product.stockQuantity > 0
                 "
-                [class.no-stock]="!product.isInStock">
+                [class.no-stock]="
+                  !product.isInStock
+                ">
 
                 {{ product.stockQuantity }}
 
               </span>
 
+
               <span
                 class="stock-status"
-                [class.in-stock]="product.isInStock"
-                [class.out-of-stock]="!product.isInStock">
+                [class.in-stock]="
+                  product.isInStock
+                "
+                [class.out-of-stock]="
+                  !product.isInStock
+                ">
 
                 <mat-icon>
-                  {{ product.isInStock ? 'check_circle' : 'cancel' }}
+
+                  {{
+                    product.isInStock
+                      ? 'check_circle'
+                      : 'cancel'
+                  }}
+
                 </mat-icon>
+
 
                 {{
                   product.isInStock
@@ -376,14 +669,23 @@
         </ng-container>
 
 
+        <!-- ================================================== -->
         <!-- CLASSIFICATION -->
+        <!-- ================================================== -->
+
         <ng-container matColumnDef="subCategories">
 
-          <th mat-header-cell *matHeaderCellDef>
+          <th
+            mat-header-cell
+            *matHeaderCellDef>
+
             {{ 'products.classification' | translate }}
+
           </th>
 
-          <td mat-cell *matCellDef="let product">
+          <td
+            mat-cell
+            *matCellDef="let product">
 
             <div class="classification">
 
@@ -393,10 +695,13 @@
               ) {
 
                 <span class="category-chip">
-                  {{ subCategory.nameEn }} 
+
+                  {{ subCategory.nameEn }}
+
                 </span>
 
               }
+
 
               @if (
                 !product.subCategories ||
@@ -404,7 +709,9 @@
               ) {
 
                 <span class="no-category">
+
                   {{ 'products.noClassification' | translate }}
+
                 </span>
 
               }
@@ -416,7 +723,10 @@
         </ng-container>
 
 
+        <!-- ================================================== -->
         <!-- ACTIONS -->
+        <!-- ================================================== -->
+
         <ng-container matColumnDef="actions">
 
           <th
@@ -428,6 +738,7 @@
 
           </th>
 
+
           <td
             mat-cell
             *matCellDef="let product"
@@ -437,21 +748,30 @@
               mat-icon-button
               class="edit-btn"
               type="button"
-              [attr.aria-label]="'products.editProduct' | translate"
+              [attr.aria-label]="
+                'products.editProduct' | translate
+              "
               (click)="editProduct(product)">
 
-              <mat-icon>edit</mat-icon>
+              <mat-icon>
+                edit
+              </mat-icon>
 
             </button>
+
 
             <button
               mat-icon-button
               class="delete-btn"
               type="button"
-              [attr.aria-label]="'products.deleteProduct' | translate"
+              [attr.aria-label]="
+                'products.deleteProduct' | translate
+              "
               (click)="deleteProduct(product.id)">
 
-              <mat-icon>delete</mat-icon>
+              <mat-icon>
+                delete
+              </mat-icon>
 
             </button>
 
@@ -460,11 +780,19 @@
         </ng-container>
 
 
-        <!-- HEADER / ROWS -->
+        <!-- ================================================== -->
+        <!-- HEADER -->
+        <!-- ================================================== -->
+
         <tr
           mat-header-row
           *matHeaderRowDef="displayedColumns">
         </tr>
+
+
+        <!-- ================================================== -->
+        <!-- ROWS -->
+        <!-- ================================================== -->
 
         <tr
           mat-row
@@ -474,12 +802,17 @@
           ">
         </tr>
 
+
       </table>
 
 
-      <!-- PAGINATION -->
+      <!-- ==================================================== -->
+      <!-- PAGINATOR -->
+      <!-- ==================================================== -->
+
       <mat-paginator
         [length]="
+          isLocalFiltering() ||
           isSearchMode()
             ? filteredProducts().length
             : totalCount()

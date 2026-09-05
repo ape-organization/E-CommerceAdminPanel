@@ -325,7 +325,8 @@ var image=environment.imageBaseUrl+this.data.category.imageUrl
 
       }
 
-
+console.log(image);
+console.log(image?.name);
       // =====================================================
       // UPDATE
       // =====================================================

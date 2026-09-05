@@ -1,3 +1,4 @@
+
 import {
   CommonModule
 } from '@angular/common';
@@ -45,6 +46,14 @@ import {
 } from '@angular/material/tooltip';
 
 import {
+  MatFormFieldModule
+} from '@angular/material/form-field';
+
+import {
+  MatSelectModule
+} from '@angular/material/select';
+
+import {
   ProductService,
   PagedResponse
 } from '../../../../services/product.service';
@@ -64,7 +73,10 @@ import {
 import {
   Product
 } from '../../../../models/product.model';
-import { TranslatePipe } from '@ngx-translate/core';
+
+import {
+  TranslatePipe
+} from '@ngx-translate/core';
 
 
 // ============================================================
@@ -85,7 +97,9 @@ import { TranslatePipe } from '@ngx-translate/core';
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatTableModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatFormFieldModule,
+    MatSelectModule
   ],
 
   templateUrl:
@@ -96,6 +110,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class ProductManagementComponent
   implements OnInit {
+
 
   // ==========================================================
   // SERVICES
@@ -112,14 +127,6 @@ export class ProductManagementComponent
   // BACKEND PAGE SIZE
   // ==========================================================
 
-  /*
-   * Must match the backend page size.
-   *
-   * Backend:
-   *
-   * const int pageSize = 100;
-   */
-
   private readonly apiPageSize = 100;
 
 
@@ -130,14 +137,11 @@ export class ProductManagementComponent
   readonly products =
     signal<Product[]>([]);
 
-
   readonly searchTerm =
     signal('');
 
-
   readonly isLoading =
     signal(false);
-
 
   readonly errorMessage =
     signal<string | null>(null);
@@ -150,45 +154,11 @@ export class ProductManagementComponent
   readonly totalCount =
     signal(0);
 
-
   readonly totalPages =
     signal(0);
 
-
-  /*
-   * IMPORTANT:
-   *
-   * This is the LAST hasMore value received from the API.
-   *
-   * false = we reached the final page
-   * true  = there are still products/pages remaining
-   */
-
   readonly hasMore =
     signal(false);
-
-
-  // ==========================================================
-  // ALL PRODUCTS LOADED
-  // ==========================================================
-
-  /*
-   * This is based on the LAST API response.
-   *
-   * When the backend returns:
-   *
-   * hasMore: false
-   *
-   * we know we reached the last page and therefore
-   * all products have been loaded into pageCache.
-   */
-
-  readonly allProductsLoaded =
-    computed(() =>
-      this.totalPages() > 0 &&
-      this.hasMore() === false &&
-      this.pageCache.size >= this.totalPages()
-    );
 
 
   // ==========================================================
@@ -203,16 +173,275 @@ export class ProductManagementComponent
   // API PAGE CACHE
   // ==========================================================
 
-  /*
-   * Example:
-   *
-   * page 1 -> 100 products
-   * page 2 -> 100 products
-   * page 3 -> 100 products
-   */
-
   private readonly pageCache =
     new Map<number, Product[]>();
+
+
+  // ==========================================================
+  // ALL PRODUCTS LOADED
+  // ==========================================================
+
+  readonly allProductsLoaded =
+    computed(() =>
+      this.totalPages() > 0 &&
+      this.hasMore() === false &&
+      this.pageCache.size >= this.totalPages()
+    );
+
+
+  // ==========================================================
+  // ALL CACHED PRODUCTS
+  // ==========================================================
+
+  /*
+   * IMPORTANT:
+   *
+   * Do NOT use this.products() for filter options.
+   *
+   * this.products() normally contains only the current
+   * API page.
+   *
+   * The filter options should use everything that has
+   * already been loaded into pageCache.
+   */
+
+  readonly allCachedProducts =
+    computed(() => {
+
+      const allProducts: Product[] = [];
+
+      const pages =
+        Array.from(
+          this.pageCache.keys()
+        ).sort(
+          (a, b) => a - b
+        );
+
+      for (
+        const page of pages
+      ) {
+
+        allProducts.push(
+          ...(this.pageCache.get(page) ?? [])
+        );
+
+      }
+
+      return allProducts;
+
+    });
+
+
+  // ==========================================================
+  // LOCAL FILTERS
+  // ==========================================================
+
+  /*
+   * Empty string means:
+   *
+   * ALL
+   */
+
+  readonly selectedCategory =
+    signal('');
+
+  readonly selectedSubCategory =
+    signal('');
+
+  readonly selectedBrand =
+    signal('');
+
+
+  // ==========================================================
+  // FILTER ACTIVE
+  // ==========================================================
+
+  readonly hasLocalFilters =
+    computed(() =>
+      !!this.selectedCategory() ||
+      !!this.selectedSubCategory() ||
+      !!this.selectedBrand()
+    );
+
+
+  // ==========================================================
+  // CATEGORY OPTIONS
+  // ==========================================================
+
+  readonly categoryOptions =
+    computed(() => {
+
+      const categories =
+        new Set<string>();
+
+      for (
+        const product of this.allCachedProducts()
+      ) {
+
+        for (
+          const subCategory of
+          product.subCategories ?? []
+        ) {
+
+          const categoryName =
+            subCategory.categoryName?.trim();
+
+          if (
+            categoryName
+          ) {
+
+            categories.add(
+              categoryName
+            );
+
+          }
+
+        }
+
+      }
+
+      return Array.from(
+        categories
+      ).sort(
+        (a, b) =>
+          a.localeCompare(b)
+      );
+
+    });
+
+
+  // ==========================================================
+  // SUBCATEGORY OPTIONS
+  // ==========================================================
+
+  readonly subCategoryOptions =
+    computed(() => {
+
+      const selectedCategory =
+        this.selectedCategory()
+          .trim()
+          .toLowerCase();
+
+      const subCategories =
+        new Set<string>();
+
+
+      for (
+        const product of this.allCachedProducts()
+      ) {
+
+        for (
+          const subCategory of
+          product.subCategories ?? []
+        ) {
+
+          const subCategoryName =
+            subCategory.nameEn?.trim();
+
+          const categoryName =
+            subCategory.categoryName
+              ?.trim()
+              .toLowerCase();
+
+
+          if (
+            !subCategoryName
+          ) {
+
+            continue;
+
+          }
+
+
+          /*
+           * No category selected:
+           *
+           * show all subcategories.
+           */
+
+          if (
+            !selectedCategory
+          ) {
+
+            subCategories.add(
+              subCategoryName
+            );
+
+            continue;
+
+          }
+
+
+          /*
+           * Category selected:
+           *
+           * only show subcategories belonging
+           * to that category.
+           */
+
+          if (
+            categoryName ===
+            selectedCategory
+          ) {
+
+            subCategories.add(
+              subCategoryName
+            );
+
+          }
+
+        }
+
+      }
+
+
+      return Array.from(
+        subCategories
+      ).sort(
+        (a, b) =>
+          a.localeCompare(b)
+      );
+
+    });
+
+
+  // ==========================================================
+  // BRAND OPTIONS
+  // ==========================================================
+
+  readonly brandOptions =
+    computed(() => {
+
+      const brands =
+        new Set<string>();
+
+      for (
+        const product of this.allCachedProducts()
+      ) {
+
+        const brandName =
+          product.brand?.nameEn?.trim();
+
+        if (
+          brandName
+        ) {
+
+          brands.add(
+            brandName
+          );
+
+        }
+
+      }
+
+      return Array.from(
+        brands
+      ).sort(
+        (a, b) =>
+          a.localeCompare(b)
+      );
+
+    });
 
 
   // ==========================================================
@@ -221,7 +450,6 @@ export class ProductManagementComponent
 
   readonly pageIndex =
     signal(0);
-
 
   readonly pageSize =
     signal(10);
@@ -240,21 +468,22 @@ export class ProductManagementComponent
 
 
   // ==========================================================
-  // FILTERED PRODUCTS
+  // LOCAL FILTERING
   // ==========================================================
 
-  /*
-   * When all products are loaded:
-   *
-   * Search is LOCAL.
-   *
-   * When all products are NOT loaded:
-   *
-   * searchProductsFromApi() puts only the DB results
-   * into products.
-   *
-   * We do not locally filter API search results again.
-   */
+  readonly isLocalFiltering =
+    computed(() =>
+      this.hasLocalFilters() ||
+      (
+        this.isSearchMode() &&
+        this.allProductsLoaded()
+      )
+    );
+
+
+  // ==========================================================
+  // FILTERED PRODUCTS
+  // ==========================================================
 
   readonly filteredProducts =
     computed(() => {
@@ -264,99 +493,171 @@ export class ProductManagementComponent
           .trim()
           .toLowerCase();
 
+      const category =
+        this.selectedCategory()
+          .trim()
+          .toLowerCase();
+
+      const subCategory =
+        this.selectedSubCategory()
+          .trim()
+          .toLowerCase();
+
+      const brand =
+        this.selectedBrand()
+          .trim()
+          .toLowerCase();
+
 
       const currentProducts =
         this.products();
 
 
-      // ------------------------------------------------------
-      // NO SEARCH
-      // ------------------------------------------------------
-
-      if (!term) {
-
-        return currentProducts;
-
-      }
+      return currentProducts.filter(
+        product => {
 
 
-      // ------------------------------------------------------
-      // LOCAL SEARCH
-      // ------------------------------------------------------
+          // ==================================================
+          // SEARCH
+          // ==================================================
 
-      /*
-       * Local search is ONLY valid when the complete
-       * product list has been loaded.
-       */
+          let matchesSearch =
+            true;
 
-      if (
-        this.allProductsLoaded()
-      ) {
 
-        return currentProducts.filter(
-          product => {
+          if (
+            term
+          ) {
 
             const nameEn =
               product.nameEn
                 ?.toLowerCase()
                 .includes(term);
 
-
             const descriptionEn =
               product.descriptionEn
                 ?.toLowerCase()
                 .includes(term);
 
-
-            const brand =
+            const brandName =
               product.brand?.nameEn
                 ?.toLowerCase()
                 .includes(term);
 
-
-            const subCategory =
+            const subCategoryName =
               product.subCategories?.some(
-                subCategory =>
-                  subCategory.name
+                sub =>
+                  sub.nameEn
+                    ?.toLowerCase()
+                    .includes(term) ||
+                  sub.nameAr
+                    ?.toLowerCase()
+                    .includes(term)
+              );
+
+            const categoryName =
+              product.subCategories?.some(
+                sub =>
+                  sub.categoryName
                     ?.toLowerCase()
                     .includes(term)
               );
 
 
-            const category =
-              product.subCategories?.some(
-                subCategory =>
-                  subCategory.categoryName
-                    ?.toLowerCase()
-                    .includes(term)
+            matchesSearch =
+              !!(
+                nameEn ||
+                descriptionEn ||
+                brandName ||
+                subCategoryName ||
+                categoryName
               );
-
-
-            return !!(
-              nameEn ||
-              descriptionEn ||
-              brand ||
-              subCategory ||
-              category
-            );
 
           }
-        );
-
-      }
 
 
-      // ------------------------------------------------------
-      // API SEARCH
-      // ------------------------------------------------------
+          // ==================================================
+          // CATEGORY
+          // ==================================================
 
-      /*
-       * When not all products are loaded,
-       * products already contains the results returned
-       * from the database.
-       */
+          let matchesCategory =
+            true;
 
-      return currentProducts;
+
+          if (
+            category
+          ) {
+
+            matchesCategory =
+              !!product.subCategories?.some(
+                sub =>
+                  sub.categoryName
+                    ?.trim()
+                    .toLowerCase() ===
+                  category
+              );
+
+          }
+
+
+          // ==================================================
+          // SUBCATEGORY
+          // ==================================================
+
+          let matchesSubCategory =
+            true;
+
+
+          if (
+            subCategory
+          ) {
+
+            matchesSubCategory =
+              !!product.subCategories?.some(
+                sub =>
+                  (
+                    sub.nameEn ||
+                    sub.nameAr
+                  )
+                    ?.trim()
+                    .toLowerCase() ===
+                  subCategory
+              );
+
+          }
+
+
+          // ==================================================
+          // BRAND
+          // ==================================================
+
+          let matchesBrand =
+            true;
+
+
+          if (
+            brand
+          ) {
+
+            matchesBrand =
+              (
+                product.brand?.nameEn
+                  ?.trim()
+                  .toLowerCase()
+              ) === brand;
+
+          }
+
+
+          return (
+            matchesSearch &&
+            matchesCategory &&
+            matchesSubCategory &&
+            matchesBrand
+          );
+
+        }
+      );
 
     });
 
@@ -368,22 +669,33 @@ export class ProductManagementComponent
   readonly paginatedProducts =
     computed(() => {
 
-      const products =
+      const filtered =
         this.filteredProducts();
 
 
-      // ------------------------------------------------------
-      // SEARCH MODE
-      // ------------------------------------------------------
-      //
-      // Search results are paginated locally.
-      //
-      // This applies to both:
-      //
-      // 1. Local search
-      // 2. DB search
-      //
-      // ------------------------------------------------------
+      // ======================================================
+      // LOCAL FILTERING
+      // ======================================================
+
+      if (
+        this.isLocalFiltering()
+      ) {
+
+        const start =
+          this.pageIndex() *
+          this.pageSize();
+
+        return filtered.slice(
+          start,
+          start + this.pageSize()
+        );
+
+      }
+
+
+      // ======================================================
+      // API SEARCH
+      // ======================================================
 
       if (
         this.isSearchMode()
@@ -393,8 +705,7 @@ export class ProductManagementComponent
           this.pageIndex() *
           this.pageSize();
 
-
-        return products.slice(
+        return filtered.slice(
           start,
           start + this.pageSize()
         );
@@ -402,13 +713,9 @@ export class ProductManagementComponent
       }
 
 
-      // ------------------------------------------------------
-      // NORMAL MODE
-      // ------------------------------------------------------
-
-      /*
-       * products contains the current API page.
-       */
+      // ======================================================
+      // NORMAL API PAGINATION
+      // ======================================================
 
       const globalStart =
         this.pageIndex() *
@@ -429,7 +736,7 @@ export class ProductManagementComponent
         );
 
 
-      return products.slice(
+      return filtered.slice(
         localStart,
         localStart + this.pageSize()
       );
@@ -474,10 +781,6 @@ export class ProductManagementComponent
     afterLoad?: () => void
   ): void {
 
-    // --------------------------------------------------------
-    // INVALID PAGE
-    // --------------------------------------------------------
-
     if (
       apiPage < 1
     ) {
@@ -486,10 +789,6 @@ export class ProductManagementComponent
 
     }
 
-
-    // --------------------------------------------------------
-    // DON'T GO BEYOND TOTAL PAGES
-    // --------------------------------------------------------
 
     if (
       this.totalPages() > 0 &&
@@ -501,9 +800,9 @@ export class ProductManagementComponent
     }
 
 
-    // --------------------------------------------------------
+    // ========================================================
     // CACHE
-    // --------------------------------------------------------
+    // ========================================================
 
     const cached =
       this.pageCache.get(
@@ -519,18 +818,10 @@ export class ProductManagementComponent
         cached
       );
 
-
       this.currentApiPage.set(
         apiPage
       );
 
-
-      /*
-       * IMPORTANT:
-       *
-       * If the cached page is the last page,
-       * hasMore should already be false.
-       */
 
       if (
         apiPage === this.totalPages()
@@ -541,10 +832,7 @@ export class ProductManagementComponent
       }
 
 
-      this.isLoading.set(
-        false
-      );
-
+      this.isLoading.set(false);
 
       afterLoad?.();
 
@@ -553,35 +841,34 @@ export class ProductManagementComponent
     }
 
 
-    // --------------------------------------------------------
+    // ========================================================
     // LOADING
-    // --------------------------------------------------------
+    // ========================================================
 
-    this.isLoading.set(
-      true
-    );
+    this.isLoading.set(true);
 
-
-    this.errorMessage.set(
-      null
-    );
+    this.errorMessage.set(null);
 
 
-    // --------------------------------------------------------
-    // API REQUEST
-    // --------------------------------------------------------
+    // ========================================================
+    // API
+    // ========================================================
 
     this.productService
-      .getProducts(
-        apiPage
-      )
+      .getProducts(apiPage)
       .subscribe({
 
         next: (
           response:
             PagedResponse<Product>
         ) => {
-console.log(response)
+
+          console.log(
+            'Products response:',
+            response
+          );
+
+
           const items =
             Array.isArray(
               response?.items
@@ -590,9 +877,9 @@ console.log(response)
               : [];
 
 
-          // --------------------------------------------------
-          // CACHE PAGE
-          // --------------------------------------------------
+          // ==================================================
+          // CACHE
+          // ==================================================
 
           this.pageCache.set(
             apiPage,
@@ -600,23 +887,22 @@ console.log(response)
           );
 
 
-          // --------------------------------------------------
-          // CURRENT PAGE
-          // --------------------------------------------------
+          // ==================================================
+          // CURRENT PRODUCTS
+          // ==================================================
 
           this.products.set(
             items
           );
-
 
           this.currentApiPage.set(
             apiPage
           );
 
 
-          // --------------------------------------------------
+          // ==================================================
           // SERVER PAGINATION
-          // --------------------------------------------------
+          // ==================================================
 
           this.totalCount.set(
             Number(
@@ -624,45 +910,35 @@ console.log(response)
             ) || 0
           );
 
-
           this.totalPages.set(
             Number(
               response?.totalPages
             ) || 0
           );
 
-
-          /*
-           * THIS IS THE IMPORTANT VALUE.
-           *
-           * We always update it with the latest API response.
-           */
-
           this.hasMore.set(
             !!response?.hasMore
           );
 
+
+          // ==================================================
+          // LAST PAGE
+          // ==================================================
+
           if (
             response?.hasMore === false
           ) {
+
             this.setAllProducts();
 
           }
 
 
-          // --------------------------------------------------
-          // FINISHED
-          // --------------------------------------------------
-
-          this.isLoading.set(
-            false
-          );
-
+          this.isLoading.set(false);
 
           afterLoad?.();
 
         },
-
 
         error: error => {
 
@@ -672,8 +948,148 @@ console.log(response)
           );
 
 
-          this.products.set(
-            []
+          this.products.set([]);
+
+          this.errorMessage.set(
+            error?.error?.message ||
+            error?.message ||
+            'Failed to load products.'
+          );
+
+          this.isLoading.set(false);
+
+        }
+
+      });
+
+  }
+
+
+  // ==========================================================
+  // LOAD ALL PRODUCTS
+  // ==========================================================
+
+  private loadAllProducts(
+    afterLoad?: () => void
+  ): void {
+
+    if (
+      this.allProductsLoaded()
+    ) {
+
+      this.setAllProducts();
+
+      this.isLoading.set(false);
+
+      afterLoad?.();
+
+      return;
+
+    }
+
+
+    const nextPage =
+      this.getNextMissingPage();
+
+
+    if (
+      !nextPage
+    ) {
+
+      this.setAllProducts();
+
+      this.isLoading.set(false);
+
+      afterLoad?.();
+
+      return;
+
+    }
+
+
+    this.isLoading.set(true);
+
+    this.errorMessage.set(null);
+
+
+    this.productService
+      .getProducts(nextPage)
+      .subscribe({
+
+        next: (
+          response:
+            PagedResponse<Product>
+        ) => {
+
+          const items =
+            Array.isArray(
+              response?.items
+            )
+              ? response.items
+              : [];
+
+
+          this.pageCache.set(
+            nextPage,
+            items
+          );
+
+
+          // ==================================================
+          // UPDATE SERVER INFORMATION
+          // ==================================================
+
+          this.totalCount.set(
+            Number(
+              response?.totalCount
+            ) || this.totalCount()
+          );
+
+          this.totalPages.set(
+            Number(
+              response?.totalPages
+            ) || this.totalPages()
+          );
+
+          this.hasMore.set(
+            !!response?.hasMore
+          );
+
+
+          // ==================================================
+          // MORE PAGES
+          // ==================================================
+
+          if (
+            response?.hasMore
+          ) {
+
+            this.loadAllProducts(
+              afterLoad
+            );
+
+            return;
+
+          }
+
+
+          // ==================================================
+          // ALL DONE
+          // ==================================================
+
+          this.setAllProducts();
+
+          this.isLoading.set(false);
+
+          afterLoad?.();
+
+        },
+
+        error: error => {
+
+          console.error(
+            'Error loading all products:',
+            error
           );
 
 
@@ -683,14 +1099,52 @@ console.log(response)
             'Failed to load products.'
           );
 
-
-          this.isLoading.set(
-            false
-          );
+          this.isLoading.set(false);
 
         }
 
       });
+
+  }
+
+
+  // ==========================================================
+  // GET NEXT MISSING PAGE
+  // ==========================================================
+
+  private getNextMissingPage(): number | null {
+
+    const totalPages =
+      this.totalPages();
+
+
+    if (
+      totalPages <= 0
+    ) {
+
+      return null;
+
+    }
+
+
+    for (
+      let page = 1;
+      page <= totalPages;
+      page++
+    ) {
+
+      if (
+        !this.pageCache.has(page)
+      ) {
+
+        return page;
+
+      }
+
+    }
+
+
+    return null;
 
   }
 
@@ -708,8 +1162,7 @@ console.log(response)
     const pages =
       Array.from(
         this.pageCache.keys()
-      )
-      .sort(
+      ).sort(
         (a, b) => a - b
       );
 
@@ -736,9 +1189,7 @@ console.log(response)
     );
 
 
-    this.currentApiPage.set(
-      1
-    );
+    this.currentApiPage.set(1);
 
   }
 
@@ -747,28 +1198,85 @@ console.log(response)
   // SEARCH
   // ==========================================================
 
-  onSearch(value: string ): void {
-   const term =value.trim();
+  onSearch(
+    value: string
+  ): void {
 
-    this.searchTerm.set(value );
-    this.pageIndex.set( 0);
-    if (!term) {
-      this.loadApiPage(
-        1
-      );
+    const term =
+      value.trim();
+
+
+    this.searchTerm.set(
+      value
+    );
+
+    this.pageIndex.set(0);
+
+
+    // ========================================================
+    // EMPTY SEARCH
+    // ========================================================
+
+    if (
+      !term
+    ) {
+
+      /*
+       * If filters are active,
+       * make sure all products are available.
+       */
+
+      if (
+        this.hasLocalFilters()
+      ) {
+
+        if (
+          !this.allProductsLoaded()
+        ) {
+
+          this.loadAllProducts();
+
+        } else {
+
+          this.setAllProducts();
+
+        }
+
+        return;
+
+      }
+
+
+      /*
+       * No search and no filters.
+       */
+
+      this.loadApiPage(1);
 
       return;
 
     }
+
+
+    // ========================================================
+    // LOCAL SEARCH
+    // ========================================================
+
     if (
       this.allProductsLoaded()
     ) {
-      this.setAllProducts();
 
+      this.setAllProducts();
 
       return;
 
     }
+
+
+    // ========================================================
+    // API SEARCH
+    // ========================================================
+
     this.searchProductsFromApi(
       term
     );
@@ -784,42 +1292,41 @@ console.log(response)
     name: string
   ): void {
 
-    this.isLoading.set(
-      true
-    );
+    this.isLoading.set(true);
 
-
-    this.errorMessage.set(
-      null
-    );
+    this.errorMessage.set(null);
 
 
     this.productService
-      .getProductsByName(
-        name
-      )
+      .getProductsByName(name)
       .subscribe({
 
         next: products => {
-console.log(products)
+
+          console.log(
+            'Search products:',
+            products
+          );
+
+
           const results =
             Array.isArray(
               products
             )
               ? products
               : [];
-  this.products.set(
+
+
+          this.products.set(
             results
           );
-          this.currentApiPage.set(
-            1
-          );
+
+          this.currentApiPage.set(1);
 
 
           this.totalCount.set(
             results.length
           );
-
 
           this.totalPages.set(
             results.length > 0
@@ -827,43 +1334,21 @@ console.log(products)
               : 0
           );
 
+          this.hasMore.set(false);
 
-          this.hasMore.set(
-            false
-          );
-
-
-          // --------------------------------------------------
-          // FINISHED
-          // --------------------------------------------------
-
-          this.isLoading.set(
-            false
-          );
+          this.isLoading.set(false);
 
         },
 
-
         error: error => {
 
-          this.products.set(
-            []
-          );
+          this.products.set([]);
 
+          this.totalCount.set(0);
 
-          this.totalCount.set(
-            0
-          );
+          this.totalPages.set(0);
 
-
-          this.totalPages.set(
-            0
-          );
-
-
-          this.hasMore.set(
-            false
-          );
+          this.hasMore.set(false);
 
 
           this.errorMessage.set(
@@ -872,14 +1357,246 @@ console.log(products)
             'Failed to search products.'
           );
 
-
-          this.isLoading.set(
-            false
-          );
+          this.isLoading.set(false);
 
         }
 
       });
+
+  }
+
+
+  // ==========================================================
+  // CATEGORY FILTER
+  // ==========================================================
+
+  onCategoryFilterChange(
+    value: string
+  ): void {
+
+    const category =
+      value?.trim() ?? '';
+
+
+    /*
+     * Set category.
+     *
+     * Empty string = ALL categories.
+     */
+
+    this.selectedCategory.set(
+      category
+    );
+
+
+    /*
+     * Whenever category changes,
+     * reset subcategory to ALL.
+     *
+     * This prevents an old subcategory from
+     * conflicting with the new category.
+     */
+
+    this.selectedSubCategory.set('');
+
+
+    this.pageIndex.set(0);
+
+
+    this.prepareLocalFiltering();
+
+  }
+
+
+  // ==========================================================
+  // SUBCATEGORY FILTER
+  // ==========================================================
+
+  onSubCategoryFilterChange(
+    value: string
+  ): void {
+
+    const subCategory =
+      value?.trim() ?? '';
+
+
+    /*
+     * Empty string = ALL subcategories.
+     */
+
+    this.selectedSubCategory.set(
+      subCategory
+    );
+
+
+    this.pageIndex.set(0);
+
+
+    this.prepareLocalFiltering();
+
+  }
+
+
+  // ==========================================================
+  // BRAND FILTER
+  // ==========================================================
+
+  onBrandFilterChange(
+    value: string
+  ): void {
+
+    const brand =
+      value?.trim() ?? '';
+
+
+    /*
+     * Empty string = ALL brands.
+     */
+
+    this.selectedBrand.set(
+      brand
+    );
+
+
+    this.pageIndex.set(0);
+
+
+    this.prepareLocalFiltering();
+
+  }
+
+
+  // ==========================================================
+  // PREPARE LOCAL FILTERING
+  // ==========================================================
+
+  private prepareLocalFiltering(): void {
+
+
+    // ========================================================
+    // NO FILTERS
+    // ========================================================
+
+    if (
+      !this.hasLocalFilters()
+    ) {
+
+
+      /*
+       * No filters.
+       *
+       * If search is active, keep search behavior.
+       */
+
+      if (
+        this.isSearchMode()
+      ) {
+
+        if (
+          this.allProductsLoaded()
+        ) {
+
+          this.setAllProducts();
+
+        } else {
+
+          this.searchProductsFromApi(
+            this.searchTerm().trim()
+          );
+
+        }
+
+        return;
+
+      }
+
+
+      /*
+       * No filters and no search.
+       *
+       * Return to API page 1.
+       */
+
+      this.loadApiPage(1);
+
+      return;
+
+    }
+
+
+    // ========================================================
+    // FILTERS ACTIVE
+    // ========================================================
+
+    /*
+     * Filters are local.
+     *
+     * We need every product before filtering.
+     */
+
+    if (
+      this.allProductsLoaded()
+    ) {
+
+      this.setAllProducts();
+
+      return;
+
+    }
+
+
+    /*
+     * Load all API pages.
+     */
+
+    this.loadAllProducts();
+
+  }
+
+
+  // ==========================================================
+  // CLEAR ALL FILTERS
+  // ==========================================================
+
+  clearFilters(): void {
+
+    this.selectedCategory.set('');
+
+    this.selectedSubCategory.set('');
+
+    this.selectedBrand.set('');
+
+    this.pageIndex.set(0);
+
+
+    /*
+     * Keep search term if one exists.
+     */
+
+    if (
+      this.isSearchMode()
+    ) {
+
+      if (
+        this.allProductsLoaded()
+      ) {
+
+        this.setAllProducts();
+
+      } else {
+
+        this.searchProductsFromApi(
+          this.searchTerm().trim()
+        );
+
+      }
+
+      return;
+
+    }
+
+
+    this.loadApiPage(1);
 
   }
 
@@ -890,23 +1607,37 @@ console.log(products)
 
   clearSearch(): void {
 
-    this.searchTerm.set(
-      ''
-    );
+    this.searchTerm.set('');
 
-
-    this.pageIndex.set(
-      0
-    );
+    this.pageIndex.set(0);
 
 
     /*
-     * Return to normal API pagination.
+     * Keep filters active.
      */
 
-    this.loadApiPage(
-      1
-    );
+    if (
+      this.hasLocalFilters()
+    ) {
+
+      if (
+        this.allProductsLoaded()
+      ) {
+
+        this.setAllProducts();
+
+      } else {
+
+        this.loadAllProducts();
+
+      }
+
+      return;
+
+    }
+
+
+    this.loadApiPage(1);
 
   }
 
@@ -919,17 +1650,56 @@ console.log(products)
     event: PageEvent
   ): void {
 
-    const newPageIndex =event.pageIndex;
-    const newPageSize =event.pageSize;
-this.pageSize.set( newPageSize );
+    const newPageIndex =
+      event.pageIndex;
+
+    const newPageSize =
+      event.pageSize;
+
+
+    this.pageSize.set(
+      newPageSize
+    );
+
+
+    // ========================================================
+    // LOCAL FILTER / LOCAL SEARCH
+    // ========================================================
+
+    if (
+      this.isLocalFiltering()
+    ) {
+
+      this.pageIndex.set(
+        newPageIndex
+      );
+
+      return;
+
+    }
+
+
+    // ========================================================
+    // API SEARCH
+    // ========================================================
+
     if (
       this.isSearchMode()
     ) {
 
-      this.pageIndex.set(newPageIndex );
- return;
+      this.pageIndex.set(
+        newPageIndex
+      );
+
+      return;
 
     }
+
+
+    // ========================================================
+    // NORMAL API PAGINATION
+    // ========================================================
+
     const globalStart =
       newPageIndex *
       newPageSize;
@@ -940,6 +1710,8 @@ this.pageSize.set( newPageSize );
         globalStart /
         this.apiPageSize
       ) + 1;
+
+
     if (
       requiredApiPage ===
       this.currentApiPage()
@@ -949,10 +1721,15 @@ this.pageSize.set( newPageSize );
         newPageIndex
       );
 
-
       return;
 
     }
+
+
+    // ========================================================
+    // CHECK CACHE
+    // ========================================================
+
     const cached =
       this.pageCache.get(
         requiredApiPage
@@ -967,23 +1744,23 @@ this.pageSize.set( newPageSize );
         cached
       );
 
-
       this.currentApiPage.set(
         requiredApiPage
       );
 
-
       this.pageIndex.set(
         newPageIndex
       );
+
+
       if (
         requiredApiPage ===
         this.totalPages()
       ) {
 
-        this.hasMore.set(
-          false
-        );
+        this.hasMore.set(false);
+
+        this.setAllProducts();
 
       }
 
@@ -991,6 +1768,12 @@ this.pageSize.set( newPageSize );
       return;
 
     }
+
+
+    // ========================================================
+    // LOAD API PAGE
+    // ========================================================
+
     this.loadApiPage(
       requiredApiPage,
       () => {
@@ -1025,12 +1808,14 @@ this.pageSize.set( newPageSize );
       ) || 0;
 
 
-    return price -
+    return (
+      price -
       (
         price *
         discount /
         100
-      );
+      )
+    );
 
   }
 
@@ -1085,7 +1870,6 @@ this.pageSize.set( newPageSize );
 
           data: {
             isEditing,
-
             product
           }
         }
@@ -1115,13 +1899,26 @@ this.pageSize.set( newPageSize );
   private refreshProducts(): void {
 
     this.pageCache.clear();
+
     this.totalCount.set(0);
+
     this.totalPages.set(0);
+
     this.hasMore.set(false);
-    this.currentApiPage.set(1 );
- this.pageIndex.set( 0 );
- this.searchTerm.set('');
-this.loadApiPage( 1);
+
+    this.currentApiPage.set(1);
+
+    this.pageIndex.set(0);
+
+    this.searchTerm.set('');
+
+    this.selectedCategory.set('');
+
+    this.selectedSubCategory.set('');
+
+    this.selectedBrand.set('');
+
+    this.loadApiPage(1);
 
   }
 
@@ -1156,9 +1953,7 @@ this.loadApiPage( 1);
 
 
           this.productService
-            .deleteProduct(
-              id
-            )
+            .deleteProduct(id)
             .subscribe({
 
               next: () => {
@@ -1166,7 +1961,6 @@ this.loadApiPage( 1);
                 this.refreshProducts();
 
               },
-
 
               error: error => {
 
@@ -1205,12 +1999,8 @@ this.loadApiPage( 1);
 
 
     if (
-      imageUrl.startsWith(
-        'http://'
-      ) ||
-      imageUrl.startsWith(
-        'https://'
-      )
+      imageUrl.startsWith('http://') ||
+      imageUrl.startsWith('https://')
     ) {
 
       return imageUrl;

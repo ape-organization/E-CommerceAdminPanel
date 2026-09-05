@@ -3,7 +3,8 @@ import { Category } from "./category.model";
 
 export interface SubCategoryResponse {
   id: number;
-  name: string;
+  nameEn: string;
+  nameAr:string;
   categoryId: number;
   categoryName: string;
 }
