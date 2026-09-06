@@ -16,6 +16,7 @@ id: number;
   nameAr: string;
   descriptionAr?: string | null;
   price: number;
+  actualPrice: number;
   isInStock: boolean;
   discountPercentage?: number | null;
   stockQuantity: number;

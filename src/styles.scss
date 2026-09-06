@@ -1,13 +1,22 @@
+/* =========================================================
+   GLOBAL STYLES
+   ========================================================= */
 
-/* ============================================================
-   GLOBAL APPLICATION STYLES
-   ============================================================ */
+
+/* =========================================================
+   1. GOOGLE FONTS
+   ========================================================= */
+
+@import url(
+  'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap'
+);
+
+
+/* =========================================================
+   2. ROOT VARIABLES
+   ========================================================= */
 
 :root {
-
-  /* ==========================================================
-     BRAND COLORS
-     ========================================================== */
 
   --color-primary: #3A2721;
   --color-primary-light: #5A4036;
@@ -18,41 +27,23 @@
 
   --color-sale: #A65D4D;
 
-  /* ==========================================================
-     BACKGROUNDS
-     ========================================================== */
-
   --color-background: #FAF7F2;
   --color-surface: #FFFFFF;
   --color-surface-soft: #F4ECE5;
-
-  /* ==========================================================
-     TEXT
-     ========================================================== */
 
   --color-text: #2E2521;
   --color-text-secondary: #756A63;
   --color-text-light: #A69A91;
 
-  /* ==========================================================
-     BORDERS
-     ========================================================== */
-
   --color-border: #E7DED6;
   --color-border-light: #EFE8E2;
-
-  /* ==========================================================
-     STATUS
-     ========================================================== */
 
   --color-success: #587A62;
   --color-error: #A65D4D;
   --color-warning: #B88A5A;
-  --color-footer:#f5ebe0;
 
-  /* ==========================================================
-     SHADOWS
-     ========================================================== */
+  --color-footer: #f5ebe0;
+
 
   --shadow-sm:
     0 2px 8px rgba(58, 39, 33, 0.06);
@@ -63,345 +54,871 @@
   --shadow-lg:
     0 18px 45px rgba(58, 39, 33, 0.16);
 
-  /* ==========================================================
-     RADIUS
-     ========================================================== */
 
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
   --radius-xl: 18px;
-  //==============================================
-  // font family 
-  //==============================================
---font-body: 'Montserrat', sans-serif;
- --font-heading: 'Playfair Display', serif;
 
-}
 
-/*===================================================
-paganiation
-==================================================*/
-/* =========================================
-   MATERIAL INPUT TEXT SPACING
-   ========================================= */
-
-::ng-deep .mat-mdc-form-field .mat-mdc-text-field-wrapper {
-  padding-inline: 8px !important;
-}
-
-::ng-deep .mat-mdc-form-field .mat-mdc-form-field-infix {
-  padding-inline: 4px !important;
-}
-
-::ng-deep .mat-mdc-form-field .mat-mdc-input-element {
-  padding-inline: 0 !important;
-}
-/* =========================================================
-   GLOBAL PAGINATOR
-   ========================================================= */
-
-.mat-mdc-paginator {
-  background: var(--color-surface);
-  color: var(--color-text-secondary);
+  --font-body: 'Montserrat', sans-serif;
+  --font-heading: 'Playfair Display', serif;
 }
 
 
 /* =========================================================
-   ITEMS PER PAGE FIELD
+   3. GLOBAL RESET
    ========================================================= */
-
-.mat-mdc-paginator .mat-mdc-form-field {
-  margin: 0 4px;
-}
-
-
-/* BORDER
-   Angular Material MDC uses these 3 elements
-*/
-
-.mat-mdc-paginator
-.mat-mdc-form-field
-.mdc-notched-outline__leading,
-
-.mat-mdc-paginator
-.mat-mdc-form-field
-.mdc-notched-outline__notch,
-
-.mat-mdc-paginator
-.mat-mdc-form-field
-.mdc-notched-outline__trailing {
-
-  border:
-    none !important;
-}
-
-
-/* =========================================================
-   HOVER
-   ========================================================= */
-
-.mat-mdc-paginator
-.mat-mdc-form-field:hover
-.mdc-notched-outline__leading,
-
-.mat-mdc-paginator
-.mat-mdc-form-field:hover
-.mdc-notched-outline__notch,
-
-.mat-mdc-paginator
-.mat-mdc-form-field:hover
-.mdc-notched-outline__trailing {
-
-  border-color:
-    var(--color-accent) !important;
-}
-
-
-/* =========================================================
-   FOCUS
-   ========================================================= */
-
-.mat-mdc-paginator
-.mat-mdc-form-field.mat-focused
-.mdc-notched-outline__leading,
-
-.mat-mdc-paginator
-.mat-mdc-form-field.mat-focused
-.mdc-notched-outline__notch,
-
-.mat-mdc-paginator
-.mat-mdc-form-field.mat-focused
-.mdc-notched-outline__trailing {
-
-  border-color:
-    var(--color-accent) !important;
-}
-
-
-//////////////////////////////////////////////////
-/*================================================
-error section
-===================================================*/
-.error
-{
-  color: var(--color-error);
-}
-/* ============================================================
-   RESET
-   ============================================================ */
 
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 
+html,
+body {
+
+  margin: 0;
+  padding: 0;
+
+  min-height: 100%;
+
+  background:
+    var(--color-background);
+
+  color:
+    var(--color-text);
+
+  font-family:
+    var(--font-body);
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+
+/* =========================================================
+   4. GLOBAL DIRECTION
+   ========================================================= */
+
 html {
-  scroll-behavior: smooth;
+  direction: ltr;
+}
+
+
+html[dir="ltr"] {
+  direction: ltr;
+}
+
+
+html[dir="rtl"] {
+  direction: rtl;
 }
 
 
 body {
-  min-height: 100vh;
-  font-family: var(--font-body);
-  line-height: 1.6;
-  color: var(--color-text);
-  background: var(--color-background);
-  -webkit-font-smoothing: antialiased;
+
+  direction: inherit;
+
+  overflow-x: hidden;
 }
-/* ======================================================
-  heads 
-========================================================*/ 
-.section-heading h2,
-.page-title,
-.hero-title {
-  font-family: var(--font-heading);
-}
-button,
+
+
+/*
+ * Normal form controls follow the
+ * document direction.
+ */
+
 input,
-select,
 textarea,
-.mat-mdc-button,
-.mat-mdc-raised-button,
-.mat-mdc-menu-item {
-  font-family: var(--font-body) !important;
-}
-/*===================================================
-drop down menu 
-=======================================================*/
-.mat-mdc-select-panel {
-  background: var(--color-surface) !important;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md) !important;
-  box-shadow: var(--shadow-lg) !important;
+select,
+button {
+
+  direction: inherit;
+
+  font-family:
+    var(--font-body);
 }
 
-.mat-mdc-option {
-  min-height: 44px !important;
 
-  padding-left: 14px !important;
-  padding-right: 14px !important;
+/* =========================================================
+   5. TYPOGRAPHY
+   ========================================================= */
 
-  background: var(--color-surface) !important;
-  color: var(--color-text) !important;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+
+  margin-top: 0;
+
+  color:
+    var(--color-primary);
+
+  font-family:
+    var(--font-heading);
 }
 
-.mat-mdc-option:hover,
-.mat-mdc-option.mat-mdc-option-active {
-  background: var(--color-surface-soft) !important;
+
+p {
+  font-family:
+    var(--font-body);
 }
 
-.mat-mdc-option.mdc-list-item--selected {
-  background: var(--color-surface-soft) !important;
-
-}
-
-.mat-mdc-option.mdc-list-item--selected
-.mdc-list-item__primary-text {
-  color: var(--color-primary) !important;
-  font-weight: 600;
-
-}
-/* ============================================================
-   PRODUCT SELECT LABELS
-   ============================================================ */
-
-.mat-mdc-form-field:has(.mat-mdc-select) .mat-mdc-floating-label {
-  color: var(--color-text-secondary) !important;
-}
-
-.mat-mdc-form-field:has(.mat-mdc-select).mat-focused
-  .mat-mdc-floating-label {
-  color: var(--color-accent) !important;
-}
-/* ============================================================
-   SELECT VALUE
-   ============================================================ */
-
-.mat-mdc-form-field .mat-mdc-select-value {
-  padding-left: 8px;
-  padding-right: 8px;
-}
-/* ============================================================
-   BUTTONS / INPUTS
-   ============================================================ */
 
 button,
 input,
 textarea,
 select {
-  font: inherit;
+
+  font-family:
+    inherit;
 }
 
 
-/* ============================================================
-   LINKS
-   ============================================================ */
+/* =========================================================
+   6. APP CONTENT
+   ========================================================= */
 
-a {
-  color: inherit;
+app-root {
+
+  display: block;
+
+  min-height: 100vh;
+
+  background:
+    var(--color-background);
 }
 
-
-/* ============================================================
-   APP CONTENT
-   ============================================================ */
 
 .app-content {
-  min-height:
-    calc(100vh - 76px - 250px);
+
+  min-height: 100vh;
+
+  background:
+    var(--color-background);
 }
 
 
-/* ============================================================
-   COMMON ANIMATIONS
-   ============================================================ */
+/* =========================================================
+   7. NORMAL FORM CONTROLS
+   ========================================================= */
+
+
+/* =========================================================
+   FORM GROUP
+   ========================================================= */
+
+.form-group {
+
+  width: 100%;
+}
+
+
+/* =========================================================
+   FORM LABEL
+   ========================================================= */
+
+.form-label {
+
+  display: block;
+
+  margin-bottom: 7px;
+
+  color:
+    var(--color-text);
+
+  font-size:
+    0.78rem;
+
+  font-weight:
+    600;
+
+  line-height:
+    1.3;
+
+  text-align:
+    start;
+}
+
+
+/* =========================================================
+   REQUIRED INDICATOR
+   ========================================================= */
+
+.form-label .required {
+
+  margin-inline-start: 3px;
+
+  color:
+    var(--color-error);
+}
+
+
+/* =========================================================
+   INPUT / SELECT / TEXTAREA
+   ========================================================= */
+
+.form-input,
+.form-select,
+.form-textarea {
+
+  display: block;
+
+  width: 100%;
+
+  min-height: 46px;
+
+  padding:
+    0 13px;
+
+  border:
+    1px solid
+    var(--color-border);
+
+  border-radius:
+    var(--radius-md);
+
+  outline: none;
+
+  background:
+    var(--color-surface);
+
+  color:
+    var(--color-text);
+
+  font-family:
+    var(--font-body);
+
+  font-size:
+    0.82rem;
+
+  font-weight:
+    400;
+
+  line-height:
+    1.4;
+
+  direction:
+    inherit;
+
+  text-align:
+    start;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+
+/* =========================================================
+   INPUT PLACEHOLDER
+   ========================================================= */
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+
+  color:
+    var(--color-text-light);
+
+  opacity: 1;
+}
+
+
+/* =========================================================
+   INPUT FOCUS
+   ========================================================= */
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+
+  border-color:
+    var(--color-accent);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(184, 138, 90, 0.12);
+}
+
+
+/* =========================================================
+   INPUT HOVER
+   ========================================================= */
+
+.form-input:hover:not(:focus):not(:disabled),
+.form-select:hover:not(:focus):not(:disabled),
+.form-textarea:hover:not(:focus):not(:disabled) {
+
+  border-color:
+    var(--color-accent-light);
+}
+
+
+/* =========================================================
+   DISABLED
+   ========================================================= */
+
+.form-input:disabled,
+.form-select:disabled,
+.form-textarea:disabled {
+
+  background:
+    var(--color-surface-soft);
+
+  color:
+    var(--color-text-light);
+
+  cursor:
+    not-allowed;
+
+  opacity:
+    0.7;
+}
+
+
+/* =========================================================
+   SELECT
+   ========================================================= */
+
+.form-select {
+
+  appearance: none;
+
+  cursor: pointer;
+
+  padding-inline-end: 38px;
+
+  background-color:
+    var(--color-surface);
+
+  background-image:
+
+    linear-gradient(
+      45deg,
+      transparent 50%,
+      var(--color-text-secondary) 50%
+    ),
+
+    linear-gradient(
+      135deg,
+      var(--color-text-secondary) 50%,
+      transparent 50%
+    );
+
+  background-position:
+
+    calc(100% - 18px) 20px,
+    calc(100% - 13px) 20px;
+
+  background-size:
+
+    5px 5px,
+    5px 5px;
+
+  background-repeat:
+    no-repeat;
+}
+
+
+/* =========================================================
+   RTL SELECT ARROW
+   ========================================================= */
+
+html[dir="rtl"] .form-select {
+
+  padding-inline-start:
+    38px;
+
+  padding-inline-end:
+    13px;
+
+  background-position:
+
+    13px 20px,
+    18px 20px;
+}
+
+
+/* =========================================================
+   SELECT OPTIONS
+   ========================================================= */
+
+.form-select option {
+
+  min-height:
+    40px;
+
+  padding:
+    10px;
+
+  background:
+    var(--color-surface);
+
+  color:
+    var(--color-text);
+
+  font-family:
+    var(--font-body);
+}
+
+
+/* =========================================================
+   TEXTAREA
+   ========================================================= */
+
+.form-textarea {
+
+  min-height:
+    100px;
+
+  padding:
+    12px 13px;
+
+  resize:
+    vertical;
+}
+
+
+/* =========================================================
+   VALIDATION
+   ========================================================= */
+
+.form-input.ng-invalid.ng-touched,
+.form-select.ng-invalid.ng-touched,
+.form-textarea.ng-invalid.ng-touched {
+
+  border-color:
+    var(--color-error);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(166, 93, 77, 0.10);
+}
+
+
+/* =========================================================
+   ERROR MESSAGE
+   ========================================================= */
+
+.form-error {
+
+  margin-top:
+    5px;
+
+  color:
+    var(--color-error);
+
+  font-size:
+    0.65rem;
+
+  line-height:
+    1.4;
+
+  text-align:
+    start;
+}
+
+
+/* =========================================================
+   FORM ROW
+   ========================================================= */
+
+.form-row {
+
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:
+    16px;
+}
+
+
+/* =========================================================
+   RTL / LTR INPUT ALIGNMENT
+   ========================================================= */
+
+[dir="rtl"] .form-input,
+[dir="rtl"] .form-select,
+[dir="rtl"] .form-textarea {
+
+  text-align:
+    right;
+}
+
+
+[dir="ltr"] .form-input,
+[dir="ltr"] .form-select,
+[dir="ltr"] .form-textarea {
+
+  text-align:
+    left;
+}
+
+
+/* =========================================================
+   8. MATERIAL BUTTONS
+   ========================================================= */
+
+.mat-mdc-button,
+.mat-mdc-raised-button,
+.mat-mdc-outlined-button {
+
+  font-family:
+    var(--font-body);
+}
+
+
+/* =========================================================
+   9. MATERIAL PAGINATOR
+   ========================================================= */
+
+.mat-mdc-paginator {
+
+  margin-inline:
+    4px;
+
+  background:
+    transparent !important;
+
+  color:
+    var(--color-text-secondary);
+}
+
+
+.mat-mdc-paginator-page-size-label,
+.mat-mdc-paginator-range-label {
+
+  color:
+    var(--color-text-secondary);
+}
+
+
+.mat-mdc-paginator
+.mat-mdc-icon-button {
+
+  color:
+    var(--color-primary);
+}
+
+
+.mat-mdc-paginator
+.mat-mdc-icon-button:disabled {
+
+  color:
+    var(--color-text-light);
+}
+
+
+/* =========================================================
+   10. COMMON LINKS
+   ========================================================= */
+
+a {
+
+  color:
+    inherit;
+
+  text-decoration:
+    none;
+}
+
+
+/* =========================================================
+   11. SECTION HEADING
+   ========================================================= */
+
+.section-heading {
+
+  margin-bottom:
+    20px;
+
+  text-align:
+    center;
+}
+
+
+.section-heading h2 {
+
+  margin-bottom:
+    6px;
+
+  color:
+    var(--color-primary);
+
+  font-family:
+    var(--font-heading);
+
+  font-size:
+    1.6rem;
+
+  font-weight:
+    600;
+}
+
+
+.section-heading p {
+
+  margin:
+    0;
+
+  color:
+    var(--color-text-secondary);
+
+  font-size:
+    0.8rem;
+}
+
+
+/* =========================================================
+   12. COMMON CAROUSEL
+   ========================================================= */
+
+.carousel-arrow {
+
+  display: flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  width:
+    38px;
+
+  height:
+    38px;
+
+  border:
+    1px solid
+    var(--color-border);
+
+  border-radius:
+    50%;
+
+  background:
+    var(--color-surface);
+
+  color:
+    var(--color-primary);
+
+  box-shadow:
+    var(--shadow-sm);
+
+  cursor:
+    pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.carousel-arrow:hover {
+
+  background:
+    var(--color-primary);
+
+  color:
+    var(--color-surface);
+
+  transform:
+    scale(1.05);
+}
+
+
+.horizontal-track {
+
+  display:
+    flex;
+
+  overflow-x:
+    auto;
+
+  scroll-behavior:
+    smooth;
+
+  scrollbar-width:
+    none;
+}
+
+
+.horizontal-track::-webkit-scrollbar {
+
+  display:
+    none;
+}
+
+
+/* =========================================================
+   13. IMAGE HELPERS
+   ========================================================= */
+
+.image-cover {
+
+  width:
+    100%;
+
+  height:
+    100%;
+
+  object-fit:
+    cover;
+}
+
+
+.image-contain {
+
+  width:
+    100%;
+
+  height:
+    100%;
+
+  object-fit:
+    contain;
+}
+
+
+/* =========================================================
+   14. LOADING
+   ========================================================= */
+
+.loading {
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  min-height:
+    200px;
+
+  color:
+    var(--color-text-secondary);
+
+  font-size:
+    0.85rem;
+}
+
+
+/* =========================================================
+   15. MODAL ANIMATIONS
+   ========================================================= */
 
 @keyframes fadeIn {
+
   from {
-    opacity: 0;
+
+    opacity:
+      0;
   }
 
   to {
-    opacity: 1;
+
+    opacity:
+      1;
   }
 }
 
 
 @keyframes slideIn {
+
   from {
-    transform: translateY(-15px);
-    opacity: 0;
+
+    opacity:
+      0;
+
+    transform:
+      translateY(-15px)
+      scale(0.98);
   }
 
   to {
-    transform: translateY(0);
-    opacity: 1;
+
+    opacity:
+      1;
+
+    transform:
+      translateY(0)
+      scale(1);
   }
 }
 
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
+/* =========================================================
+   16. COMMON MODAL ANIMATION
+   ========================================================= */
 
-  to {
-    transform: rotate(360deg);
-  }
-}
+.modal-container {
 
-
-/* ============================================================
-   MODALS
-   ============================================================ */
-
-.modal-overlay {
-  animation:
-    fadeIn
-    0.25s
-    ease-out;
-}
-
-
-.modal-content {
   animation:
     slideIn
-    0.25s
+    0.3s
     ease-out;
 }
 
 
-/* ============================================================
-   WHATSAPP
-   ============================================================ */
+/* =========================================================
+   17. WHATSAPP BUTTON
+   ========================================================= */
 
-.whatsapp {
-  position: fixed;
+.whatsapp-button {
 
-  right: 20px;
-  bottom: 80px;
+  position:
+    fixed;
 
-  width: 58px;
-  height: 58px;
+  inset-inline-end:
+    20px;
 
-  z-index: 9999;
-}
+  bottom:
+    20px;
 
+  z-index:
+    1000;
 
-.whatsapp img {
-  width: 100%;
-  height: 100%;
+  display:
+    flex;
 
-  object-fit: cover;
+  align-items:
+    center;
 
-  border-radius: 50%;
+  justify-content:
+    center;
+
+  width:
+    52px;
+
+  height:
+    52px;
+
+  border-radius:
+    50%;
+
+  background:
+    #25D366;
+
+  color:
+    white;
 
   box-shadow:
-    0 5px 16px
-    rgba(0, 0, 0, 0.20);
+    0 5px 18px
+    rgba(0, 0, 0, 0.18);
+
+  cursor:
+    pointer;
 
   transition:
     transform 0.2s ease,
@@ -409,214 +926,138 @@ a {
 }
 
 
-.whatsapp img:hover {
-  transform: scale(1.08);
+.whatsapp-button:hover {
+
+  transform:
+    scale(1.08);
 
   box-shadow:
-    0 8px 22px
-    rgba(0, 0, 0, 0.25);
+    0 8px 25px
+    rgba(0, 0, 0, 0.22);
 }
 
 
-/* ============================================================
-   MOBILE PAGE SPACE
-   ============================================================ */
+/* =========================================================
+   18. TEXT DIRECTION UTILITIES
+   ========================================================= */
 
-@media (max-width: 991px) {
+[dir="rtl"] .text-start {
 
-  .app-content {
-    padding-bottom: 90px;
+  text-align:
+    right !important;
+}
+
+
+[dir="ltr"] .text-start {
+
+  text-align:
+    left !important;
+}
+
+
+[dir="rtl"] .text-end {
+
+  text-align:
+    left !important;
+}
+
+
+[dir="ltr"] .text-end {
+
+  text-align:
+    right !important;
+}
+
+
+/* =========================================================
+   19. MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  .section-heading h2 {
+
+    font-size:
+      1.35rem;
   }
 
-}
 
+  .section-heading p {
 
-@media (max-width: 480px) {
-
-  .whatsapp {
-    right: 15px;
-    bottom: 85px;
-
-    width: 52px;
-    height: 52px;
+    font-size:
+      0.72rem;
   }
 
-}
-/* ============================================================
-   GLOBAL SECTION HEADING
-   ============================================================ */
 
-.section-heading {
-  text-align: center;
-  margin-bottom: 42px;
-}
+  .carousel-arrow {
 
-.section-small-title {
-  display: block;
+    width:
+      34px;
 
-  color: var(--color-accent);
+    height:
+      34px;
+  }
 
-  font-size: 11px;
-  font-weight: 700;
 
-  letter-spacing: 3px;
-}
+  .whatsapp-button {
 
-.section-heading h2 {
-  margin: 8px 0;
+    width:
+      48px;
 
-  color: var(--color-primary);
+    height:
+      48px;
 
-  font-size: 34px;
-  font-weight: 600;
+    inset-inline-end:
+      15px;
 
-  line-height: 1.2;
-}
+    bottom:
+      15px;
+  }
 
-.section-heading p {
-  margin: 10px 0 0;
 
-  color: var(--color-text-secondary);
+  .form-row {
 
-  font-size: 14px;
-}
+    grid-template-columns:
+      1fr;
 
-.title-line {
-  display: flex;
+    gap:
+      16px;
+  }
 
-  align-items: center;
-  justify-content: center;
 
-  gap: 10px;
+  .form-input,
+  .form-select,
+  .form-textarea {
 
-  color: var(--color-accent);
-}
+    min-height:
+      44px;
 
-.title-line::before,
-.title-line::after {
-  content: '';
-
-  width: 45px;
-  height: 1px;
-
-  background: var(--color-accent);
-}
-
-.title-line span {
-  font-size: 14px;
+    font-size:
+      0.78rem;
+  }
 }
 
 
-/* ============================================================
-   GLOBAL CAROUSEL ARROW
-   ============================================================ */
+/* =========================================================
+   20. REDUCE MOTION
+   ========================================================= */
 
-.carousel-arrow {
-  flex: 0 0 auto;
+@media (prefers-reduced-motion: reduce) {
 
-  width: 42px;
-  height: 42px;
+  *,
+  *::before,
+  *::after {
 
-  display: flex;
+    scroll-behavior:
+      auto !important;
 
-  align-items: center;
-  justify-content: center;
+    animation-duration:
+      0.01ms !important;
 
-  padding: 0;
+    animation-iteration-count:
+      1 !important;
 
-  border: 1px solid var(--color-border);
-  border-radius: 50%;
-
-  background: var(--color-surface);
-
-  color: var(--color-primary);
-
-  cursor: pointer;
-
-  box-shadow: var(--shadow-sm);
-
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease,
-    transform 0.2s ease;
-}
-
-.carousel-arrow:hover {
-  background: var(--color-accent);
-
-  border-color: var(--color-accent);
-
-  color: var(--color-surface);
-
-  transform: scale(1.05);
-}
-
-.carousel-arrow mat-icon {
-  width: 23px;
-  height: 23px;
-
-  font-size: 23px;
-}
-
-
-/* ============================================================
-   GLOBAL HORIZONTAL TRACK
-   ============================================================ */
-
-.horizontal-track {
-  display: flex;
-
-  overflow-x: auto;
-
-  scroll-behavior: smooth;
-
-  scrollbar-width: none;
-}
-
-.horizontal-track::-webkit-scrollbar {
-  display: none;
-}
-
-
-/* ============================================================
-   GLOBAL LOADING
-   ============================================================ */
-
-.content-loading {
-  min-height: 180px;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  gap: 10px;
-
-  color: var(--color-text-secondary);
-
-  font-size: 14px;
-}
-
-.content-loading span {
-  color: var(--color-accent);
-
-  font-size: 20px;
-
-  animation:
-    spin 1.2s linear infinite;
-}
-
-
-/* ============================================================
-   GLOBAL IMAGE
-   ============================================================ */
-
-.image-cover {
-  width: 100%;
-  height: 100%;
-
-  display: block;
-
-  object-fit: cover;
+    transition-duration:
+      0.01ms !important;
+  }
 }

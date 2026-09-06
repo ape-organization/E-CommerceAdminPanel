@@ -3,6 +3,7 @@
 
   <div class="modal-container">
 
+
     <!-- =====================================================
          HEADER
          ===================================================== -->
@@ -20,18 +21,17 @@
         </div>
 
 
-        <div>
+        <div class="header-text">
 
           <h2>
-           
-              {{
-            isEditing()
-              ? ('subCategories.editSubcategory' | translate)
-              : ('subCategories.addSubcategory' | translate)
-          }}
-          </h2>
 
-        
+            {{
+              isEditing
+                ? ('subCategories.editSubcategory' | translate)
+                : ('subCategories.addSubcategory' | translate)
+            }}
+
+          </h2>
 
         </div>
 
@@ -67,6 +67,7 @@
     <form
       [formGroup]="form"
       (ngSubmit)="save()"
+      novalidate
     >
 
       <div class="form-content">
@@ -76,188 +77,227 @@
              CATEGORY
              ================================================= -->
 
-        <mat-form-field
-          appearance="outline"
-        >
+        <div class="form-group">
 
-          <mat-label class="icon">
+          <label
+            for="categoryId"
+            class="form-label"
+          >
+
             {{ 'subCategories.category' | translate }}
-          </mat-label>
 
-         
+            <span class="required">
+              *
+            </span>
 
-          <mat-select
+          </label>
+
+
+          <select
+            id="categoryId"
+            class="form-select"
             formControlName="categoryId"
           >
+
+            <option
+              [ngValue]="null"
+              disabled
+            >
+
+              {{ 'common.allCategories' | translate }}
+
+            </option>
+
 
             @for (
               category of data.categories;
               track category.id
             ) {
 
-              <mat-option
-                [value]="category.id"
+              <option
+                [ngValue]="category.id"
               >
 
                 {{ category.nameEn }}
 
-              </mat-option>
+              </option>
+
+            }
+
+          </select>
+
+
+          @if (
+            form.controls.categoryId.hasError('required') &&
+            form.controls.categoryId.touched
+          ) {
+
+            <div class="form-error">
+
+              {{ 'subCategories.categoryRequired' | translate }}
+
+            </div>
+
+          }
+
+        </div>
+
+
+        <!-- =================================================
+             NAMES
+             ================================================= -->
+
+        <div class="form-row">
+
+
+          <!-- ===============================================
+               ARABIC NAME
+               =============================================== -->
+
+          <div class="form-group">
+
+            <label
+              for="nameAr"
+              class="form-label"
+            >
+
+              {{ 'brands.nameAr' | translate }}
+
+              <span class="required">
+                *
+              </span>
+
+            </label>
+
+
+            <input
+              id="nameAr"
+              type="text"
+              class="form-input"
+              formControlName="nameAr"
+              maxlength="100"
+              autocomplete="off"
+            />
+
+
+            @if (
+              form.controls.nameAr.hasError('required') &&
+              form.controls.nameAr.touched
+            ) {
+
+              <div class="form-error">
+
+                {{ 'subCategories.nameArRequired' | translate }}
+
+              </div>
 
             }
 
 
             @if (
-              !data.categories ||
-              data.categories.length === 0
+              form.controls.nameAr.hasError('minlength') &&
+              form.controls.nameAr.touched
             ) {
 
-              <mat-option disabled>
+              <div class="form-error">
 
-                {{ 'subCategories.noCategories' | translate }}
+                {{ 'subCategories.minLength' | translate }}
 
-              </mat-option>
+              </div>
 
             }
 
-          </mat-select>
+
+            @if (
+              form.controls.nameAr.hasError('maxlength') &&
+              form.controls.nameAr.touched
+            ) {
+
+              <div class="form-error">
+
+                {{ 'subCategories.maxLength' | translate }}
+
+              </div>
+
+            }
+
+          </div>
 
 
-          @if (
-            form.get('categoryId')?.hasError('required') &&
-            form.get('categoryId')?.touched
-          ) {
+          <!-- ===============================================
+               ENGLISH NAME
+               =============================================== -->
 
-            <mat-error class="error">
+          <div class="form-group">
 
-              {{ 'subCategories.categoryRequired' | translate }}
+            <label
+              for="nameEn"
+              class="form-label"
+            >
 
-            </mat-error>
+              {{ 'brands.nameEn' | translate }}
 
-          }
+              <span class="required">
+                *
+              </span>
 
-        </mat-form-field>
-
-
-        <!-- =================================================
-             NAME
-             ================================================= -->
-
-        <mat-form-field
-          appearance="outline"
-        >
-
-         <mat-label>
-            {{ 'brands.nameAr' | translate }}
-          </mat-label>
-
-          <input
-            matInput
-            formControlName="nameAr"
-            [placeholder]="'subCategories.nameArPlaceholder' | translate"
-            maxlength="100"
-          />
+            </label>
 
 
-          @if (
-            form.get('nameAr')?.hasError('required') &&
-            form.get('nameAr')?.touched
-          ) {
-
-            <mat-error class="error">
-
-              {{ 'subCategories.nameArRequired' | translate }}
-
-            </mat-error>
-
-          }
+            <input
+              id="nameEn"
+              type="text"
+              class="form-input"
+              formControlName="nameEn"
+              maxlength="100"
+              autocomplete="off"
+            />
 
 
-          @if (
-            form.get('nameAr')?.hasError('minlength') &&
-            form.get('nameAr')?.touched
-          ) {
+            @if (
+              form.controls.nameEn.hasError('required') &&
+              form.controls.nameEn.touched
+            ) {
 
-            <mat-error class="error">
+              <div class="form-error">
 
-              {{ 'subCategories.minLength' | translate }}
+                {{ 'subCategories.nameEnRequired' | translate }}
 
-            </mat-error>
+              </div>
 
-          }
-
-
-          @if (
-            form.get('nameAr')?.hasError('maxlength') &&
-            form.get('nameAr')?.touched
-          ) {
-
-            <mat-error class="error">
-
-              {{ 'subCategories.maxLength' | translate }}
-
-            </mat-error>
-
-          }
-
-        </mat-form-field>
-<mat-form-field
-          appearance="outline"
-        >
-
-          <mat-label>
-            {{ 'brands.nameEn' | translate }}
-          </mat-label>
-
-          <input
-            matInput
-            formControlName="nameEn"
-            [placeholder]="'subCategories.nameEnPlaceholder' | translate"
-            maxlength="100"
-          />
+            }
 
 
-          @if (
-            form.get('nameEn')?.hasError('required') &&
-            form.get('nameEn')?.touched
-          ) {
+            @if (
+              form.controls.nameEn.hasError('minlength') &&
+              form.controls.nameEn.touched
+            ) {
 
-            <mat-error class="error">
+              <div class="form-error">
 
-              {{ 'subCategories.nameEnRequired' | translate }}
+                {{ 'subCategories.minLength' | translate }}
 
-            </mat-error>
+              </div>
 
-          }
-
-
-          @if (
-            form.get('nameEn')?.hasError('minlength') &&
-            form.get('nameEn')?.touched
-          ) {
-
-            <mat-error class="error">
-
-              {{ 'subCategories.minLength' | translate }}
-
-            </mat-error>
-
-          }
+            }
 
 
-          @if (
-            form.get('nameEn')?.hasError('maxlength') &&
-            form.get('nameEn')?.touched
-          ) {
+            @if (
+              form.controls.nameEn.hasError('maxlength') &&
+              form.controls.nameEn.touched
+            ) {
 
-            <mat-error class="error">
+              <div class="form-error">
 
-              {{ 'subCategories.maxLength' | translate }}
+                {{ 'subCategories.maxLength' | translate }}
 
-            </mat-error>
+              </div>
 
-          }
+            }
 
-        </mat-form-field>
+          </div>
+
+        </div>
 
       </div>
 
@@ -268,7 +308,10 @@
 
       <div class="modal-actions">
 
-        <!-- CANCEL -->
+
+        <!-- =================================================
+             CANCEL
+             ================================================= -->
 
         <button
           mat-button
@@ -283,24 +326,24 @@
         </button>
 
 
-        <!-- SUBMIT -->
+        <!-- =================================================
+             SUBMIT
+             ================================================= -->
 
         <button
           mat-raised-button
           type="submit"
           class="submit-button"
-          [disabled]="
-            form.invalid ||
-            saving()
-          "
+          [disabled]="form.invalid || saving()"
         >
 
-          <mat-icon>
-          save
-          </mat-icon>
+      <!--     <mat-icon>
+            save
+          </mat-icon> -->
 
-              {{
-            isEditing()
+
+          {{
+            isEditing
               ? ('subCategories.editSubcategory' | translate)
               : ('subCategories.addSubcategory' | translate)
           }}

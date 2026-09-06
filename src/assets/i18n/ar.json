@@ -1,6 +1,8 @@
 
 {
   "common": {
+        "saveChanges":"احفظ التغييرات",
+
      "allCategories": "كل التصنيفات",
     "allSubCategories": "كل التصنيفات الفرعية",
     "allBrands": "كل العلامات التجارية",
@@ -44,27 +46,39 @@
     "shoppingCart": "سلة التسوق"
   },
 
-  "dashboard": {
-    "adminDashboard": "لوحة تحكم الإدارة",
-    "salesOverview": "نظرة عامة على المبيعات",
-    "description": "تابع مبيعات متجرك وتوزيع الإيرادات.",
+   "dashboard": {
+    "monthly":"شهري",
+"ordersCount":"عدد الطلبات",
+"ordersThisMonth":"طلبات هذا الشهر",
+"salesThisMonth":"مبيعات هذا الشهر",
+"gainThisMonth":"ارباح هذا الشهر",
+"totalOrdersAllTime":"الطلبات",
+"totalSalesAllTime":"المبيعات",
+"totalGainAllTime":"الارباح",
+     "salesOverview":"مراجعه المبيعات",
+    "adminDashboard":"إدارة العلامات التجارية",
+    "title": "لوحة التحكم",
+    "monthlyPerformance": "أداء الشهر",
+    "totalPerformance": "الأداء الإجمالي",
+    "currentMonth": "الشهر الحالي",
+    "allTime": "الإجمالي",
 
+    "orders": "الطلبات",
+    "sales": "المبيعات",
+    "gain": "الربح",
+
+    "totalOrders": "إجمالي الطلبات",
     "totalSales": "إجمالي المبيعات",
-    "activeOrders": "الطلبات النشطة",
+    "totalGain": "إجمالي الربح",
 
-    "totalRevenue": "إجمالي الإيرادات",
-    "revenueFromSales": "الإيرادات من المبيعات",
+    "thisMonth": "هذا الشهر",
+    "allTimeBadge": "الإجمالي",
 
-    "partnerShare": "حصة الشريك",
-    "partnerShareDescription": "30% من إجمالي الإيرادات",
-
-    "yourShare": "حصتك",
-    "yourShareDescription": "70% من إجمالي الإيرادات",
-
-    "error": "حدث خطأ أثناء تحميل بيانات لوحة التحكم."
-  },
-
+    "failedToLoad": "فشل تحميل إحصائيات لوحة التحكم."
+  }
+,
   "brands": {
+   
     "management": "إدارة العلامات التجارية",
     "description": "إدارة العلامات التجارية لمستحضرات التجميل",
 
@@ -96,10 +110,12 @@
     "invalidImage": "يرجى اختيار ملف صورة صالح.",
     "imageTooLarge": "يجب أن يكون حجم الصورة أقل من 5 ميجابايت.",
     "saveError": "حدث خطأ أثناء حفظ العلامة التجارية.",
-    "deleteConfirmation": "هل أنت متأكد أنك تريد حذف هذه العلامة التجارية؟"
+    "deleteConfirmation":  " هل أنت متأكد أنك تريد حذف هذه العلامة التجارية؟ مسح العلامه التجاريه يعني مسح جميع المنتجات التي تحتويها."
   }, 
 
   "categories": {
+        "deleteConfirmation":  " هل أنت متأكد أنك تريد حذف هذه العلامة التجارية؟ مسح الفئه يعني مسح جميع الفئات الفرعيه والمنتجات التي تحتويها."
+,
     "management": "إدارة الفئات",
     "description": "إدارة فئات المنتجات",
   "nameEn":"الاسم باللغه الانجليزيه",
@@ -130,6 +146,8 @@
   },
 
   "subCategories": {
+            "deleteConfirmation":  " هل أنت متأكد أنك تريد حذف هذه الفئه الفرعيه؟ مسح الفئه الفرعيه يعني مسح جميع المنتجات التي تحتويها."
+,
      "nameEn":"الاسم باللغه الانجليزيه",
 "nameEnPlaceholder":"ادخل الاسم باللغه الانجليزيه",
 "nameEnRequired":"الاسم الانجليزي مطلوب ",
@@ -158,6 +176,17 @@
   },
 
   "products": {
+        "selected":"اختار",
+
+      "noProductsFound":"لا يوجد منتجات",
+    "startAddingFirstProduct":"ابدا باضافه اول منتج ",
+       "discountInvalid":"النسبه غير صحيحه",
+"actualPrice":"السعر الفعلي",
+"sellingPrice":"سعر البيع",
+    "loadMore":"تحميل المنتجات ...",
+                "deleteConfirmation":  " هل أنت متأكد أنك تريد حذف هذا المنتج؟."
+,"priceAfterDiscount":"السعر بعد الخصم",
+"selectSubCategories":"اختار فئه فرعيه",
     "Pagination":"يتم عرض المنتجات على عدة صفحات لتسهيل وتسريع التصفح. استخدم أدوات التحكم أسفل الجدول للتنقل بين الصفحات أو تغيير عدد المنتجات المعروضة في كل صفحة.",
         "loadingProducts":"تحميل المنتجات",
 
@@ -279,6 +308,9 @@
     
   },
   "users": {
+    "role":"الدور",
+
+    "name":"الاسم",
     "createUserDescription": "إدارة المستخدمين ومعلومات حساباتهم",
     "management": "إدارة المستخدمين",
     "description": "إدارة المستخدمين ومعلومات حساباتهم",

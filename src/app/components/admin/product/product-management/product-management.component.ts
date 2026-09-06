@@ -1,4 +1,3 @@
-
 import {
   CommonModule
 } from '@angular/common';
@@ -67,7 +66,8 @@ import {
 } from '../../../../models/product.model';
 
 import {
-  TranslatePipe
+  TranslatePipe,
+  TranslateService
 } from '@ngx-translate/core';
 
 
@@ -103,12 +103,28 @@ export class ProductManagementComponent implements OnInit {
   private readonly dialog =
     inject(MatDialog);
 
+  private readonly translate =
+    inject(TranslateService);
+
 
   // ==========================================================
   // API PAGE SIZE
   // ==========================================================
 
-  private readonly apiPageSize = 100;
+  /*
+   * The API controls the actual page size.
+   *
+   * For example, if the backend uses:
+   *
+   * pageSize = 100
+   *
+   * then:
+   *
+   * API page 1 = products 1 - 100
+   * API page 2 = products 101 - 200
+   * API page 3 = products 201 - 300
+   */
+  private readonly apiPageSize = 50;
 
 
   // ==========================================================
@@ -146,18 +162,28 @@ export class ProductManagementComponent implements OnInit {
   // CURRENT API PAGE
   // ==========================================================
 
+  /*
+   * This is the last API page that has been loaded.
+   *
+   * It is NOT the Material paginator page.
+   */
   readonly currentApiPage =
     signal(1);
 
 
   // ==========================================================
   // API PAGE CACHE
-  //
-  // IMPORTANT:
-  // This MUST be a signal.
-  // A normal Map does not trigger computed() updates.
   // ==========================================================
 
+  /*
+   * Stores API pages that have already been loaded.
+   *
+   * Example:
+   *
+   * page 1 -> 100 products
+   * page 2 -> 100 products
+   * page 3 -> 100 products
+   */
   private readonly pageCache =
     signal<Map<number, Product[]>>(
       new Map<number, Product[]>()
@@ -328,6 +354,7 @@ export class ProductManagementComponent implements OnInit {
             );
 
             continue;
+
           }
 
           if (
@@ -390,9 +417,16 @@ export class ProductManagementComponent implements OnInit {
 
 
   // ==========================================================
-  // ANGULAR PAGINATION
+  // LOCAL TABLE PAGINATION
   // ==========================================================
 
+  /*
+   * IMPORTANT:
+   *
+   * These belong ONLY to the Angular Material paginator.
+   *
+   * They do NOT represent API pages.
+   */
   readonly pageIndex =
     signal(0);
 
@@ -592,9 +626,14 @@ export class ProductManagementComponent implements OnInit {
 
 
   // ==========================================================
-  // PAGINATED PRODUCTS
+  // LOCAL TABLE PAGINATION
   // ==========================================================
 
+  /*
+   * This does NOT call the API.
+   *
+   * It only slices products that are already in memory.
+   */
   readonly paginatedProducts =
     computed(() => {
 
@@ -623,6 +662,7 @@ export class ProductManagementComponent implements OnInit {
     'nameAr',
     'brand',
     'price',
+    'sellingPrice',
     'discount',
     'stock',
     'subCategories',
@@ -647,18 +687,41 @@ export class ProductManagementComponent implements OnInit {
 
   private loadApiPage(
     apiPage: number,
+    append = false,
     afterLoad?: () => void
   ): void {
+
+    // ========================================================
+    // INVALID PAGE
+    // ========================================================
 
     if (apiPage < 1) {
       return;
     }
 
+
+    // ========================================================
+    // ALREADY LOADING
+    // ========================================================
+
+    if (this.isLoading()) {
+      return;
+    }
+
+
+    // ========================================================
+    // PAGE DOES NOT EXIST
+    // ========================================================
+
     if (
       this.totalPages() > 0 &&
       apiPage > this.totalPages()
     ) {
+
+      this.hasMore.set(false);
+
       return;
+
     }
 
 
@@ -672,11 +735,29 @@ export class ProductManagementComponent implements OnInit {
 
     if (cached) {
 
-      this.products.set(cached);
+      if (append) {
 
-      this.currentApiPage.set(apiPage);
+        const current =
+          this.products();
 
-      this.isLoading.set(false);
+        this.products.set([
+          ...current,
+          ...cached
+        ]);
+
+      } else {
+
+        this.products.set(
+          cached
+        );
+
+      }
+
+
+      this.currentApiPage.set(
+        apiPage
+      );
+
 
       afterLoad?.();
 
@@ -690,11 +771,12 @@ export class ProductManagementComponent implements OnInit {
     // ========================================================
 
     this.isLoading.set(true);
+
     this.errorMessage.set(null);
 
 
     // ========================================================
-    // API
+    // API REQUEST
     // ========================================================
 
     this.productService
@@ -706,10 +788,15 @@ export class ProductManagementComponent implements OnInit {
         ) => {
 
           console.log(
-            'Products response:',
+            'Products page:',
+            apiPage,
             response
           );
 
+
+          // ==================================================
+          // PRODUCTS
+          // ==================================================
 
           const items =
             Array.isArray(response?.items)
@@ -718,7 +805,7 @@ export class ProductManagementComponent implements OnInit {
 
 
           // ==================================================
-          // UPDATE CACHE
+          // CACHE
           // ==================================================
 
           this.updatePageCache(
@@ -728,12 +815,35 @@ export class ProductManagementComponent implements OnInit {
 
 
           // ==================================================
-          // CURRENT PRODUCTS
+          // APPEND OR REPLACE
           // ==================================================
 
-          this.products.set(items);
+          if (append) {
 
-          this.currentApiPage.set(apiPage);
+            const current =
+              this.products();
+
+            this.products.set([
+              ...current,
+              ...items
+            ]);
+
+          } else {
+
+            this.products.set(
+              items
+            );
+
+          }
+
+
+          // ==================================================
+          // CURRENT API PAGE
+          // ==================================================
+
+          this.currentApiPage.set(
+            apiPage
+          );
 
 
           // ==================================================
@@ -753,11 +863,16 @@ export class ProductManagementComponent implements OnInit {
           );
 
 
+          // ==================================================
+          // FINISHED
+          // ==================================================
+
           this.isLoading.set(false);
 
           afterLoad?.();
 
         },
+
 
         error: error => {
 
@@ -766,19 +881,77 @@ export class ProductManagementComponent implements OnInit {
             error
           );
 
-          this.products.set([]);
 
           this.errorMessage.set(
-            error?.error?.message ||
-            error?.message ||
             'Failed to load products.'
           );
+
 
           this.isLoading.set(false);
 
         }
 
       });
+
+  }
+
+
+  // ==========================================================
+  // LOAD NEXT API PAGE
+  // ==========================================================
+
+  loadNextPage(): void {
+
+    // ========================================================
+    // PREVENT DOUBLE CLICK
+    // ========================================================
+
+    if (this.isLoading()) {
+      return;
+    }
+
+
+    // ========================================================
+    // NO MORE PAGES
+    // ========================================================
+
+    if (!this.hasMore()) {
+      return;
+    }
+
+
+    // ========================================================
+    // NEXT API PAGE
+    // ========================================================
+
+    const nextPage =
+      this.currentApiPage() + 1;
+
+
+    // ========================================================
+    // SAFETY CHECK
+    // ========================================================
+
+    if (
+      this.totalPages() > 0 &&
+      nextPage > this.totalPages()
+    ) {
+
+      this.hasMore.set(false);
+
+      return;
+
+    }
+
+
+    // ========================================================
+    // LOAD AND APPEND
+    // ========================================================
+
+    this.loadApiPage(
+      nextPage,
+      true
+    );
 
   }
 
@@ -793,7 +966,9 @@ export class ProductManagementComponent implements OnInit {
   ): void {
 
     const newCache =
-      new Map(this.pageCache());
+      new Map(
+        this.pageCache()
+      );
 
     newCache.set(
       page,
@@ -815,6 +990,10 @@ export class ProductManagementComponent implements OnInit {
     afterLoad?: () => void
   ): void {
 
+    // ========================================================
+    // EVERYTHING ALREADY LOADED
+    // ========================================================
+
     if (this.allProductsLoaded()) {
 
       this.setAllProducts();
@@ -828,8 +1007,13 @@ export class ProductManagementComponent implements OnInit {
     }
 
 
+    // ========================================================
+    // FIND NEXT MISSING PAGE
+    // ========================================================
+
     const nextPage =
       this.getNextMissingPage();
+
 
     if (!nextPage) {
 
@@ -845,8 +1029,13 @@ export class ProductManagementComponent implements OnInit {
 
 
     this.isLoading.set(true);
+
     this.errorMessage.set(null);
 
+
+    // ========================================================
+    // API
+    // ========================================================
 
     this.productService
       .getProducts(nextPage)
@@ -892,7 +1081,7 @@ export class ProductManagementComponent implements OnInit {
 
 
           // ==================================================
-          // MORE PAGES
+          // CONTINUE
           // ==================================================
 
           if (response?.hasMore) {
@@ -918,6 +1107,7 @@ export class ProductManagementComponent implements OnInit {
 
         },
 
+
         error: error => {
 
           console.error(
@@ -925,11 +1115,11 @@ export class ProductManagementComponent implements OnInit {
             error
           );
 
+
           this.errorMessage.set(
-            error?.error?.message ||
-            error?.message ||
             'Failed to load products.'
           );
+
 
           this.isLoading.set(false);
 
@@ -1007,7 +1197,45 @@ export class ProductManagementComponent implements OnInit {
       allProducts
     );
 
-    this.currentApiPage.set(1);
+
+    // ========================================================
+    // KEEP LAST API PAGE
+    // ========================================================
+
+    if (pages.length > 0) {
+
+      this.currentApiPage.set(
+        Math.max(...pages)
+      );
+
+    }
+
+  }
+
+
+  // ==========================================================
+  // LOCAL TABLE PAGINATOR
+  // ==========================================================
+
+  /*
+   * IMPORTANT:
+   *
+   * This method NEVER calls the API.
+   *
+   * It only changes which locally loaded products
+   * are displayed in the table.
+   */
+  onPageChange(
+    event: PageEvent
+  ): void {
+
+    this.pageIndex.set(
+      event.pageIndex
+    );
+
+    this.pageSize.set(
+      event.pageSize
+    );
 
   }
 
@@ -1024,8 +1252,12 @@ export class ProductManagementComponent implements OnInit {
       value.trim();
 
 
-    this.searchTerm.set(value);
+    this.searchTerm.set(
+      value
+    );
 
+
+    // Reset local table pagination
     this.pageIndex.set(0);
 
 
@@ -1068,7 +1300,9 @@ export class ProductManagementComponent implements OnInit {
     // API SEARCH
     // ========================================================
 
-    this.searchProductsFromApi(term);
+    this.searchProductsFromApi(
+      term
+    );
 
   }
 
@@ -1082,6 +1316,7 @@ export class ProductManagementComponent implements OnInit {
   ): void {
 
     this.isLoading.set(true);
+
     this.errorMessage.set(null);
 
 
@@ -1097,13 +1332,20 @@ export class ProductManagementComponent implements OnInit {
               : [];
 
 
-          this.products.set(results);
+          this.products.set(
+            results
+          );
 
-          this.currentApiPage.set(1);
+
+          this.currentApiPage.set(
+            1
+          );
+
 
           this.totalCount.set(
             results.length
           );
+
 
           this.totalPages.set(
             results.length > 0
@@ -1111,25 +1353,32 @@ export class ProductManagementComponent implements OnInit {
               : 0
           );
 
-          this.hasMore.set(false);
+
+          this.hasMore.set(
+            false
+          );
+
 
           this.isLoading.set(false);
 
         },
+
 
         error: error => {
 
           this.products.set([]);
 
           this.totalCount.set(0);
+
           this.totalPages.set(0);
+
           this.hasMore.set(false);
 
+
           this.errorMessage.set(
-            error?.error?.message ||
-            error?.message ||
             'Failed to search products.'
           );
+
 
           this.isLoading.set(false);
 
@@ -1161,6 +1410,7 @@ export class ProductManagementComponent implements OnInit {
     this.selectedSubCategory.set('');
 
 
+    // Reset local table paginator
     this.pageIndex.set(0);
 
 
@@ -1186,6 +1436,7 @@ export class ProductManagementComponent implements OnInit {
     );
 
 
+    // Reset local table paginator
     this.pageIndex.set(0);
 
 
@@ -1211,6 +1462,7 @@ export class ProductManagementComponent implements OnInit {
     );
 
 
+    // Reset local table paginator
     this.pageIndex.set(0);
 
 
@@ -1250,7 +1502,10 @@ export class ProductManagementComponent implements OnInit {
       }
 
 
-      // No filters / no search
+      // ======================================================
+      // NO FILTERS / NO SEARCH
+      // ======================================================
+
       this.loadApiPage(1);
 
       return;
@@ -1287,9 +1542,13 @@ export class ProductManagementComponent implements OnInit {
   clearFilters(): void {
 
     this.selectedCategory.set('');
+
     this.selectedSubCategory.set('');
+
     this.selectedBrand.set('');
 
+
+    // Reset local table paginator
     this.pageIndex.set(0);
 
 
@@ -1325,6 +1584,8 @@ export class ProductManagementComponent implements OnInit {
 
     this.searchTerm.set('');
 
+
+    // Reset local table paginator
     this.pageIndex.set(0);
 
 
@@ -1338,127 +1599,6 @@ export class ProductManagementComponent implements OnInit {
 
 
     this.loadApiPage(1);
-
-  }
-
-
-  // ==========================================================
-  // PAGINATION
-  // ==========================================================
-
-  onPageChange(
-    event: PageEvent
-  ): void {
-
-    const newPageIndex =
-      event.pageIndex;
-
-    const newPageSize =
-      event.pageSize;
-
-
-    this.pageSize.set(
-      newPageSize
-    );
-
-
-    // ========================================================
-    // LOCAL FILTERING / LOCAL SEARCH
-    // ========================================================
-
-    if (
-      this.isLocalFiltering() ||
-      this.isSearchMode()
-    ) {
-
-      this.pageIndex.set(
-        newPageIndex
-      );
-
-      return;
-
-    }
-
-
-    // ========================================================
-    // NORMAL API PAGINATION
-    // ========================================================
-
-    const globalStart =
-      newPageIndex *
-      newPageSize;
-
-
-    const requiredApiPage =
-      Math.floor(
-        globalStart /
-        this.apiPageSize
-      ) + 1;
-
-
-    const cache =
-      this.pageCache();
-
-
-    // ========================================================
-    // SAME API PAGE
-    // ========================================================
-
-    if (
-      requiredApiPage ===
-      this.currentApiPage()
-    ) {
-
-      this.pageIndex.set(
-        newPageIndex
-      );
-
-      return;
-
-    }
-
-
-    // ========================================================
-    // CACHED PAGE
-    // ========================================================
-
-    const cached =
-      cache.get(requiredApiPage);
-
-
-    if (cached) {
-
-      this.products.set(
-        cached
-      );
-
-      this.currentApiPage.set(
-        requiredApiPage
-      );
-
-      this.pageIndex.set(
-        newPageIndex
-      );
-
-      return;
-
-    }
-
-
-    // ========================================================
-    // LOAD PAGE
-    // ========================================================
-
-    this.loadApiPage(
-      requiredApiPage,
-      () => {
-
-        this.pageIndex.set(
-          newPageIndex
-        );
-
-      }
-    );
 
   }
 
@@ -1496,7 +1636,9 @@ export class ProductManagementComponent implements OnInit {
 
   addProduct(): void {
 
-    this.openProductDialog(false);
+    this.openProductDialog(
+      false
+    );
 
   }
 
@@ -1560,22 +1702,60 @@ export class ProductManagementComponent implements OnInit {
 
   private refreshProducts(): void {
 
+    // ========================================================
+    // CLEAR API CACHE
+    // ========================================================
+
     this.pageCache.set(
       new Map<number, Product[]>()
     );
 
+
+    // ========================================================
+    // RESET API PAGINATION
+    // ========================================================
+
     this.totalCount.set(0);
+
     this.totalPages.set(0);
+
     this.hasMore.set(false);
 
     this.currentApiPage.set(1);
+
+
+    // ========================================================
+    // RESET LOCAL TABLE PAGINATION
+    // ========================================================
+
     this.pageIndex.set(0);
+
+    this.pageSize.set(10);
+
+
+    // ========================================================
+    // RESET SEARCH / FILTERS
+    // ========================================================
 
     this.searchTerm.set('');
 
     this.selectedCategory.set('');
+
     this.selectedSubCategory.set('');
+
     this.selectedBrand.set('');
+
+
+    // ========================================================
+    // CLEAR PRODUCTS
+    // ========================================================
+
+    this.products.set([]);
+
+
+    // ========================================================
+    // LOAD API PAGE 1
+    // ========================================================
 
     this.loadApiPage(1);
 
@@ -1594,8 +1774,9 @@ export class ProductManagementComponent implements OnInit {
       .open(
         ConfirmDeleteComponent,
         {
-          data:
-            'Are you sure you want to delete this product?'
+          data: this.translate.instant(
+            'products.deleteConfirmation'
+          )
         }
       )
       .afterClosed()
@@ -1616,10 +1797,10 @@ export class ProductManagementComponent implements OnInit {
 
             },
 
+
             error: error => {
 
               this.errorMessage.set(
-                error?.error?.message ??
                 'Failed to delete product.'
               );
 

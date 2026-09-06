@@ -1,13 +1,16 @@
 
-import { CommonModule } from '@angular/common';
+import {
+  CommonModule
+} from '@angular/common';
 
 import {
   Component,
+  HostListener,
   Inject,
   OnInit,
+  computed,
   inject,
-  signal,
-  computed
+  signal
 } from '@angular/core';
 
 import {
@@ -23,48 +26,46 @@ import {
   MatDialogRef
 } from '@angular/material/dialog';
 
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatRadioModule } from '@angular/material/radio';
+import {
+  MatButtonModule
+} from '@angular/material/button';
 
+import {
+  MatIconModule
+} from '@angular/material/icon';
+
+import {
+  MatProgressSpinnerModule
+} from '@angular/material/progress-spinner';
+
+import {
+  TranslatePipe
+} from '@ngx-translate/core';
 import { ProductService } from '../../../../services/product.service';
-import { SubCategoryService } from '../../../../services/sub-category.service';
-import { CategoryService } from '../../../../services/category.service';
 import { BrandService } from '../../../../services/brand.service';
-
-import { environment } from '../../../../../environments/environment';
+import { CategoryService } from '../../../../services/category.service';
+import { SubCategoryService } from '../../../../services/sub-category.service';
 import { Product } from '../../../../models/product.model';
 import { Brand } from '../../../../models/Brand.model';
 import { Category } from '../../../../models/category.model';
 import { SubCategory } from '../../../../models/subCategory.model';
-import { TranslatePipe } from '@ngx-translate/core';
+import { environment } from '../../../../../environments/environment';
 
-
-
-// ============================================================
-// COMPONENT
-// ============================================================
 
 @Component({
   selector: 'app-add-product',
   standalone: true,
 
   imports: [
-    TranslatePipe,
     CommonModule,
     ReactiveFormsModule,
+
     MatDialogModule,
-    MatRadioModule,
     MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+
+    TranslatePipe
   ],
 
   templateUrl: './add-product.component.html',
@@ -72,33 +73,15 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class AddProductComponent implements OnInit {
 
-  // ==========================================================
-  // SERVICES
-  // ==========================================================
+  private readonly fb = inject(FormBuilder);
+  private readonly productService = inject(ProductService);
+  private readonly brandService = inject(BrandService);
+  private readonly categoryService = inject(CategoryService);
+  private readonly subCategoryService = inject(SubCategoryService);
 
-  private readonly fb =
-    inject(FormBuilder);
-
-  private readonly productService =
-    inject(ProductService);
-
-  private readonly categoryService =
-    inject(CategoryService);
-
-  private readonly subCategoryService =
-    inject(SubCategoryService);
-
-  private readonly brandService =
-    inject(BrandService);
-
-
-  // ==========================================================
-  // DIALOG
-  // ==========================================================
 
   constructor(
-    private readonly dialogRef:
-      MatDialogRef<AddProductComponent>,
+    private readonly dialogRef: MatDialogRef<AddProductComponent>,
 
     @Inject(MAT_DIALOG_DATA)
     public data: {
@@ -108,22 +91,13 @@ export class AddProductComponent implements OnInit {
   ) {}
 
 
-  // ==========================================================
-  // FORM
-  // ==========================================================
+  // =========================================================
+  // SIGNALS
+  // =========================================================
 
-  productForm!: FormGroup;
+  readonly brands = signal<Brand[]>([]);
 
-
-  // ==========================================================
-  // SIGNAL STATE
-  // ==========================================================
-
-  readonly brands =
-    signal<Brand[]>([]);
-
-  readonly categories =
-    signal<Category[]>([]);
+  readonly categories = signal<Category[]>([]);
 
   readonly filteredSubCategories =
     signal<SubCategory[]>([]);
@@ -149,102 +123,84 @@ export class AddProductComponent implements OnInit {
   readonly imagePreview =
     signal<string | null>(null);
 
-
-  /**
-   * Currently selected category.
-   */
   readonly selectedCategoryId =
     signal<number | null>(null);
 
-
-  /**
-   * Currently selected subcategory IDs.
-   */
   readonly selectedSubCategoryIds =
     signal<number[]>([]);
 
-
-  // ==========================================================
-  // EDIT STATE
-  // ==========================================================
-
-  private editingSubCategoryIds: number[] = [];
-
-  private editingCategoryId: number | null = null;
+  readonly isSubCategoryDropdownOpen =
+    signal(false);
 
 
-  // ==========================================================
+  // =========================================================
   // COMPUTED
-  // ==========================================================
+  // =========================================================
 
-  readonly isEditing =
-    computed(() =>
-      this.data?.isEditing === true
-    );
+  readonly isEditing = computed(
+    () => this.data?.isEditing === true
+  );
 
-    
+  readonly hasImage = computed(
+    () => !!this.imagePreview()
+  );
 
-  readonly hasImage =
-    computed(() =>
-      !!this.imagePreview()
-    );
+  readonly selectedSubCategoryCount = computed(
+    () => this.selectedSubCategoryIds().length
+  );
 
+  readonly discountedPrice = computed(() => {
 
-  readonly selectedSubCategoryCount =
-    computed(() =>
-      this.selectedSubCategoryIds().length
-    );
+    if (!this.productForm) {
+      return 0;
+    }
 
+    const price =
+      Number(
+        this.productForm.get('sellingPrice')?.value
+      ) || 0;
 
-  readonly discountedPrice =
-    computed(() => {
+    const discount =
+      Number(
+        this.productForm.get('discountPercentage')?.value
+      ) || 0;
 
-      if (!this.productForm) {
-        return 0;
-      }
-
-      const price =
-        Number(
-          this.productForm
-            .get('price')
-            ?.value
-        ) || 0;
-
-      const discount =
-        Number(
-          this.productForm
-            .get('discountPercentage')
-            ?.value
-        ) || 0;
-
-      const validDiscount =
-        Math.min(
-          Math.max(discount, 0),
-          100
-        );
-
-      return (
-        price -
-        (
-          price *
-          validDiscount /
-          100
-        )
+    const validDiscount =
+      Math.min(
+        Math.max(discount, 0),
+        100
       );
-    });
 
+    return price -
+      (price * validDiscount / 100);
+  });
 
-  // ==========================================================
-  // IMAGE API
-  // ==========================================================
 
   readonly api =
     environment.imageBaseUrl;
 
 
-  // ==========================================================
+  // =========================================================
+  // FORM
+  // =========================================================
+
+  productForm!: FormGroup;
+
+
+  // =========================================================
+  // EDITING STATE
+  // =========================================================
+
+  private editingCategoryId:
+    number | null = null;
+
+  private editingSubCategoryIds:
+    number[] = [];
+
+
+  // =========================================================
   // INIT
-  // ==========================================================
+  // =========================================================
 
   ngOnInit(): void {
 
@@ -258,7 +214,6 @@ export class AddProductComponent implements OnInit {
       this.data?.isEditing &&
       this.data?.product
     ) {
-
       this.loadProductData(
         this.data.product
       );
@@ -266,9 +221,9 @@ export class AddProductComponent implements OnInit {
   }
 
 
-  // ==========================================================
-  // INITIALIZE FORM
-  // ==========================================================
+  // =========================================================
+  // FORM INITIALIZATION
+  // =========================================================
 
   private initializeForm(): void {
 
@@ -281,13 +236,20 @@ export class AddProductComponent implements OnInit {
             Validators.required
           ]
         ],
- nameAr: [
+
+        nameAr: [
           '',
           [
             Validators.required
           ]
+        ], actualPrice: [
+          null,
+          [
+            Validators.required,
+            Validators.min(0)
+          ]
         ],
-        price: [
+        sellingPrice: [
           null,
           [
             Validators.required,
@@ -305,10 +267,7 @@ export class AddProductComponent implements OnInit {
 
         stockQuantity: [
           null,
-          [
-            Validators.required,
-            Validators.min(0)
-          ]
+          [Validators.min(0)  ]
         ],
 
         isInStock: [
@@ -332,19 +291,19 @@ export class AddProductComponent implements OnInit {
 
         descriptionEn: [
           ''
-        ]
-,
+        ],
 
         descriptionAr: [
           ''
         ]
+
       });
   }
 
 
-  // ==========================================================
+  // =========================================================
   // LOAD BRANDS
-  // ==========================================================
+  // =========================================================
 
   private loadBrands(): void {
 
@@ -354,44 +313,40 @@ export class AddProductComponent implements OnInit {
       .getBrands()
       .subscribe({
 
-        next: (
-          brands: Brand[]
-        ) => {
+        next: (response: any) => {
 
-          this.brands.set(
-            brands ?? []
-          );
+          const brands =
+            Array.isArray(response)
+              ? response
+              : (
+                  response?.data ??
+                  response?.items ??
+                  []
+                );
 
-          this.isLoadingBrands.set(
-            false
-          );
+          this.brands.set(brands);
+
+          this.isLoadingBrands.set(false);
         },
 
         error: (error) => {
 
-          console.error(
-            'Failed to load brands:',
-            error
+         this.errorMessage.set(
+            'Error loading brands'
           );
 
           this.brands.set([]);
 
-          this.isLoadingBrands.set(
-            false
-          );
-
-          this.errorMessage.set(
-            'Failed to load brands.'
-          );
+          this.isLoadingBrands.set(false);
         }
 
       });
   }
 
 
-  // ==========================================================
+  // =========================================================
   // LOAD CATEGORIES
-  // ==========================================================
+  // =========================================================
 
   private loadCategories(): void {
 
@@ -401,338 +356,260 @@ export class AddProductComponent implements OnInit {
       .getCategories()
       .subscribe({
 
-        next: (
-          categories: Category[]
-        ) => {
+        next: (response: any) => {
 
-          this.categories.set(
-            categories ?? []
-          );
+          const categories =
+            Array.isArray(response)
+              ? response
+              : (
+                  response?.data ??
+                  response?.items ??
+                  []
+                );
 
-          this.isLoadingCategories.set(
-            false
-          );
+          this.categories.set(categories);
 
+          this.isLoadingCategories.set(false);
+
+
+          /*
+           * If we are editing and the product
+           * already has a category, load its
+           * subcategories now.
+           */
 
           if (
-            this.editingCategoryId
+            this.editingCategoryId !== null
           ) {
-
-            this.selectedCategoryId.set(
-              this.editingCategoryId
-            );
 
             this.loadSubCategories(
               this.editingCategoryId,
               this.editingSubCategoryIds
             );
+
           }
 
         },
 
         error: (error) => {
 
-          console.error(
-            'Failed to load categories:',
-            error
-          );
+           this.errorMessage.set(
+            'Error loading categories')
 
           this.categories.set([]);
 
-          this.isLoadingCategories.set(
-            false
-          );
-
-          this.errorMessage.set(
-            'Failed to load categories.'
-          );
+          this.isLoadingCategories.set(false);
         }
 
       });
   }
 
 
-  // ==========================================================
+  // =========================================================
   // LOAD SUBCATEGORIES
-  // ==========================================================
+  // =========================================================
 
   private loadSubCategories(
     categoryId: number,
     selectedIds: number[] = []
   ): void {
 
-    const id =
-      Number(categoryId);
-
-
-    // --------------------------------------------------------
-    // INVALID CATEGORY
-    // --------------------------------------------------------
+    const id = Number(categoryId);
 
     if (
       !id ||
       Number.isNaN(id)
     ) {
 
-      this.selectedCategoryId.set(
-        null
-      );
+      this.selectedCategoryId.set(null);
 
       this.filteredSubCategories.set([]);
 
       this.selectedSubCategoryIds.set([]);
 
-      this.productForm
-        .get('subCategoryIds')
-        ?.setValue(
-          [],
-          {
-            emitEvent: false
-          }
-        );
+      this.productForm.patchValue({
+        subCategoryIds: []
+      });
 
       return;
     }
 
 
-    // --------------------------------------------------------
-    // SET SELECTED CATEGORY
-    // --------------------------------------------------------
+    this.selectedCategoryId.set(id);
 
-    this.selectedCategoryId.set(
-      id
-    );
+    this.isLoadingSubCategories.set(true);
 
-
-    // --------------------------------------------------------
-    // START LOADING
-    // --------------------------------------------------------
-
-    this.isLoadingSubCategories.set(
-      true
-    );
-
-
-    // --------------------------------------------------------
-    // CLEAR OLD OPTIONS
-    // --------------------------------------------------------
-
-    this.filteredSubCategories.set([]);
-
-
-    // --------------------------------------------------------
-    // API
-    // --------------------------------------------------------
 
     this.subCategoryService
       .getByCategoryId(id)
       .subscribe({
 
-        next: (
-          response: SubCategory[] | any
-        ) => {
+        next: (response: any) => {
 
-
-
-          let result: SubCategory[] = [];
-
-
-          if (
+          const subCategories =
             Array.isArray(response)
-          ) {
-
-            result = response;
-
-          } else if (
-            Array.isArray(response?.data)
-          ) {
-
-            result = response.data;
-
-          } else if (
-            Array.isArray(response?.items)
-          ) {
-
-            result = response.items;
-          }
+              ? response
+              : (
+                  response?.data ??
+                  response?.items ??
+                  []
+                );
 
 
-          // --------------------------------------------------
-          // FILTER BY CATEGORY
-          // --------------------------------------------------
+          /*
+           * Make sure only subcategories
+           * belonging to this category
+           * are displayed.
+           */
 
-          result =
-            result.filter(
-              subCategory =>
+          const filtered =
+            subCategories.filter(
+              (subCategory: SubCategory) =>
                 Number(
                   subCategory.categoryId
                 ) === id
             );
 
-          // --------------------------------------------------
-          // SET SIGNAL
-          // --------------------------------------------------
 
-          this.filteredSubCategories.set(
-            result
-          );
+          this.filteredSubCategories
+            .set(filtered);
 
 
-          // --------------------------------------------------
-          // KEEP ONLY VALID SELECTED IDS
-          // --------------------------------------------------
+          /*
+           * Keep only IDs that actually
+           * exist in the returned list.
+           */
 
           const validIds =
             selectedIds
-              .map(
-                selectedId =>
-                  Number(selectedId)
+              .map(value => Number(value))
+              .filter(
+                value =>
+                  !Number.isNaN(value)
               )
               .filter(
-                selectedId =>
-                  !Number.isNaN(selectedId) &&
-                  result.some(
-                    subCategory =>
+                value =>
+                  filtered.some(
+                    (                    subCategory: { id: any; }) =>
                       Number(
                         subCategory.id
-                      ) === selectedId
+                      ) === value
                   )
               );
 
 
-          // --------------------------------------------------
-          // UPDATE SIGNAL
-          // --------------------------------------------------
-
-          this.selectedSubCategoryIds.set(
-            validIds
-          );
+          this.selectedSubCategoryIds
+            .set(validIds);
 
 
-          // --------------------------------------------------
-          // UPDATE FORM
-          // --------------------------------------------------
-
-          this.productForm
-            .get('subCategoryIds')
-            ?.setValue(
-              validIds,
-              {
-                emitEvent: false
-              }
-            );
-
-          this.productForm
-            .get('subCategoryIds')
-            ?.updateValueAndValidity();
+          this.productForm.patchValue({
+            subCategoryIds: validIds
+          });
 
 
-          // --------------------------------------------------
-          // FINISHED
-          // --------------------------------------------------
-
-          this.isLoadingSubCategories.set(
-            false
-          );
+          this.isLoadingSubCategories
+            .set(false);
         },
 
         error: (error) => {
 
-          console.error(
-            'Failed to load subcategories:',
-            error
-          );
+          this.errorMessage.set(
+            'Error loading subcategories')
 
           this.filteredSubCategories.set([]);
 
           this.selectedSubCategoryIds.set([]);
 
-          this.productForm
-            .get('subCategoryIds')
-            ?.setValue(
-              [],
-              {
-                emitEvent: false
-              }
-            );
+          this.productForm.patchValue({
+            subCategoryIds: []
+          });
 
-          this.isLoadingSubCategories.set(
-            false
-          );
-
-          this.errorMessage.set(
-            'Failed to load subcategories.'
-          );
+          this.isLoadingSubCategories
+            .set(false);
         }
 
       });
   }
 
 
-  // ==========================================================
+  // =========================================================
   // CATEGORY CHANGE
-  // ==========================================================
+  // =========================================================
+
+  onCategorySelectChange(): void {
+
+    const categoryId =
+      Number(
+        this.productForm
+          .get('categoryId')
+          ?.value
+      );
+
+
+    if (
+      !categoryId ||
+      Number.isNaN(categoryId)
+    ) {
+
+      this.selectedCategoryId.set(null);
+
+      this.filteredSubCategories.set([]);
+
+      this.selectedSubCategoryIds.set([]);
+
+      this.productForm.patchValue({
+        subCategoryIds: []
+      });
+
+      return;
+    }
+
+
+    this.onCategoryChange(
+      categoryId
+    );
+  }
+
 
   onCategoryChange(
     categoryId: number
   ): void {
 
-    this.errorMessage.set(null);
+    const id = Number(categoryId);
 
-
-    const id =
-      Number(categoryId);
-
-    // --------------------------------------------------------
-    // CLEAR PREVIOUS SUBCATEGORIES
-    // --------------------------------------------------------
-
-    this.editingSubCategoryIds = [];
-
-    this.selectedSubCategoryIds.set([]);
-
-    this.filteredSubCategories.set([]);
-
-
-    this.productForm
-      .get('subCategoryIds')
-      ?.setValue(
-        [],
-        {
-          emitEvent: false
-        }
-      );
-
-
-    // --------------------------------------------------------
-    // INVALID CATEGORY
-    // --------------------------------------------------------
 
     if (
       !id ||
       Number.isNaN(id)
     ) {
 
-      this.selectedCategoryId.set(
-        null
-      );
+      this.selectedCategoryId.set(null);
+
+      this.filteredSubCategories.set([]);
+
+      this.selectedSubCategoryIds.set([]);
+
+      this.productForm.patchValue({
+        subCategoryIds: []
+      });
 
       return;
     }
 
 
-    // --------------------------------------------------------
-    // SET CATEGORY
-    // --------------------------------------------------------
+    this.selectedCategoryId.set(id);
 
-    this.selectedCategoryId.set(
-      id
-    );
+    /*
+     * A new category means the previous
+     * subcategory selection is no longer valid.
+     */
 
+    this.selectedSubCategoryIds.set([]);
 
-    // --------------------------------------------------------
-    // LOAD SUBCATEGORIES
-    // --------------------------------------------------------
+    this.productForm.patchValue({
+      subCategoryIds: []
+    });
+
 
     this.loadSubCategories(
       id,
@@ -741,59 +618,150 @@ export class AddProductComponent implements OnInit {
   }
 
 
-  // ==========================================================
+  // =========================================================
+  // SUBCATEGORY DROPDOWN
+  // =========================================================
+
+  toggleSubCategoryDropdown(): void {
+
+    if (
+      !this.selectedCategoryId() ||
+      this.isLoadingSubCategories()
+    ) {
+      return;
+    }
+
+    this.isSubCategoryDropdownOpen.update(
+      value => !value
+    );
+  }
+
+
+  // =========================================================
+  // SUBCATEGORY CHECKBOX
+  // =========================================================
+
+  toggleSubCategory(
+    subCategoryId: number,
+    event: Event
+  ): void {
+
+    const checkbox =
+      event.target as HTMLInputElement;
+
+    const id = Number(subCategoryId);
+
+
+    if (
+      !id ||
+      Number.isNaN(id)
+    ) {
+      return;
+    }
+
+
+    const current =
+      this.selectedSubCategoryIds();
+
+
+    let updated: number[];
+
+
+    if (checkbox.checked) {
+
+      if (current.includes(id)) {
+        return;
+      }
+
+      updated = [
+        ...current,
+        id
+      ];
+
+    } else {
+
+      updated =
+        current.filter(
+          value => value !== id
+        );
+
+    }
+
+
+    this.onSubCategoryChange(
+      updated
+    );
+  }
+
+
+  // =========================================================
   // SUBCATEGORY CHANGE
-  // ==========================================================
+  // =========================================================
 
   onSubCategoryChange(
     selectedIds: number[]
   ): void {
 
     const ids =
-      Array.isArray(selectedIds)
-        ? selectedIds
-            .map(
-              id => Number(id)
-            )
-            .filter(
-              id =>
-                !Number.isNaN(id)
-            )
-        : [];
+      selectedIds
+        .map(id => Number(id))
+        .filter(
+          id =>
+            !Number.isNaN(id)
+        );
 
 
-    this.selectedSubCategoryIds.set(
-      ids
-    );
+    this.selectedSubCategoryIds
+      .set(ids);
+
+
+    this.productForm.patchValue({
+      subCategoryIds: ids
+    });
 
 
     this.productForm
       .get('subCategoryIds')
-      ?.setValue(
-        ids,
-        {
-          emitEvent: false
-        }
-      );
+      ?.markAsTouched();
   }
 
 
-  // ==========================================================
+  // =========================================================
+  // REMOVE SUBCATEGORY
+  // =========================================================
+
+  removeSubCategory(
+    id: number
+  ): void {
+
+    const updated =
+      this.selectedSubCategoryIds()
+        .filter(
+          value =>
+            value !== Number(id)
+        );
+
+
+    this.onSubCategoryChange(
+      updated
+    );
+  }
+
+
+  // =========================================================
   // LOAD PRODUCT FOR EDIT
-  // ==========================================================
+  // =========================================================
 
   private loadProductData(
     product: Product
   ): void {
 
-    // --------------------------------------------------------
-    // SUBCATEGORY IDS
-    // --------------------------------------------------------
-
-    this.editingSubCategoryIds =
-      (product.subCategories ?? [])
+    const subCategoryIds =
+      (
+        product.subCategories ?? []
+      )
         .map(
-          subCategory =>
+          (subCategory: any) =>
             Number(subCategory.id)
         )
         .filter(
@@ -802,177 +770,154 @@ export class AddProductComponent implements OnInit {
         );
 
 
-    // --------------------------------------------------------
-    // CATEGORY
-    // --------------------------------------------------------
-
-    this.editingCategoryId =
+    const categoryId =
       this.getProductCategoryId(
         product
       );
 
 
-    // --------------------------------------------------------
-    // BRAND
-    // --------------------------------------------------------
-
     const brandId =
-      product.brandId ??
       product.brand?.id ??
+      (product as any).brandId ??
       null;
 
 
-    // --------------------------------------------------------
-    // DISCOUNT
-    // --------------------------------------------------------
-
     const discount =
-      product.discountPercentage ??
-      
-      0;
+      Number(
+        (product as any)
+          .discountPercentage
+      ) || 0;
 
 
-    // --------------------------------------------------------
-    // PATCH FORM
-    // --------------------------------------------------------
+    this.editingCategoryId =
+      categoryId;
+
+    this.editingSubCategoryIds =
+      subCategoryIds;
+
 
     this.productForm.patchValue({
 
       nameEn:
         product.nameEn ?? '',
-nameAr:
+
+      nameAr:
         product.nameAr ?? '',
-      price:
-        product.price ?? 0,
+
+      actualPrice:
+        product.actualPrice ?? null,
+        sellingPrice:product.price??null,
 
       discountPercentage:
         discount,
 
       stockQuantity:
-        product.stockQuantity ?? 0,
+        product.stockQuantity ?? null,
 
       isInStock:
-        product.isInStock ?? true,
+        (product as any).isInStock ?? true,
 
       brandId:
         brandId,
 
       categoryId:
-        this.editingCategoryId,
+        categoryId,
 
       subCategoryIds:
-        [],
+        subCategoryIds,
 
       descriptionEn:
         product.descriptionEn ?? '',
-        descriptionAr:
+
+      descriptionAr:
         product.descriptionAr ?? ''
 
     });
 
 
-    // --------------------------------------------------------
-    // SET CATEGORY SIGNAL
-    // --------------------------------------------------------
+    this.selectedCategoryId
+      .set(categoryId);
+
+
+    this.selectedSubCategoryIds
+      .set(subCategoryIds);
+
+
+    /*
+     * If categories are already loaded,
+     * load the subcategories immediately.
+     *
+     * Otherwise loadCategories() will
+     * do it when the API response arrives.
+     */
 
     if (
-      this.editingCategoryId
+      categoryId !== null &&
+      this.categories().length > 0
     ) {
 
-      this.selectedCategoryId.set(
-        this.editingCategoryId
-      );
-
-
       this.loadSubCategories(
-        this.editingCategoryId,
-        this.editingSubCategoryIds
+        categoryId,
+        subCategoryIds
       );
+
     }
 
 
-    // --------------------------------------------------------
-    // IMAGE
-    // --------------------------------------------------------
+    // Image
 
-    if (
-      product.imageUrl
-    ) {
+    if (product.imageUrl) {
 
       this.imagePreview.set(
         this.getImageUrl(
           product.imageUrl
         )
       );
+
     }
+
   }
 
 
-  // ==========================================================
+  // =========================================================
   // GET PRODUCT CATEGORY
-  // ==========================================================
+  // =========================================================
 
   private getProductCategoryId(
     product: Product
   ): number | null {
 
-    // --------------------------------------------------------
-    // DIRECT CATEGORY ID
-    // --------------------------------------------------------
+    const directCategoryId =
+      (product as any)
+        ?.category?.id;
+
 
     if (
-      product.category?.id !== null &&
-      product.category?.id !== undefined
+      directCategoryId !== null &&
+      directCategoryId !== undefined
     ) {
 
       const id =
-        Number(
-          product.category?.id
-        );
+        Number(directCategoryId);
 
       if (
         !Number.isNaN(id)
       ) {
-
         return id;
       }
     }
 
 
-    // --------------------------------------------------------
-    // CATEGORY OBJECT
-    // --------------------------------------------------------
+    const subCategories =
+      product.subCategories ?? [];
+
 
     if (
-      product.category?.id !== null &&
-      product.category?.id !== undefined
-    ) {
-
-      const id =
-        Number(
-          product.category.id
-        );
-
-      if (
-        !Number.isNaN(id)
-      ) {
-
-        return id;
-      }
-    }
-
-
-    // --------------------------------------------------------
-    // SUBCATEGORY CATEGORY
-    // --------------------------------------------------------
-
-    if (
-      product.subCategories &&
-      product.subCategories.length > 0
+      subCategories.length > 0
     ) {
 
       const categoryId =
-        product.subCategories[0]
+        (subCategories[0] as any)
           ?.categoryId;
 
 
@@ -987,7 +932,6 @@ nameAr:
         if (
           !Number.isNaN(id)
         ) {
-
           return id;
         }
       }
@@ -998,19 +942,9 @@ nameAr:
   }
 
 
-  // ==========================================================
-  // GET DISCOUNTED PRICE
-  // ==========================================================
-
-  getDiscountedPrice(): number {
-
-    return this.discountedPrice();
-  }
-
-
-  // ==========================================================
-  // FILE SELECTED
-  // ==========================================================
+  // =========================================================
+  // FILE SELECT
+  // =========================================================
 
   onFileSelected(
     event: Event
@@ -1024,7 +958,6 @@ nameAr:
       !input.files ||
       input.files.length === 0
     ) {
-
       return;
     }
 
@@ -1032,10 +965,6 @@ nameAr:
     const file =
       input.files[0];
 
-
-    // --------------------------------------------------------
-    // VALIDATE TYPE
-    // --------------------------------------------------------
 
     const allowedTypes = [
       'image/png',
@@ -1051,7 +980,7 @@ nameAr:
     ) {
 
       this.errorMessage.set(
-        'Please select a PNG, JPG or WEBP image.'
+        'Only PNG, JPG, JPEG and WEBP images are allowed.'
       );
 
       input.value = '';
@@ -1059,10 +988,6 @@ nameAr:
       return;
     }
 
-
-    // --------------------------------------------------------
-    // VALIDATE SIZE
-    // --------------------------------------------------------
 
     const maxSize =
       5 * 1024 * 1024;
@@ -1073,7 +998,7 @@ nameAr:
     ) {
 
       this.errorMessage.set(
-        'Image size must be less than 5 MB.'
+        'Image size must not exceed 5MB.'
       );
 
       input.value = '';
@@ -1082,114 +1007,112 @@ nameAr:
     }
 
 
-    // --------------------------------------------------------
-    // STORE FILE
-    // --------------------------------------------------------
-
-    this.selectedFile.set(
-      file
-    );
-
     this.errorMessage.set(null);
 
+    this.selectedFile.set(file);
 
-    // --------------------------------------------------------
-    // PREVIEW
-    // --------------------------------------------------------
 
     const reader =
       new FileReader();
 
 
-    reader.onload = () => {
+    reader.onload =
+      () => {
 
-      this.imagePreview.set(
-        reader.result as string
-      );
-    };
+        this.imagePreview.set(
+          reader.result as string
+        );
 
-
-    reader.onerror = () => {
-
-      this.imagePreview.set(null);
-
-      this.selectedFile.set(null);
-
-      this.errorMessage.set(
-        'Failed to read the selected image.'
-      );
-    };
+      };
 
 
-    reader.readAsDataURL(
-      file
-    );
+    reader.readAsDataURL(file);
+  }
+//===========================================
+// close sub category list 
+//===========================================
+@HostListener('document:click', ['$event'])
+onDocumentClick(event: MouseEvent): void {
+
+  const target =
+    event.target as HTMLElement;
+
+  const dropdown =
+    target.closest('.subcategory-dropdown');
+
+  if (!dropdown) {
+
+    this.isSubCategoryDropdownOpen.set(false);
+
   }
 
+}
+//==========================================
+// show the discounted price
+//==========================================
+getPriceAfterDiscount(): number | null {
 
-  // ==========================================================
+  const sellingPrice =
+    Number(
+      this.productForm.get('sellingPrice')?.value ?? 0
+    );
+
+  const discount =
+    Number(
+      this.productForm.get('discountPercentage')?.value ?? 0
+    );
+
+  if (
+    sellingPrice <= 0 ||
+    discount <= 0
+  ) {
+    return null;
+  }
+
+  return (
+    sellingPrice -
+    (sellingPrice * discount / 100)
+  );
+}
+  // =========================================================
   // SAVE
-  // ==========================================================
+  // =========================================================
 
   save(): void {
 
-    // --------------------------------------------------------
-    // VALIDATE FORM
-    // --------------------------------------------------------
+    this.errorMessage.set(null);
+
 
     if (
       this.productForm.invalid
     ) {
 
-      this.productForm
-        .markAllAsTouched();
+      this.productForm.markAllAsTouched();
 
       return;
     }
 
 
-    // --------------------------------------------------------
-    // PREVENT DOUBLE SUBMIT
-    // --------------------------------------------------------
+    const productNameEn = String( this.productForm .get('nameEn') ?.value ?? '' ).trim();
+const productNameAr = String(this.productForm .get('nameAr')?.value ?? '').trim();
+const actualPrice =Number(
+    this.productForm.get('actualPrice')?.value ?? 0
+  );
+
+const sellingPrice =
+  Number(
+    this.productForm.get('sellingPrice')?.value ?? 0
+  );
+
+const discount =
+  Number(
+    this.productForm.get('discountPercentage')?.value ?? 0
+  );
 
     if (
-      this.isSubmitting()
+      !productNameEn &&
+      !productNameAr
     ) {
-
-      return;
-    }
-
-
-    // --------------------------------------------------------
-    // CLEAR PREVIOUS ERROR
-    // --------------------------------------------------------
-
-    this.errorMessage.set(null);
-
-
-    // --------------------------------------------------------
-    // GET FORM VALUE
-    // --------------------------------------------------------
-
-    const value =
-      this.productForm
-        .getRawValue();
-
-
-    const productNameEn =
-      String(
-        value.nameEn ?? ''
-      ).trim();
- const productNameAr =
-      String(
-        value.nameAr ?? ''
-      ).trim();
-
-    // --------------------------------------------------------
-    // NAME VALIDATION
-    // --------------------------------------------------------
-
-    if (!productNameEn && !productNameAr) {
 
       this.errorMessage.set(
         'Product name is required.'
@@ -1197,171 +1120,117 @@ nameAr:
 
       return;
     }
+ const discountedPrice = sellingPrice - (sellingPrice * discount / 100);
+console.log(actualPrice > discountedPrice)
+if (actualPrice > discountedPrice) {
 
+  this.errorMessage.set(
+    'Actual price must be less than the selling price after discount.'
+  );
 
-    // --------------------------------------------------------
-    // START SUBMITTING
-    // --------------------------------------------------------
+  return;
+}
 
     this.isSubmitting.set(true);
 
 
-    // ========================================================
-    // CREATE
-    // ========================================================
-
-    if (
-      !this.data?.isEditing
-    ) {
-
-      /*
-       * IMPORTANT:
-       *
-       * Before creating the product, check the database
-       * to see if another product already has this name.
-       */
-
-      this.productService
-        .checkProductExists(
-          productNameEn
-        )
-        .subscribe({
-
-          // ==================================================
-          // CHECK RESULT
-          // ==================================================
-
-          next: (
-            res: any
-          ) => {
-
-            // ------------------------------------------------
-            // PRODUCT ALREADY EXISTS
-            // ------------------------------------------------
-            if (res.exists) {
-
-              this.errorMessage.set(
-                'Same product already exists.'
-              );
-
-              this.isSubmitting.set(
-                false
-              );
-
-              return;
-            }
-
-
-            // ------------------------------------------------
-            // PRODUCT DOES NOT EXIST
-            // ------------------------------------------------
-
-            this.createProduct(
-              value
-            );
-          },
-
-
-          // ==================================================
-          // CHECK ERROR
-          // ==================================================
-
-          error: (error) => {
-
-            console.error(
-              'Check product exists error:',
-              error
-            );
-
-            this.errorMessage.set(
-              this.getApiErrorMessage(
-                error,
-                'Unable to check if the product already exists.'
-              )
-            );
-
-            this.isSubmitting.set(
-              false
-            );
-          }
-
-        });
-
-      return;
-    }
-
-
-    // ========================================================
-    // UPDATE
-    // ========================================================
-
-    this.updateProduct(
-      value
-    );
-  }
-
-
-  // ==========================================================
-  // CREATE PRODUCT
-  // ==========================================================
-
-  private createProduct(
-    value: any
-  ): void {
-
-    const formData =
-      this.buildFormData(
-        value
-      );
-
-
     this.productService
-      .createProduct(
-        formData
+      .checkProductExists(
+        productNameEn
       )
       .subscribe({
 
-        next: () => {
+        next: (exists: boolean) => {
+console.log(exists)
+console.log(this.isEditing())
+          if (!exists  ) {
+console.log("inside")
+            this.errorMessage.set(
+              'A product with this name already exists.'
+            );
 
-          this.isSubmitting.set(
-            false
-          );
+            this.isSubmitting.set(false);
 
-          this.dialogRef.close(
-            true
-          );
+            return;
+          }
+
+
+          if (this.isEditing()) {
+
+            this.updateProduct();
+
+          } else {
+
+            this.createProduct();
+
+          }
+
         },
 
         error: (error) => {
 
-          console.error(
-            'Create product error:',
-            error
-          );
-
           this.errorMessage.set(
-            this.getApiErrorMessage(
-              error,
-              'Failed to create product.'
-            )
-          );
+            'Error checking product')
 
-          this.isSubmitting.set(
-            false
-          );
+          if (this.isEditing()) {
+
+            this.updateProduct();
+
+          } else {
+
+            this.createProduct();
+
+          }
+
         }
 
       });
   }
 
 
-  // ==========================================================
-  // UPDATE PRODUCT
-  // ==========================================================
+  // =========================================================
+  // CREATE
+  // =========================================================
 
-  private updateProduct(
-    value: any
-  ): void {
+  private createProduct(): void {
+
+    const formData =
+      this.buildFormData();
+
+
+    this.productService
+      .createProduct(formData)
+      .subscribe({
+
+        next: (response) => {
+
+          this.isSubmitting.set(false);
+
+          this.dialogRef.close(
+            response ?? true
+          );
+
+        },
+
+        error: (error) => {
+
+          this.errorMessage.set(
+            'Error creating product')
+
+        
+
+          this.isSubmitting.set(false);
+        }
+
+      });
+  }
+
+
+  // =========================================================
+  // UPDATE
+  // =========================================================
+
+  private updateProduct(): void {
 
     const productId =
       this.data?.product?.id;
@@ -1373,18 +1242,14 @@ nameAr:
         'Product ID is missing.'
       );
 
-      this.isSubmitting.set(
-        false
-      );
+      this.isSubmitting.set(false);
 
       return;
     }
 
 
     const formData =
-      this.buildFormData(
-        value
-      );
+      this.buildFormData();
 
 
     this.productService
@@ -1394,99 +1259,68 @@ nameAr:
       )
       .subscribe({
 
-        next: () => {
+        next: (response) => {
 
-          this.isSubmitting.set(
-            false
-          );
+          this.isSubmitting.set(false);
 
           this.dialogRef.close(
-            true
+            response ?? true
           );
+
         },
 
         error: (error) => {
 
-          console.error(
-            'Update product error:',
-            error
-          );
+           this.errorMessage.set(
+            'Error updating product')
 
-          this.errorMessage.set(
-            this.getApiErrorMessage(
-              error,
-              'Failed to update product.'
-            )
-          );
 
-          this.isSubmitting.set(
-            false
-          );
+          this.isSubmitting.set(false);
         }
 
       });
   }
 
 
-  // ==========================================================
+  // =========================================================
   // BUILD FORM DATA
-  // ==========================================================
+  // =========================================================
 
-  private buildFormData(
-    value: any
-  ): FormData {
+  private buildFormData(): FormData {
+
+    const value =
+      this.productForm.getRawValue();
+
 
     const formData =
       new FormData();
 
 
-    // ========================================================
-    // BASIC INFORMATION
-    // ========================================================
+    formData.append(
+      'NameEn',
+      String(value.nameEn ?? '').trim()
+    );
+
 
     formData.append(
       'NameAr',
-      String(
-        value.nameAr ?? ''
-      ).trim()
+      String(value.nameAr ?? '').trim()
     );
 
-    formData.append(
-      'NameEn',
-      String(
-        value.nameEn ?? ''
-      ).trim()
-    );
-
-    formData.append(
-      'DescriptionAr',
-      String(
-        value.descriptionAr ?? ''
-      )
-    );
- formData.append(
-      'DescriptionEn',
-      String(
-        value.descriptionEn ?? ''
-      )
-    );
 
     formData.append(
       'Price',
-      String(
-        Number(
-          value.price ?? 0
-        )
-      )
+      String(value.sellingPrice ?? 0)
     );
-
+ formData.append(
+      'actualPrice',
+      String(value.actualPrice ?? 0)
+    );
 
     formData.append(
       'DiscountPercentage',
       String(
-        Number(
-          value.discountPercentage ?? 0
-        )
+        value.discountPercentage ?? 0
       )
     );
 
@@ -1494,9 +1328,7 @@ nameAr:
     formData.append(
       'StockQuantity',
       String(
-        Number(
-          value.stockQuantity ?? 0
-        )
+        value.stockQuantity ?? 0
       )
     );
 
@@ -1509,83 +1341,70 @@ nameAr:
     );
 
 
-    // ========================================================
-    // BRAND
-    // ========================================================
-
-    if (
-      value.brandId !== null &&
-      value.brandId !== undefined
-    ) {
-
-      formData.append(
-        'BrandId',
-        String(
-          value.brandId
-        )
-      );
-    }
+    formData.append(
+      'BrandId',
+      String(
+        value.brandId ?? ''
+      )
+    );
 
 
-    // ========================================================
-    // CATEGORY
-    // ========================================================
-
-    if (
-      value.categoryId !== null &&
-      value.categoryId !== undefined
-    ) {
-
-      formData.append(
-        'CategoryId',
-        String(
-          value.categoryId
-        )
-      );
-    }
+    formData.append(
+      'CategoryId',
+      String(
+        value.categoryId ?? ''
+      )
+    );
 
 
-    // ========================================================
-    // SUBCATEGORIES
-    // ========================================================
+    /*
+     * IMPORTANT:
+     *
+     * Send each selected subcategory
+     * as a separate SubCategoryIds value.
+     */
 
     const subCategoryIds =
-      this.selectedSubCategoryIds()
-        .map(
-          id =>
-            Number(id)
-        )
-        .filter(
-          id =>
-            !Number.isNaN(id)
-        );
+      this.selectedSubCategoryIds();
 
 
     subCategoryIds.forEach(
-      (id: number) => {
+      id => {
 
         formData.append(
           'SubCategoryIds',
           String(id)
         );
+
       }
     );
 
 
-    // ========================================================
-    // IMAGE
-    // ========================================================
+    formData.append(
+      'DescriptionEn',
+      String(
+        value.descriptionEn ?? ''
+      )
+    );
 
-    const file =
-      this.selectedFile();
+
+    formData.append(
+      'DescriptionAr',
+      String(
+        value.descriptionAr ?? ''
+      )
+    );
 
 
-    if (file) {
+    if (
+      this.selectedFile()
+    ) {
 
       formData.append(
         'Image',
-        file
+        this.selectedFile()!
       );
+
     }
 
 
@@ -1593,99 +1412,73 @@ nameAr:
   }
 
 
-  // ==========================================================
-  // API ERROR
-  // ==========================================================
+  
+  // =========================================================
+  // SUBCATEGORY NAME
+  // =========================================================
 
-  private getApiErrorMessage(
-    error: any,
-    fallback: string
+  getSubCategoryName(
+    id: number
   ): string {
 
-    if (
-      error?.error?.message
-    ) {
+    const subCategory =
+      this.filteredSubCategories()
+        .find(
+          item =>
+            Number(item.id) ===
+            Number(id)
+        );
 
-      return error.error.message;
+
+    if (!subCategory) {
+      return String(id);
     }
 
 
-    if (
-      error?.error?.title
-    ) {
-
-      return error.error.title;
-    }
-
-
-    if (
-      typeof error?.error === 'string'
-    ) {
-
-      return error.error;
-    }
-
-
-    return fallback;
+    return `${subCategory.nameEn} - ${subCategory.nameAr}`;
   }
 
 
-  // ==========================================================
+  // =========================================================
+  // IMAGE URL
+  // =========================================================
+
+  getImageUrl(
+    imageUrl: string
+  ): string {
+
+    if (
+      !imageUrl
+    ) {
+      return '';
+    }
+
+
+    if (
+      imageUrl.startsWith('http://') ||
+      imageUrl.startsWith('https://')
+    ) {
+      return imageUrl;
+    }
+
+
+    return `${this.api}${imageUrl}`;
+  }
+
+
+  // =========================================================
   // CANCEL
-  // ==========================================================
+  // =========================================================
 
   cancel(): void {
 
     if (
       this.isSubmitting()
     ) {
-
       return;
     }
 
     this.dialogRef.close();
-  }
-
-
-  // ==========================================================
-  // SUBCATEGORY NAME
-  // ==========================================================
-
-  getSubCategoryName(
-    id: number
-  ): string {
-
-    return (
-      this.filteredSubCategories()
-        .find(
-          subCategory =>
-            Number(subCategory.id) ===
-            Number(id)
-        )
-        ?.nameEn ??
-      'Selected'
-    );
-  }
-
-
-  // ==========================================================
-  // IMAGE URL
-  // ==========================================================
-
-  private getImageUrl(
-    imageUrl: string
-  ): string {
-
-    if (
-      imageUrl.startsWith('http://') ||
-      imageUrl.startsWith('https://')
-    ) {
-
-      return imageUrl;
-    }
-
-
-    return `${this.api}${imageUrl}`;
   }
 
 }

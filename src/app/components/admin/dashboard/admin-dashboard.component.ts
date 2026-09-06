@@ -1,16 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+
+import {
+  Component,
+  OnInit,
+  inject,
+  signal
+} from '@angular/core';
 
 import { MatIconModule } from '@angular/material/icon';
 
-import { OrderService } from '../../../services/order.service';
 import { TranslatePipe } from '@ngx-translate/core';
 
-interface DashboardOrder {
-  id: number;
-  status: string;
-  totalAmount: number;
-}
+import { OrderService } from '../../../services/order.service';
+import { LanguageService } from '../../../services/language.service';
+
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -23,25 +26,71 @@ interface DashboardOrder {
   ],
 
   templateUrl: './admin-dashboard.component.html',
+
   styleUrl: './admin-dashboard.component.scss'
 })
 export class AdminDashboardComponent implements OnInit {
 
-  private readonly orderService = inject(OrderService);
+  private readonly orderService =
+    inject(OrderService);
+
 
   // ============================================================
-  // VALUES
+  // CURRENT DATE
   // ============================================================
 
-  totalSales =signal(0) ;
+  readonly currentYear =
+    new Date().getFullYear();
 
-  totalRevenue = signal(0);
+  readonly currentMonth =
+    new Date().getMonth() + 1;
 
-  partnerShare = signal(0);
 
-  yourShare = signal(0);
 
-  errorMessage = '';
+
+  // ============================================================
+  // MONTHLY VALUES
+  // ============================================================
+
+  monthlyOrders =
+    signal(0);
+
+  monthlySales =
+    signal(0);
+
+  monthlyGain =
+    signal(0);
+
+
+  // ============================================================
+  // TOTAL VALUES
+  // ============================================================
+
+  totalOrders =
+    signal(0);
+
+  totalSales =
+    signal(0);
+
+  totalGain =
+    signal(0);
+
+
+  // ============================================================
+  // LOADING
+  // ============================================================
+
+  isLoading =
+    signal(false);
+
+
+  // ============================================================
+  // ERROR
+  // ============================================================
+
+  errorMessage =
+    signal('');
+
 
   // ============================================================
   // INIT
@@ -49,78 +98,96 @@ export class AdminDashboardComponent implements OnInit {
 
   ngOnInit(): void {
 
-    console.log('🔥 Dashboard initialized');
-
     this.loadDashboard();
 
   }
+
 
   // ============================================================
   // LOAD DASHBOARD
   // ============================================================
 
-  private loadDashboard(): void {
+ loadDashboard(): void {
+  this.isLoading.set(true);
+  this.errorMessage.set('');
 
-    console.log('🟡 Loading orders...');
+  let completed = 0;
 
-    this.orderService.getOrders().subscribe({
+  const requestCompleted = () => {
+    completed++;
 
-      next: (orders: any[]) => {
+    if (completed === 2) {
+      this.isLoading.set(false);
+    }
+  };
 
-        console.log('🟢 ORDERS RECEIVED:', orders);
+  this.orderService.getCurrentMonthStats().subscribe({
+    next: stats => {
+      this.monthlyOrders.set(stats.orders);
+      this.monthlySales.set(stats.sales);
+      this.monthlyGain.set(stats.gain);
 
-        const validOrders =
-          (orders ?? []).filter(order =>
-            order.status?.toLowerCase() !== 'cancelled'
-          );
+      requestCompleted();
+    },
 
-        this.totalSales.set(
-          validOrders.length);
+    error: () => {
+      this.errorMessage.set(
+        'Failed to load current month statistics.'
+      );
 
-        this.totalRevenue .set(
-          validOrders.reduce(
-            (total, order) =>
-              total + Number(order.totalAmount || 0),
-            0
-          ));
+      requestCompleted();
+    }
+  });
 
-        this.partnerShare .set(
-          this.totalRevenue() * 0.30);
+  this.orderService.getTotalStats().subscribe({
+    next: stats => {
+      this.totalOrders.set(stats.orders);
+      this.totalSales.set(stats.sales);
+      this.totalGain.set(stats.gain);
 
-        this.yourShare .set(
-          this.totalRevenue() * 0.70);
+      requestCompleted();
+    },
 
-        console.log('🟢 DASHBOARD VALUES:', {
-          totalSales: this.totalSales,
-          totalRevenue: this.totalRevenue,
-          partnerShare: this.partnerShare,
-          yourShare: this.yourShare
-        });
+    error: () => {
+      this.errorMessage.set(
+        'Failed to load total statistics.'
+      );
 
-      },
+      requestCompleted();
+    }
+  });
+}
+// transalte month 
+private readonly languageService=inject(LanguageService)
+get currentMonthName(): string {
+  const language = this.languageService.currentLanguage();
 
-      error: (error) => {
+  return new Intl.DateTimeFormat(
+    language === 'ar' ? 'ar-EG' : 'en-US',
+    {
+      month: 'long'
+    }
+  ).format(new Date());
+}
+  // ============================================================
+  // ERROR HANDLER
+  // ============================================================
 
-        console.error(
-          '🔴 Dashboard error:',
-          error
-        );
+  private handleError(error: any): void {
 
-        this.errorMessage =
-          error?.error?.message ??
-          'Unable to load dashboard data.';
+    console.error(
+      'Dashboard error:',
+      error
+    );
 
-      },
+    if (!this.errorMessage()) {
 
-      complete: () => {
+      this.errorMessage.set(
+        error?.error?.message ??
+        'Unable to load dashboard data.'
+      );
 
-        console.log(
-          '🔵 Dashboard request completed'
-        );
-
-      }
-
-    });
+    }
 
   }
 

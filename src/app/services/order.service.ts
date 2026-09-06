@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { Order } from '../models/order.model';
+import { DashboardStats } from '../models/DashboardStats.model';
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +14,12 @@ export class OrderService {
   private readonly http = inject(HttpClient);
 
   private readonly apiUrl =
-    environment.apiBaseUrl+'/orders';
+    environment.apiBaseUrl + '/orders';
 
+
+  // ============================================================
+  // ORDERS
+  // ============================================================
 
   getOrders(): Observable<Order[]> {
 
@@ -63,4 +68,20 @@ export class OrderService {
 
   }
 
+
+  // ============================================================
+  // DASHBOARD
+  // ============================================================
+
+getCurrentMonthStats(): Observable<DashboardStats> {
+  return this.http.get<DashboardStats>(
+    `${this.apiUrl}/dashboard/current-month`
+  );
+}
+
+getTotalStats(): Observable<DashboardStats> {
+  return this.http.get<DashboardStats>(
+    `${this.apiUrl}/dashboard/total`
+  );
+}
 }

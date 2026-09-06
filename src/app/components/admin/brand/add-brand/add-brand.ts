@@ -164,13 +164,17 @@ export class AddBrand implements OnInit {
 
       });
 
+const imageUrl = this.data.brand.imageUrl;
 
-      // Existing image
-var image=environment.imageBaseUrl+this.data.brand.imageUrl
-
-      this.imagePreview.set(
-        image|| null
-      );
+if (imageUrl) {
+  this.imagePreview.set(
+    imageUrl.startsWith('http')
+      ? imageUrl
+      : environment.imageBaseUrl + imageUrl
+  );
+} else {
+  this.imagePreview.set(null);
+}
 
     }
 

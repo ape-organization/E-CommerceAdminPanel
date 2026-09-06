@@ -1,24 +1,21 @@
 
 <div class="product-dialog">
 
-  <!-- ===================================================== -->
+  <!-- ========================================================= -->
   <!-- HEADER -->
-  <!-- ===================================================== -->
+  <!-- ========================================================= -->
 
   <div class="dialog-header">
 
-    <div class="header-title">
+    <div class="header-content">
 
       <div class="title-icon">
         <mat-icon>inventory_2</mat-icon>
       </div>
 
-      <div class="header-text">
-
-      
+      <div class="title-content">
 
         <h2>
-          
           {{
             isEditing()
               ? ('products.editProduct' | translate)
@@ -29,8 +26,8 @@
         <p>
           {{
             isEditing()
-              ? ('products.editProduct' | translate)
-              : ('products.addProduct' | translate)
+              ? ('products.editProductSubtitle' | translate)
+              : ('products.addProductSubtitle' | translate)
           }}
         </p>
 
@@ -39,994 +36,1016 @@
     </div>
 
     <button
-      mat-icon-button
       type="button"
-      [disabled]="isSubmitting()"
+      mat-icon-button
+      class="close-button"
       (click)="cancel()"
-      [attr.aria-label]="'common.closeDialog' | translate">
-
-      <mat-icon>
-        close
-      </mat-icon>
-
+      [attr.aria-label]="'common.close' | translate"
+    >
+      <mat-icon>close</mat-icon>
     </button>
 
   </div>
 
 
-  <!-- ===================================================== -->
+  <!-- ========================================================= -->
   <!-- FORM -->
-  <!-- ===================================================== -->
+  <!-- ========================================================= -->
 
   <form
     [formGroup]="productForm"
-    (ngSubmit)="save()">
+    (ngSubmit)="save()"
+    novalidate
+  >
 
-
-    <!-- =================================================== -->
+    <!-- ======================================================= -->
     <!-- IMAGE -->
-    <!-- =================================================== -->
+    <!-- ======================================================= -->
 
-    <div class="image-section">
+    <section class="form-section image-section">
+
+      <div class="section-heading">
+
+        <div>
+          <h3>
+            {{ 'products.productImage' | translate }}
+          </h3>
+
+        </div>
+
+      </div>
 
       <div
-        class="image-preview"
-        (click)="fileInput.click()">
+        class="image-upload"
+        [class.has-image]="hasImage()"
+      >
 
-        @if (imagePreview()) {
+        <div
+          class="image-preview"
+          (click)="fileInput.click()"
+          tabindex="0"
+          role="button"
+          (keydown.enter)="fileInput.click()"
+          (keydown.space)="fileInput.click(); $event.preventDefault()"
+        >
 
-          <img
-            [src]="imagePreview()"
-            [attr.alt]="'products.productImage' | translate"
-            class="preview-image"
+          @if (imagePreview()) {
+
+            <img
+              [src]="imagePreview()!"
+              [alt]="'products.productImage' | translate"
+            />
+
+            <div class="image-overlay">
+              <mat-icon>photo_camera</mat-icon>
+
+              <span>
+                {{ 'products.changeImage' | translate }}
+              </span>
+            </div>
+
+          } @else {
+
+            <div class="image-placeholder">
+
+              <mat-icon>add_photo_alternate</mat-icon>
+
+              <span>
+                {{ 'products.image' | translate }}
+              </span>
+
+              <small>
+                PNG, JPG, WEBP · Max 5MB
+              </small>
+
+            </div>
+
+          }
+
+        </div>
+
+        <input
+          #fileInput
+          type="file"
+          hidden
+          accept="image/png,image/jpeg,image/webp"
+          (change)="onFileSelected($event)"
+        />
+
+      </div>
+
+    </section>
+
+
+    <!-- ======================================================= -->
+    <!-- BASIC INFORMATION -->
+    <!-- ======================================================= -->
+
+    <section class="form-section">
+
+      <div class="section-heading">
+
+        <div class="heading-icon">
+          <mat-icon>info</mat-icon>
+        </div>
+
+        <div>
+          <h3>
+            {{ 'products.basicInformation' | translate }}
+          </h3>
+
+          
+        </div>
+
+      </div>
+
+
+      <div class="form-grid">
+
+        <!-- English Name -->
+
+        <div class="form-group">
+
+          <label
+            for="productNameEn"
+            class="form-label"
+          >
+            {{ 'products.nameEn' | translate }}
+            <span class="required">*</span>
+          </label>
+
+          <input
+            id="productNameEn"
+            type="text"
+            class="form-input"
+            formControlName="nameEn"
+            autocomplete="off"
           />
 
-          <div class="upload-overlay">
+          @if (
+            productForm.get('nameEn')?.hasError('required') &&
+            productForm.get('nameEn')?.touched
+          ) {
 
-            <mat-icon>
-              cloud_upload
-            </mat-icon>
+            <div class="form-error">
+              {{ 'products.nameEnRequired' | translate }}
+            </div>
 
-            <span>
+          }
 
-              {{ 'common.changeImage' | translate }}
-            </span>
-
-          </div>
-
-        } @else {
-
-          <div class="image-placeholder">
-
-            <mat-icon>
-              cloud_upload
-            </mat-icon>
-
-            <span>
-              {{ 'products.productImage' | translate }}
-            </span>
-
-       
-
-          </div>
-
-        }
-
-      </div>
+        </div>
 
 
-      <input
-        #fileInput
-        type="file"
-        hidden
-        accept="image/png,image/jpeg,image/webp"
-        (change)="onFileSelected($event)"
-      />
+        <!-- Arabic Name -->
 
+        <div class="form-group">
 
-     
-
-    </div>
-
-
-    <!-- =================================================== -->
-    <!-- BASIC INFORMATION -->
-    <!-- =================================================== -->
-
-    <div class="section-heading">
-
-      <div class="section-icon">
-        <mat-icon>
-          info
-        </mat-icon>
-      </div>
-
-      <div>
-
-        <h3>
-          {{ 'products.basicInformation' | translate }}
-        </h3>
-
-        <p>
-          {{ 'products.enterMainProductDetails' | translate }}
-        </p>
-
-      </div>
-
-    </div>
-
-
-    <div class="form-grid">
-
-
-      <!-- ================================================= -->
-      <!-- NAME arabic -->
-      <!-- ================================================= -->
-
-      <mat-form-field
-        appearance="outline"
-        class="full-width">
-
-        <mat-label >
+          <label
+            for="productNameAr"
+            class="form-label"
+          >
             {{ 'products.nameAr' | translate }}
-          </mat-label>
+            <span class="required">*</span>
+          </label>
 
-        <input
-          matInput
-          formControlName="nameAr"
-          [placeholder]="'products.productNamePlaceholderAr' | translate"
-        />
+          <input
+            id="productNameAr"
+            type="text"
+            class="form-input"
+            formControlName="nameAr"
+            autocomplete="off"
+          />
 
-        @if (
-          productForm.get('nameAr')?.hasError('required')
-        ) {
+          @if (
+            productForm.get('nameAr')?.hasError('required') &&
+            productForm.get('nameAr')?.touched
+          ) {
 
-          <mat-error>
-            {{ 'products.productNameRequired' | translate }}
-          </mat-error>
+            <div class="form-error">
+              {{ 'products.nameArRequired' | translate }}
+            </div>
 
-        }
+          }
 
-        @if (
-          productForm.get('nameAr')?.hasError('maxlength')
-        ) {
-
-          <mat-error>
-            {{ 'products.productNameTooLong' | translate }}
-          </mat-error>
-
-        }
-
-      </mat-form-field>
- <!-- ================================================= -->
-      <!-- NAME english -->
-      <!-- ================================================= -->
-
-      <mat-form-field
-        appearance="outline"
-        class="full-width">
-
-        <mat-label >
-            {{ 'products.nameEn' | translate }}
-          </mat-label>
-
-        <input
-          matInput
-          formControlName="nameEn"
-          [placeholder]="'products.productNameEnPlaceholder' | translate"
-        />
-
-        @if (
-          productForm.get('nameEn')?.hasError('required')
-        ) {
-
-          <mat-error>
-            {{ 'products.productNameRequired' | translate }}
-          </mat-error>
-
-        }
-
-        @if (
-          productForm.get('nameEn')?.hasError('maxlength')
-        ) {
-
-          <mat-error>
-            {{ 'products.productNameTooLong' | translate }}
-          </mat-error>
-
-        }
-
-      </mat-form-field>
-
-      <!-- ================================================= -->
-      <!-- PRICE -->
-      <!-- ================================================= -->
-
-      <mat-form-field
-        appearance="outline">
-
- <mat-label class="currency-prefix">
-            {{ 'common.egp' | translate }}
-          </mat-label>
-        <input
-          matInput
-          type="number"
-          min="0"
-          step="0.01"
-          formControlName="price"
-          placeholder="0.00"
-        />
-
-        @if (
-          productForm.get('price')?.hasError('required')
-        ) {
-
-          <mat-error>
-            {{ 'products.priceRequired' | translate }}
-          </mat-error>
-
-        }
-
-        @if (
-          productForm.get('price')?.hasError('min')
-        ) {
-
-          <mat-error>
-            {{ 'products.priceCannotBeNegative' | translate }}
-          </mat-error>
-
-        }
-
-      </mat-form-field>
+        </div>
 
 
-      <!-- ================================================= -->
-      <!-- DISCOUNT -->
-      <!-- ================================================= -->
+        <!-- actual Price -->
 
-      <mat-form-field
-        appearance="outline">
+        <div class="form-group">
 
-       <mat-label>
-            {{ 'products.discount' | translate }}
-          </mat-label>
+          <label
+            for="productPrice"
+            class="form-label"
+          >
+            {{ 'products.actualPrice' | translate }}
+            <span class="required">*</span>
+          </label>
 
-        <input
-          matInput
-          type="number"
-          min="0"
-          max="100"
-          step="1"
-          formControlName="discountPercentage"
-          placeholder="0"
-        />
+          <div class="currency-input">
 
-        @if (
-          productForm
-            .get('discountPercentage')
-            ?.hasError('min')
-        ) {
+            <span class="currency-prefix">
+              EGP
+            </span>
 
-          <mat-error>
-            {{ 'products.discountCannotBeNegative' | translate }}
-          </mat-error>
-
-        }
-
-        @if (
-          productForm
-            .get('discountPercentage')
-            ?.hasError('max')
-        ) {
-
-          <mat-error>
-            {{ 'products.discountCannotExceed' | translate }}
-          </mat-error>
-
-        }
-
-      </mat-form-field>
-
-
-      <!-- ================================================= -->
-      <!-- STOCK QUANTITY -->
-      <!-- ================================================= -->
-
-      <mat-form-field
-        appearance="outline">
-
-        <mat-label>
-          {{ 'products.stockQuantity' | translate }}
-        </mat-label>
-
-       <!--  <mat-icon matPrefix >
-          inventory
-        </mat-icon> -->
-
-        <input
-          matInput
-          type="number"
-          min="0"
-          step="1"
-          formControlName="stockQuantity"
-          placeholder="0"
-        />
-
-        @if (
-          productForm
-            .get('stockQuantity')
-            ?.hasError('required')
-        ) {
-
-          <mat-error>
-            {{ 'products.stockQuantityRequired' | translate }}
-          </mat-error>
-
-        }
-
-        @if (
-          productForm
-            .get('stockQuantity')
-            ?.hasError('min')
-        ) {
-
-          <mat-error>
-            {{ 'products.stockCannotBeNegative' | translate }}
-          </mat-error>
-
-        }
-
-      </mat-form-field>
-
-
-      <!-- ================================================= -->
-      <!-- DISCOUNT PREVIEW -->
-      <!-- ================================================= -->
-
-      @if (
-        productForm.get('price')?.value > 0 &&
-        productForm.get('discountPercentage')?.value > 0
-      ) {
-
-        <div class="discount-preview">
-
-          <div class="discount-preview-icon">
-
-            <mat-icon>
-              local_offer
-            </mat-icon>
+            <input
+              id="productPrice"
+              type="number"
+              min="0"
+              step="0.01"
+              class="form-input currency-input-field"
+              formControlName="actualPrice"
+          
+            />
 
           </div>
 
-          <div class="discount-preview-content">
+          @if (
+            productForm.get('actualPrice')?.hasError('required') &&
+            productForm.get('actualPrice')?.touched
+          ) {
 
-            <span class="discount-preview-label">
-              {{ 'products.discountedPrice' | translate }}
+            <div class="form-error">
+              {{ 'products.priceRequired' | translate }}
+            </div>
+
+          }
+
+          @if (
+            productForm.get('actualPrice')?.hasError('min') &&
+            productForm.get('actualPrice')?.touched
+          ) {
+
+            <div class="form-error">
+              {{ 'products.priceInvalid' | translate }}
+            </div>
+
+          }
+
+        </div>
+
+   <!--selling Price -->
+
+        <div class="form-group">
+
+          <label
+            for="productPrice"
+            class="form-label"
+          >
+            {{ 'products.sellingPrice' | translate }}
+            <span class="required">*</span>
+          </label>
+
+          <div class="currency-input">
+
+            <span class="currency-prefix">
+              EGP
             </span>
 
-            <div class="discount-prices">
+            <input
+              id="productPrice"
+              type="number"
+              min="0"
+              step="0.01"
+              class="form-input currency-input-field"
+              formControlName="sellingPrice"
+           
+            />
 
-              <span class="old-price">
+          </div>
 
-                {{ 'common.egp' | translate }}
-                {{
-                  productForm.get('price')?.value
-                    | number:'1.2-2'
-                }}
+          @if (
+            productForm.get('sellingPrice')?.hasError('required') &&
+            productForm.get('sellingPrice')?.touched
+          ) {
 
+            <div class="form-error">
+              {{ 'products.priceRequired' | translate }}
+            </div>
+
+          }
+
+          @if (
+            productForm.get('sellingPrice')?.hasError('min') &&
+            productForm.get('sellingPrice')?.touched
+          ) {
+
+            <div class="form-error">
+              {{ 'products.priceInvalid' | translate }}
+            </div>
+
+          }
+
+        </div>
+
+        <!-- Discount -->
+
+        <div class="form-group">
+
+          <label
+            for="productDiscount"
+            class="form-label"
+          >
+            {{ 'products.discount' | translate }}
+          </label>
+
+          <div class="percentage-input">
+
+            <input
+              id="productDiscount"
+              type="number"
+              min="0"
+              max="100"
+              step="1"
+              class="form-input"
+              formControlName="discountPercentage"
+            />
+
+            <span class="percentage-suffix">
+              %
+            </span>
+
+          </div>
+
+          @if (
+            productForm.get('discountPercentage')?.hasError('min') &&
+            productForm.get('discountPercentage')?.touched
+          ) {
+
+            <div class="form-error">
+              {{ 'products.discountInvalid' | translate }}
+            </div>
+
+          }
+
+          @if (
+            productForm.get('discountPercentage')?.hasError('max') &&
+            productForm.get('discountPercentage')?.touched
+          ) {
+
+            <div class="form-error">
+              {{ 'products.discountInvalid' | translate }}
+            </div>
+
+          }
+@if (getPriceAfterDiscount() !== null) {
+
+  <div class="discounted-price-preview">
+
+    <span class="discounted-price-label">
+      {{ 'products.priceAfterDiscount' | translate }}
+    </span>
+
+    <strong>
+      {{ getPriceAfterDiscount() | number:'1.2-2' }}
+    </strong>
+
+  </div>
+
+}
+        </div>
+
+
+        <!-- Discount Preview -->
+
+        @if (
+          (productForm.get('discountPercentage')?.value ?? 0) > 0 &&
+          (productForm.get('price')?.value ?? 0) > 0
+        ) {
+
+          <div class="discount-preview full-width">
+
+            <div class="discount-icon">
+              <mat-icon>local_offer</mat-icon>
+            </div>
+
+            <div class="discount-content">
+
+              <span class="discount-label">
+                {{ 'products.finalPrice' | translate }}
               </span>
 
-              <span class="new-price">
-
-                {{ 'common.egp' | translate }}
-                {{
-                  discountedPrice()
-                    | number:'1.2-2'
-                }}
-
-              </span>
+              <strong>
+                {{ discountedPrice() | number:'1.2-2' }}
+                EGP
+              </strong>
 
             </div>
 
           </div>
 
+        }
+
+
+        <!-- Stock Quantity -->
+
+        <div class="form-group">
+
+          <label
+            for="stockQuantity"
+            class="form-label"
+          >
+            {{ 'products.stockQuantity' | translate }}
+            <span class="required">*</span>
+          </label>
+
+          <input
+            id="stockQuantity"
+            type="number"
+            min="0"
+            step="1"
+            class="form-input"
+            formControlName="stockQuantity"
+          />
+
+          @if (
+            productForm.get('stockQuantity')?.hasError('required') &&
+            productForm.get('stockQuantity')?.touched
+          ) {
+
+            <div class="form-error">
+              {{ 'products.stockQuantityRequired' | translate }}
+            </div>
+
+          }
+
+          @if (
+            productForm.get('stockQuantity')?.hasError('min') &&
+            productForm.get('stockQuantity')?.touched
+          ) {
+
+            <div class="form-error">
+              {{ 'products.stockQuantityInvalid' | translate }}
+            </div>
+
+          }
+
         </div>
 
-      }
+      </div>
 
-    </div>
+    </section>
 
 
-    <!-- =================================================== -->
+    <!-- ======================================================= -->
     <!-- STOCK STATUS -->
-    <!-- =================================================== -->
+    <!-- ======================================================= -->
 
-    <div class="stock-section">
+    <section class="form-section">
+
+      <div class="section-heading">
+
+        <div class="heading-icon">
+          <mat-icon>inventory</mat-icon>
+        </div>
+
+        <div>
+          <h3>
+            {{ 'products.stockStatus' | translate }}
+          </h3>
+
+        </div>
+
+      </div>
+
 
       <div
-        class="stock-status-card"
-        [class.out-of-stock]="
-          !productForm.get('isInStock')?.value
-        ">
+        class="stock-card"
+        [class.in-stock]="productForm.get('isInStock')?.value === true"
+        [class.out-of-stock]="productForm.get('isInStock')?.value === false"
+      >
 
-        <div class="stock-status-info">
+        <div class="stock-status-icon">
 
-          <div class="stock-status-icon">
-
-            <mat-icon>
-              {{
-                productForm.get('isInStock')?.value
-                  ? 'check_circle'
-                  : 'cancel'
-              }}
-            </mat-icon>
-
-          </div>
-
-          <div class="stock-status-text">
-
-            <strong>
-              {{
-                productForm.get('isInStock')?.value
-                  ? ('products.inStock' | translate)
-                  : ('products.outOfStock' | translate)
-              }}
-            </strong>
-
-            <span>
-              {{
-                productForm.get('isInStock')?.value
-                  ? ('products.productAvailable' | translate)
-                  : ('products.productUnavailable' | translate)
-              }}
-            </span>
-
-          </div>
+          <mat-icon>
+            {{
+              productForm.get('isInStock')?.value === true
+                ? 'check_circle'
+                : 'cancel'
+            }}
+          </mat-icon>
 
         </div>
 
 
-        <!-- =============================================== -->
-        <!-- RADIO BUTTONS -->
-        <!-- =============================================== -->
+        <div class="stock-status-content">
 
-        <mat-radio-group
-          formControlName="isInStock"
+          <strong>
+            {{
+              productForm.get('isInStock')?.value === true
+                ? ('products.inStock' | translate)
+                : ('products.outOfStock' | translate)
+            }}
+          </strong>
+
+          <span>
+            {{
+              productForm.get('isInStock')?.value === true
+                ? ('products.productAvailable' | translate)
+                : ('products.productUnavailable' | translate)
+            }}
+          </span>
+
+        </div>
+
+
+        <div
           class="stock-radio-group"
-          [attr.aria-label]="'products.stockStatus' | translate">
+          role="radiogroup"
+          [attr.aria-label]="'products.stockStatus' | translate"
+        >
 
-          <mat-radio-button [value]="true">
+          <label class="stock-radio">
 
-            {{ 'products.inStock' | translate }}
+            <input
+              type="radio"
+              formControlName="isInStock"
+              [value]="true"
+            />
 
-          </mat-radio-button>
+            <span class="radio-mark"></span>
 
-          <mat-radio-button [value]="false">
+            <span class="radio-label">
+              {{ 'products.inStock' | translate }}
+            </span>
 
-            {{ 'products.outOfStock' | translate }}
+          </label>
 
-          </mat-radio-button>
 
-        </mat-radio-group>
+          <label class="stock-radio">
+
+            <input
+              type="radio"
+              formControlName="isInStock"
+              [value]="false"
+            />
+
+            <span class="radio-mark"></span>
+
+            <span class="radio-label">
+              {{ 'products.outOfStock' | translate }}
+            </span>
+
+          </label>
+
+        </div>
 
       </div>
 
-    </div>
+    </section>
 
 
-    <!-- =================================================== -->
+    <!-- ======================================================= -->
     <!-- CLASSIFICATION -->
-    <!-- =================================================== -->
+    <!-- ======================================================= -->
 
-    <div class="section-heading">
+    <section class="form-section">
 
-      <div class="section-icon">
+      <div class="section-heading">
 
-        <mat-icon>
-          account_tree
-        </mat-icon>
+        <div class="heading-icon">
+          <mat-icon>category</mat-icon>
+        </div>
 
-      </div>
+        <div>
+          <h3>
+            {{ 'products.classification' | translate }}
+          </h3>
 
-      <div>
-
-        <h3>
-          {{ 'products.productClassification' | translate }}
-        </h3>
-
-        <p>
-          {{ 'products.selectClassification' | translate }}
-        </p>
+        </div>
 
       </div>
 
-    </div>
 
+      <div class="form-grid">
 
-    <div class="classification-card">
+        <!-- Brand -->
 
+        <div class="form-group">
 
-      <!-- ================================================= -->
-      <!-- BRAND -->
-      <!-- ================================================= -->
+          <label
+            for="productBrand"
+            class="form-label"
+          >
+            {{ 'products.brand' | translate }}
+            <span class="required">*</span>
+          </label>
 
-      <mat-form-field
-        appearance="outline"
-        class="full-width">
+          <select
+            id="productBrand"
+            class="form-select"
+            formControlName="brandId"
+          >
 
-        <mat-label>
-          {{ 'products.brand' | translate }}
-        </mat-label>
-
-        <mat-select
-          formControlName="brandId">
-
-          @if (isLoadingBrands()) {
-
-            <mat-option disabled>
-              {{ 'products.loadingBrands' | translate }}
-            </mat-option>
-
-          } @else {
+            <option
+              [ngValue]="null"
+              disabled
+            >
+              {{
+                isLoadingBrands()
+                  ? ('products.loadingBrands' | translate)
+                  : ('products.selectBrand' | translate)
+              }}
+            </option>
 
             @for (
               brand of brands();
               track brand.id
             ) {
 
-              <mat-option
-                [value]="brand.id">
-
+              <option [ngValue]="brand.id">
                 {{ brand.nameEn }} - {{ brand.nameAr }}
-
-              </mat-option>
-
-            }
-
-            @if (
-              brands().length === 0
-            ) {
-
-              <mat-option disabled>
-                {{ 'products.noBrandsAvailable' | translate }}
-              </mat-option>
+              </option>
 
             }
+
+          </select>
+
+          @if (
+            productForm.get('brandId')?.hasError('required') &&
+            productForm.get('brandId')?.touched
+          ) {
+
+            <div class="form-error">
+              {{ 'products.selectBrand' | translate }}
+            </div>
 
           }
 
-        </mat-select>
-
-        @if (
-          productForm
-            .get('brandId')
-            ?.hasError('required')
-        ) {
-
-          <mat-error>
-            {{ 'products.selectBrand' | translate }}
-          </mat-error>
-
-        }
-
-      </mat-form-field>
+        </div>
 
 
-      <!-- ================================================= -->
-      <!-- CATEGORY -->
-      <!-- ================================================= -->
+        <!-- Category -->
 
-      <mat-form-field
-        appearance="outline"
-        class="full-width">
+        <div class="form-group">
 
-        <mat-label>
-          {{ 'products.category' | translate }}
-        </mat-label>
+          <label
+            for="productCategory"
+            class="form-label"
+          >
+            {{ 'products.category' | translate }}
+            <span class="required">*</span>
+          </label>
 
-        <mat-select
-          formControlName="categoryId"
-          (selectionChange)="
-            onCategoryChange($event.value)
-          ">
+          <select
+            id="productCategory"
+            class="form-select"
+            formControlName="categoryId"
+            (change)="onCategorySelectChange()"
+          >
 
-          @if (isLoadingCategories()) {
-
-            <mat-option disabled>
-              {{ 'products.loadingCategories' | translate }}
-            </mat-option>
-
-          } @else {
+            <option
+              [ngValue]="null"
+              disabled
+            >
+              {{
+                isLoadingCategories()
+                  ? ('products.loadingCategories' | translate)
+                  : ('products.selectCategory' | translate)
+              }}
+            </option>
 
             @for (
               category of categories();
               track category.id
             ) {
 
-              <mat-option
-                [value]="category.id">
-
-                {{ category.nameEn }} -{{ category.nameAr }}
-
-              </mat-option>
+              <option [ngValue]="category.id">
+                {{ category.nameEn }} - {{ category.nameAr }}
+              </option>
 
             }
 
-            @if (
-              categories().length === 0
-            ) {
-
-              <mat-option disabled>
-                {{ 'products.noCategoriesAvailable' | translate }}
-              </mat-option>
-
-            }
-
-          }
-
-        </mat-select>
-
-        @if (
-          productForm
-            .get('categoryId')
-            ?.hasError('required')
-        ) {
-
-          <mat-error>
-            {{ 'products.selectCategory' | translate }}
-          </mat-error>
-
-        }
-
-      </mat-form-field>
-
-
-      <!-- ================================================= -->
-      <!-- SUBCATEGORIES -->
-      <!-- ================================================= -->
-
-      <mat-form-field
-        appearance="outline"
-        class="full-width">
-
-        <mat-label>
-          {{ 'products.subcategories' | translate }}
-        </mat-label>
-
-        <mat-select
-          formControlName="subCategoryIds"
-          multiple
-          [disabled]="
-            !selectedCategoryId() ||
-            isLoadingSubCategories()
-          "
-          (selectionChange)="
-            onSubCategoryChange($event.value)
-          ">
-
-
-          <!-- ============================================= -->
-          <!-- SELECTED VALUE -->
-          <!-- ============================================= -->
-
-          <mat-select-trigger>
-
-            {{ selectedSubCategoryCount() }}
-
-            {{
-              selectedSubCategoryCount() === 1
-                ? ('products.subcategory' | translate)
-                : ('products.subcategories' | translate)
-            }}
-
-          </mat-select-trigger>
-
-
-          <!-- ============================================= -->
-          <!-- LOADING -->
-          <!-- ============================================= -->
+          </select>
 
           @if (
-            isLoadingSubCategories()
+            productForm.get('categoryId')?.hasError('required') &&
+            productForm.get('categoryId')?.touched
           ) {
 
-            <mat-option disabled>
-
-              <mat-icon>
-                sync
-              </mat-icon>
-
-              {{ 'products.loadingSubcategories' | translate }}
-
-            </mat-option>
-
-          } @else {
-
-
-            <!-- =========================================== -->
-            <!-- SUBCATEGORY OPTIONS -->
-            <!-- =========================================== -->
-
-            @for (
-              subCategory of filteredSubCategories();
-              track subCategory.id
-            ) {
-
-              <mat-option
-                [value]="subCategory.id">
-
-                {{ subCategory.nameEn }} -  {{ subCategory.nameAr }}
-
-              </mat-option>
-
-            }
-
-
-            <!-- =========================================== -->
-            <!-- EMPTY -->
-            <!-- =========================================== -->
-
-            @if (
-              filteredSubCategories().length === 0 &&
-              selectedCategoryId()
-            ) {
-
-              <mat-option disabled>
-                {{ 'products.noSubcategoriesAvailable' | translate }}
-              </mat-option>
-
-            }
+            <div class="form-error">
+              {{ 'products.selectCategory' | translate }}
+            </div>
 
           }
 
-        </mat-select>
+        </div>
 
 
-        <!-- =============================================== -->
-        <!-- NO CATEGORY -->
-        <!-- =============================================== -->
+        <!-- ================================================= -->
+        <!-- CUSTOM SUBCATEGORY MULTI SELECT -->
+        <!-- ================================================= -->
 
-        @if (
-          !selectedCategoryId()
-        ) {
+        <div class="form-group full-width">
 
-          <mat-hint>
-            {{ 'products.selectCategoryFirst' | translate }}
-          </mat-hint>
-
-        }
+          <label class="form-label">
+            {{ 'products.subcategories' | translate }}
+            <span class="required">*</span>
+          </label>
 
 
-        <!-- =============================================== -->
-        <!-- LOADING HINT -->
-        <!-- =============================================== -->
+          <div
+            class="subcategory-dropdown"
+            [class.open]="isSubCategoryDropdownOpen()"
+            [class.disabled]="
+              !selectedCategoryId() ||
+              isLoadingSubCategories()
+            "
+          >
 
-        @if (
-          isLoadingSubCategories()
-        ) {
+            <button
+              type="button"
+              class="subcategory-select-trigger"
+              [disabled]="
+                !selectedCategoryId() ||
+                isLoadingSubCategories()
+              "
+              (click)="toggleSubCategoryDropdown()"
+            >
 
-          <mat-hint>
-            {{ 'products.loadingSubcategories' | translate }}
-          </mat-hint>
+              <span class="subcategory-trigger-text">
 
-        }
+                @if (isLoadingSubCategories()) {
 
+                  {{ 'products.loadingSubCategories' | translate }}
 
-        <!-- =============================================== -->
-        <!-- REQUIRED ERROR -->
-        <!-- =============================================== -->
+                } @else if (!selectedCategoryId()) {
 
-        @if (
-          productForm
-            .get('subCategoryIds')
-            ?.hasError('required') &&
-          productForm
-            .get('subCategoryIds')
-            ?.touched
-        ) {
+                  {{ 'products.selectCategoryFirst' | translate }}
 
-          <mat-error>
-            {{ 'products.subcategoryRequired' | translate }}
-          </mat-error>
+                } @else if (selectedSubCategoryCount() === 0) {
 
-        }
+                  {{ 'products.selectSubCategories' | translate }}
 
-      </mat-form-field>
+                } @else {
 
+                  {{ selectedSubCategoryCount() }}
+                  {{
+                    selectedSubCategoryCount() === 1
+                      ? ('products.subcategory' | translate)
+                      : ('products.subcategories' | translate)
+                  }}
+                  {{ 'products.selected' | translate }}
 
-      <!-- ================================================= -->
-      <!-- SELECTED SUBCATEGORIES -->
-      <!-- ================================================= -->
-
-      @if (
-        selectedSubCategoryCount() > 0
-      ) {
-
-        <div class="selected-subcategories">
-
-          <span class="selected-label">
-            {{ 'products.selectedSubcategories' | translate }}
-          </span>
-
-          <div class="selected-list">
-
-            @for (
-              id of selectedSubCategoryIds();
-              track id
-            ) {
-
-              <span class="selected-chip">
-
-                <mat-icon>
-                  label
-                </mat-icon>
-
-                {{ getSubCategoryName(id) }}
+                }
 
               </span>
+
+
+              <mat-icon>
+                {{
+                  isSubCategoryDropdownOpen()
+                    ? 'keyboard_arrow_up'
+                    : 'keyboard_arrow_down'
+                }}
+              </mat-icon>
+
+            </button>
+
+
+            @if (isSubCategoryDropdownOpen()) {
+
+              <div class="subcategory-dropdown-panel">
+
+                @if (filteredSubCategories().length === 0) {
+
+                  <div class="subcategory-empty">
+
+                    <mat-icon>category</mat-icon>
+
+                    <span>
+                      {{ 'products.noSubCategoriesAvailable' | translate }}
+                    </span>
+
+                  </div>
+
+                } @else {
+
+                  @for (
+                    subCategory of filteredSubCategories();
+                    track subCategory.id
+                  ) {
+
+                    <label
+                      class="subcategory-option"
+                      [class.selected]="
+                        selectedSubCategoryIds().includes(subCategory.id)
+                      "
+                    >
+
+                      <input
+                        type="checkbox"
+                        [checked]="
+                          selectedSubCategoryIds().includes(subCategory.id)
+                        "
+                        (change)="
+                          toggleSubCategory(
+                            subCategory.id,
+                            $event
+                          )
+                        "
+                      />
+
+                      <span class="checkbox-mark">
+
+                        @if (
+                          selectedSubCategoryIds().includes(subCategory.id)
+                        ) {
+                          <mat-icon>check</mat-icon>
+                        }
+
+                      </span>
+
+                      <span class="subcategory-name">
+                        {{ subCategory.nameEn }}
+                        -
+                        {{ subCategory.nameAr }}
+                      </span>
+
+                    </label>
+
+                  }
+
+                }
+
+              </div>
 
             }
 
           </div>
 
+
+          @if (selectedSubCategoryCount() > 0) {
+
+            <div class="selected-subcategories">
+
+              @for (
+                id of selectedSubCategoryIds();
+                track id
+              ) {
+
+                <div class="subcategory-chip">
+
+                  <span>
+                    {{ getSubCategoryName(id) }}
+                  </span>
+
+                  <button
+                    type="button"
+                    (click)="removeSubCategory(id)"
+                    [attr.aria-label]="'common.remove' | translate"
+                  >
+                    <mat-icon>close</mat-icon>
+                  </button>
+
+                </div>
+
+              }
+
+            </div>
+
+          }
+
+
+          @if (
+            productForm.get('subCategoryIds')?.hasError('required') &&
+            productForm.get('subCategoryIds')?.touched
+          ) {
+
+            <div class="form-error">
+              {{ 'products.selectSubCategory' | translate }}
+            </div>
+
+          }
+
         </div>
 
-      }
+      </div>
 
-    </div>
+    </section>
 
 
-    <!-- =================================================== -->
+    <!-- ======================================================= -->
     <!-- DESCRIPTION -->
-    <!-- =================================================== -->
+    <!-- ======================================================= -->
 
-    <div class="section-heading">
+    <section class="form-section">
 
-      <div class="section-icon">
+      <div class="section-heading">
 
-        <mat-icon>
-          description
-        </mat-icon>
+        <div class="heading-icon">
+          <mat-icon>description</mat-icon>
+        </div>
 
-      </div>
+        <div>
+          <h3>
+            {{ 'products.description' | translate }}
+          </h3>
 
-      <div>
-
-        <h3>
-          {{ 'products.description' | translate }}
-        </h3>
-
-      
+        </div>
 
       </div>
 
-    </div>
 
+      <div class="form-grid">
 
-    <mat-form-field
-      appearance="outline"
-      class="full-width">
+        <!-- English Description -->
 
-     <mat-label >
+        <div class="form-group full-width">
+
+          <label
+            for="descriptionEn"
+            class="form-label"
+          >
             {{ 'products.descriptionEn' | translate }}
-          </mat-label>
+          </label>
 
-      <textarea
-        matInput
-        rows="2"
-        formControlName="descriptionEn"
-        [placeholder]="'products.descriptionPlaceholderEn' | translate"
-      ></textarea>
+          <textarea
+            id="descriptionEn"
+            class="form-textarea"
+            formControlName="descriptionEn"
+          ></textarea>
 
-    </mat-form-field>
-  <mat-form-field
-      appearance="outline"
-      class="full-width">
+        </div>
 
-       <mat-label >
+
+        <!-- Arabic Description -->
+
+        <div class="form-group full-width">
+
+          <label
+            for="descriptionAr"
+            class="form-label"
+          >
             {{ 'products.descriptionAr' | translate }}
-          </mat-label>
+          </label>
 
-      <textarea
-        matInput
-        rows="2"
-        formControlName="descriptionAr"
-        [placeholder]="'products.descriptionPlaceholderAr' | translate"
-      ></textarea>
+          <textarea
+            id="descriptionAr"
+            class="form-textarea"
+            formControlName="descriptionAr"
+          ></textarea>
 
-    </mat-form-field>
+        </div>
 
-    <!-- =================================================== -->
+      </div>
+
+    </section>
+
+
+    <!-- ======================================================= -->
     <!-- ERROR -->
-    <!-- =================================================== -->
+    <!-- ======================================================= -->
 
-    @if (
-      errorMessage()
-    ) {
+    @if (errorMessage()) {
 
       <div class="error-message">
 
-        <mat-icon>
-          error_outline
-        </mat-icon>
+        <mat-icon>error_outline</mat-icon>
 
         <span>
           {{ errorMessage() }}
         </span>
-
-        <button
-          type="button"
-          class="error-close"
-          (click)="errorMessage.set(null)"
-          [attr.aria-label]="'common.dismissError' | translate">
-
-          <mat-icon>
-            close
-          </mat-icon>
-
-        </button>
 
       </div>
 
     }
 
 
-    <!-- =================================================== -->
+    <!-- ======================================================= -->
     <!-- ACTIONS -->
-    <!-- =================================================== -->
+    <!-- ======================================================= -->
 
     <div class="dialog-actions">
 
       <button
-        mat-button
         type="button"
+        mat-button
         class="cancel-button"
         [disabled]="isSubmitting()"
-        (click)="cancel()">
-
+        (click)="cancel()"
+      >
         {{ 'common.cancel' | translate }}
-
       </button>
 
 
       <button
-        mat-raised-button
         type="submit"
+        mat-raised-button
         class="save-button"
-        [disabled]="
-          productForm.invalid ||
-          isSubmitting()
-        ">
+        [disabled]="isSubmitting()"
+      >
 
-        @if (isSubmitting()) {
-
-          <mat-spinner
-            diameter="18">
-          </mat-spinner>
-
+        
           <span>
-            {{ 'common.saving' | translate }}
+            {{
+              isEditing()
+                ? ('common.saveChanges' | translate)
+                : ('common.add' | translate)
+            }}
           </span>
 
-        } @else {
-
-          <ng-container>
-
-            <mat-icon>
-              {{ isEditing() ? 'save' : 'add' }}
-            </mat-icon>
-
-            <span>
-              {{
-                isEditing()
-                  ? ('products.saveChanges' | translate)
-                  : ('products.addProduct' | translate)
-              }}
-            </span>
-
-          </ng-container>
-
-        }
+        
 
       </button>
 

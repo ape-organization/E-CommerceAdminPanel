@@ -1,5 +1,16 @@
-import { Injectable, signal } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import {
+  Injectable,
+  signal
+} from '@angular/core';
+
+import {
+  Directionality
+} from '@angular/cdk/bidi';
+
+import {
+  TranslateService
+} from '@ngx-translate/core';
+
 
 @Injectable({
   providedIn: 'root'
@@ -8,9 +19,12 @@ export class LanguageService {
 
   currentLanguage = signal<'en' | 'ar'>('en');
 
+
   constructor(
-    private translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly directionality: Directionality
   ) {
+
     const savedLanguage =
       localStorage.getItem('language') as 'en' | 'ar' | null;
 
@@ -19,25 +33,58 @@ export class LanguageService {
     this.setLanguage(language);
   }
 
-  setLanguage(language: 'en' | 'ar'): void {
 
-    this.currentLanguage.set(language);
+ setLanguage(language: 'en' | 'ar'): void {
 
-    this.translate.use(language);
+  const direction =
+    language === 'ar'
+      ? 'rtl'
+      : 'ltr';
 
-    localStorage.setItem('language', language);
+  /*
+   * Update HTML direction
+   */
+  document.documentElement.lang = language;
+  document.documentElement.dir = direction;
 
-    document.documentElement.dir =
-      language === 'ar' ? 'rtl' : 'ltr';
+  /*
+   * Notify Angular Material / CDK
+   *
+   * Directionality.value is read-only.
+   * The change event is what consumers listen to.
+   */
+  this.directionality.change.emit(direction);
 
-    document.documentElement.lang = language;
-  }
+  /*
+   * Save language
+   */
+  localStorage.setItem(
+    'language',
+    language
+  );
+
+  /*
+   * Update application language
+   */
+  this.currentLanguage.set(language);
+
+  /*
+   * Load translations
+   */
+  this.translate.use(language);
+}
+
 
   toggleLanguage(): void {
-    this.setLanguage(
-      this.currentLanguage() === 'en' ? 'ar' : 'en'
-    );
+
+    const newLanguage =
+      this.currentLanguage() === 'en'
+        ? 'ar'
+        : 'en';
+
+    this.setLanguage(newLanguage);
   }
+
 
   isArabic(): boolean {
     return this.currentLanguage() === 'ar';

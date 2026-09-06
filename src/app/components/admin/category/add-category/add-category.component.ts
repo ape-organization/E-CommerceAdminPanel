@@ -2,7 +2,6 @@ import {
   Component,
   Inject,
   OnInit,
-  computed,
   inject,
   signal
 } from '@angular/core';
@@ -18,10 +17,6 @@ import {
 
 import { MatButtonModule } from '@angular/material/button';
 
-import { MatFormFieldModule } from '@angular/material/form-field';
-
-import { MatInputModule } from '@angular/material/input';
-
 import { MatIconModule } from '@angular/material/icon';
 
 import {
@@ -31,9 +26,17 @@ import {
 
 import { firstValueFrom } from 'rxjs';
 
-import { CategoryService } from '../../../../services/category.service';
-import { TranslatePipe } from '@ngx-translate/core';
-import { environment } from '../../../../../environments/environment';
+import {
+  CategoryService
+} from '../../../../services/category.service';
+
+import {
+  TranslatePipe
+} from '@ngx-translate/core';
+
+import {
+  environment
+} from '../../../../../environments/environment';
 
 
 @Component({
@@ -42,13 +45,11 @@ import { environment } from '../../../../../environments/environment';
   standalone: true,
 
   imports: [
-    TranslatePipe,
     CommonModule,
     ReactiveFormsModule,
     MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule
+    MatIconModule,
+    TranslatePipe
   ],
 
   templateUrl:
@@ -98,7 +99,8 @@ export class AddCategoryComponent
         '',
         Validators.required
       ],
- nameAr: [
+
+      nameAr: [
         '',
         Validators.required
       ]
@@ -122,15 +124,34 @@ export class AddCategoryComponent
   readonly isSubmitting =
     signal(false);
 
+  readonly isEditing =
+    signal(false);
+
 
   // =========================================================
   // INIT
   // =========================================================
- isEditing=signal(false);
+
   ngOnInit(): void {
-this.isEditing.set(this.data.add)
+
+    /*
+     * data.add = true  -> CREATE
+     * data.add = false -> EDIT
+     */
+
+    this.isEditing.set(
+      !this.data?.add
+    );
+console.log(this.isEditing())
+
+    /*
+     * =========================================
+     * EDIT EXISTING CATEGORY
+     * =========================================
+     */
+
     if (
-      !this.isEditing() &&
+      this.isEditing() &&
       this.data?.category
     ) {
 
@@ -139,15 +160,29 @@ this.isEditing.set(this.data.add)
         nameAr:
           this.data.category.nameAr ?? '',
 
-         nameEn:
-          this.data.category.nameEn ?? '',
+        nameEn:
+          this.data.category.nameEn ?? ''
 
       });
 
-var image=environment.imageBaseUrl+this.data.category.imageUrl
-      this.imagePreview.set(
-        image ?? null
-      );
+
+      /*
+       * Existing image
+       */
+
+      if (
+        this.data.category.imageUrl
+      ) {
+
+        const image =
+          environment.imageBaseUrl +
+          this.data.category.imageUrl;
+
+        this.imagePreview.set(
+          image
+        );
+
+      }
 
     }
 
@@ -207,7 +242,9 @@ var image=environment.imageBaseUrl+this.data.category.imageUrl
       5 * 1024 * 1024;
 
 
-    if (file.size > maxSize) {
+    if (
+      file.size > maxSize
+    ) {
 
       this.errorMessage.set(
         'Image size must be less than 5 MB.'
@@ -224,9 +261,13 @@ var image=environment.imageBaseUrl+this.data.category.imageUrl
     // SAVE IMAGE
     // =======================================================
 
-    this.selectedImage.set(file);
+    this.selectedImage.set(
+      file
+    );
 
-    this.errorMessage.set(null);
+    this.errorMessage.set(
+      null
+    );
 
 
     // =======================================================
@@ -255,7 +296,9 @@ var image=environment.imageBaseUrl+this.data.category.imageUrl
     };
 
 
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(
+      file
+    );
 
   }
 
@@ -265,6 +308,12 @@ var image=environment.imageBaseUrl+this.data.category.imageUrl
   // =========================================================
 
   async onSubmit(): Promise<void> {
+
+    /*
+     * =========================================
+     * VALIDATE
+     * =========================================
+     */
 
     if (
       this.categoryForm.invalid ||
@@ -278,9 +327,13 @@ var image=environment.imageBaseUrl+this.data.category.imageUrl
     }
 
 
-    this.errorMessage.set(null);
+    this.errorMessage.set(
+      null
+    );
 
-    this.isSubmitting.set(true);
+    this.isSubmitting.set(
+      true
+    );
 
 
     try {
@@ -290,23 +343,29 @@ var image=environment.imageBaseUrl+this.data.category.imageUrl
 
 
       // =====================================================
-      // NAME
+      // NAME AR
       // =====================================================
 
       formData.append(
         'NameAr',
         this.categoryForm
           .get('nameAr')
-          ?.value ?? ''
+          ?.value?.trim() ?? ''
       );
-  formData.append(
+
+
+      // =====================================================
+      // NAME EN
+      // =====================================================
+
+      formData.append(
         'NameEn',
         this.categoryForm
           .get('nameEn')
-          ?.value ?? ''
+          ?.value?.trim() ?? ''
       );
 
-    
+
       // =====================================================
       // IMAGE
       // =====================================================
@@ -325,14 +384,13 @@ var image=environment.imageBaseUrl+this.data.category.imageUrl
 
       }
 
-console.log(image);
-console.log(image?.name);
+
       // =====================================================
       // UPDATE
       // =====================================================
 
       if (
-        !this.isEditing() &&
+        this.isEditing() &&
         this.data?.category
       ) {
 
@@ -356,7 +414,7 @@ console.log(image?.name);
 
           );
 
-console.log(response)
+
         if (!response) {
 
           throw new Error(
@@ -416,13 +474,14 @@ console.log(response)
       );
 
 
-      this.errorMessage.set(
-        error instanceof Error
-          ? error.message
-          : 'Something went wrong while saving the category.'
+      this.errorMessage.set('Something went wrong while saving the category.'
+
       );
 
-      this.isSubmitting.set(false);
+
+      this.isSubmitting.set(
+        false
+      );
 
     }
 
@@ -435,7 +494,9 @@ console.log(response)
 
   onCancel(): void {
 
-    if (this.isSubmitting()) {
+    if (
+      this.isSubmitting()
+    ) {
 
       return;
 

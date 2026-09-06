@@ -1,3 +1,4 @@
+
 import {
   Component,
   Inject,
@@ -21,13 +22,11 @@ import {
 } from '@angular/material/dialog';
 
 import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 
 import { Category } from '../../../../models/category.model';
 import { SubCategory } from '../../../../models/subCategory.model';
+
 import { TranslatePipe } from '@ngx-translate/core';
 
 
@@ -56,16 +55,14 @@ export interface AddSubCategoryDialogData {
   standalone: true,
 
   imports: [
-    TranslatePipe,
     CommonModule,
     ReactiveFormsModule,
 
     MatDialogModule,
     MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatIconModule
+    MatIconModule,
+
+    TranslatePipe
   ],
 
   templateUrl: './add-sub-category.html',
@@ -87,11 +84,22 @@ export class AddSubCategory implements OnInit {
 
 
   // ==========================================================
-  // SIGNALS
+  // STATE
   // ==========================================================
 
   readonly saving =
     signal(false);
+
+
+  /*
+   * This is a normal boolean.
+   *
+   * Do NOT make this a signal because the value
+   * comes directly from the dialog data.
+   */
+
+  readonly isEditing: boolean;
+
 
   // ==========================================================
   // FORM
@@ -105,24 +113,29 @@ export class AddSubCategory implements OnInit {
         Validators.required
       ],
 
+      nameAr: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(100)
+        ]
+      ],
+
       nameEn: [
         '',
         [
-          Validators.required
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(100)
         ]
-      ],
-       nameAr: [
-        '',
-        [
-          Validators.required
-        ]
-      ],
+      ]
 
     });
 
 
   // ==========================================================
-  // CONSTRUCTOR DATA
+  // CONSTRUCTOR
   // ==========================================================
 
   constructor(
@@ -132,45 +145,47 @@ export class AddSubCategory implements OnInit {
     public readonly data:
       AddSubCategoryDialogData
 
-  ) {}
+  ) {
+
+    this.isEditing =
+      data?.isEditing ?? false;
+
+  }
 
 
-  // ==========================================================
-  // COMPUTED-STYLE GETTERS
-  // ==========================================================
-
-   isEditing=signal(false)
-     
-  
   // ==========================================================
   // INIT
   // ==========================================================
 
   ngOnInit(): void {
-this.isEditing.set(this.data?.isEditing)
+
     const subcategory =
       this.data?.subcategory;
 
+
+    /*
+     * ADD MODE
+     */
 
     if (!subcategory) {
       return;
     }
 
 
-    // ========================================================
-    // EDIT MODE
-    // ========================================================
+    /*
+     * EDIT MODE
+     */
 
     this.form.patchValue({
 
       categoryId:
         subcategory.categoryId ?? null,
 
-      nameEn:
-        subcategory.nameEn ?? '',
-nameAr:
+      nameAr:
         subcategory.nameAr ?? '',
-     
+
+      nameEn:
+        subcategory.nameEn ?? ''
 
     });
 
@@ -183,18 +198,18 @@ nameAr:
 
   save(): void {
 
-    // --------------------------------------------------------
-    // PREVENT DUPLICATE SUBMISSION
-    // --------------------------------------------------------
+    /*
+     * Prevent duplicate submission
+     */
 
     if (this.saving()) {
       return;
     }
 
 
-    // --------------------------------------------------------
-    // VALIDATION
-    // --------------------------------------------------------
+    /*
+     * Validate form
+     */
 
     if (this.form.invalid) {
 
@@ -204,42 +219,42 @@ nameAr:
     }
 
 
-    // --------------------------------------------------------
-    // START SAVING
-    // --------------------------------------------------------
+    /*
+     * Start saving
+     */
 
     this.saving.set(true);
 
 
-    // --------------------------------------------------------
-    // FORM VALUE
-    // --------------------------------------------------------
+    /*
+     * Get form values
+     */
 
     const value =
       this.form.getRawValue();
 
 
-    // --------------------------------------------------------
-    // PAYLOAD
-    // --------------------------------------------------------
+    /*
+     * Build payload
+     */
 
     const payload = {
 
       categoryId:
         Number(value.categoryId),
 
-      nameEn:
-        value.nameEn?.trim() ?? '',
- nameAr:
+      nameAr:
         value.nameAr?.trim() ?? '',
-     
+
+      nameEn:
+        value.nameEn?.trim() ?? ''
 
     };
 
 
-    // --------------------------------------------------------
-    // RETURN TO PARENT
-    // --------------------------------------------------------
+    /*
+     * Return data to parent
+     */
 
     this.dialogRef.close({
 

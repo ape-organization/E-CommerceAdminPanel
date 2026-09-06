@@ -1,10 +1,6 @@
-/* =========================================================
-   SUBCATEGORY MODAL
-   ========================================================= */
-
 
 /* =========================================================
-   OVERLAY
+   MODAL OVERLAY
    ========================================================= */
 
 .modal-overlay {
@@ -34,12 +30,14 @@
   z-index: 1100;
 
   animation:
-    overlay-fade 0.25s ease;
+    overlay-fade
+    0.25s
+    ease;
 }
 
 
 /* =========================================================
-   MODAL
+   MODAL CONTAINER
    ========================================================= */
 
 .modal-container {
@@ -68,7 +66,9 @@
     var(--shadow-lg);
 
   animation:
-    modal-slide-in 0.3s ease-out;
+    modal-slide-in
+    0.3s
+    ease-out;
 }
 
 
@@ -102,6 +102,14 @@
   align-items: center;
 
   gap: 12px;
+
+  min-width: 0;
+}
+
+
+.header-text {
+
+  min-width: 0;
 }
 
 
@@ -115,6 +123,7 @@
   display: flex;
 
   align-items: center;
+
   justify-content: center;
 
   border-radius:
@@ -141,6 +150,10 @@
 }
 
 
+/* =========================================================
+   HEADER TITLE
+   ========================================================= */
+
 .modal-header h2 {
 
   margin: 0;
@@ -162,21 +175,8 @@
 }
 
 
-.modal-header p {
-
-  margin:
-    3px 0 0;
-
-  color:
-    var(--color-text-secondary);
-
-  font-size:
-    0.72rem;
-}
-
-
 /* =========================================================
-   CLOSE
+   CLOSE BUTTON
    ========================================================= */
 
 .close-button {
@@ -204,7 +204,8 @@
 
 .close-button:disabled {
 
-  opacity: 0.5;
+  opacity:
+    0.5;
 }
 
 
@@ -219,126 +220,433 @@ form {
 }
 
 
+/* =========================================================
+   FORM CONTENT
+   ========================================================= */
+
 .form-content {
 
-  display: flex;
+  display:
+    flex;
 
-  flex-direction: column;
+  flex-direction:
+    column;
 
-  gap: 16px;
+  gap:
+    18px;
 }
 
 
 /* =========================================================
-   MATERIAL FORM FIELDS
+   FORM GROUP
    ========================================================= */
 
-::ng-deep
-.mat-mdc-form-field {
+.form-group {
 
-  width: 100%;
+  width:
+    100%;
 }
 
-
-::ng-deep
-.mat-mdc-form-field
-.mat-mdc-form-field-icon-prefix {
-
-  color:
-    var(--color-text-secondary);
-}
-
-
-::ng-deep
-.mat-mdc-form-field.mat-focused
-.mdc-notched-outline__leading,
-
-::ng-deep
-.mat-mdc-form-field.mat-focused
-.mdc-notched-outline__notch,
-
-::ng-deep
-.mat-mdc-form-field.mat-focused
-.mdc-notched-outline__trailing {
-
-  border-color:
-    var(--color-accent) !important;
-}
-
-
-::ng-deep
-.mat-mdc-form-field.mat-focused
-.mat-mdc-floating-label {
-
-  color:
-    var(--color-accent) !important;
-}
-/* =========================================
-   MATERIAL INPUT TEXT SPACING
-   ========================================= */
-
-::ng-deep .mat-mdc-form-field .mat-mdc-text-field-wrapper {
-  padding-inline: 8px !important;
-}
-
-::ng-deep .mat-mdc-form-field .mat-mdc-form-field-infix {
-  padding-inline: 4px !important;
-}
-
-::ng-deep .mat-mdc-form-field .mat-mdc-input-element {
-  padding-inline: 0 !important;
-}
 
 /* =========================================================
-   INPUT / SELECT
+   FORM LABEL
    ========================================================= */
 
-::ng-deep
-.mat-mdc-input-element {
+.form-label {
+
+  display:
+    block;
+
+  margin-bottom:
+    7px;
 
   color:
     var(--color-text);
+
+  font-size:
+    0.78rem;
+
+  font-weight:
+    600;
+
+  line-height:
+    1.3;
+
+  text-align:
+    start;
 }
 
 
-::ng-deep
-.mat-mdc-select {
+/* =========================================================
+   REQUIRED
+   ========================================================= */
+
+.required {
+
+  margin-inline-start:
+    3px;
+
+  color:
+    var(--color-error);
+}
+
+
+/* =========================================================
+   NORMAL INPUT
+   ========================================================= */
+
+.form-input {
+
+  display:
+    block;
+
+  width:
+    100%;
+
+  min-height:
+    46px;
+
+  padding:
+    0 13px;
+
+  border:
+    1px solid
+    var(--color-border);
+
+  border-radius:
+    var(--radius-md);
+
+  outline:
+    none;
+
+  background:
+    var(--color-surface);
 
   color:
     var(--color-text);
-}
-
-
-::ng-deep
-.mat-mdc-option {
 
   font-family:
     var(--font-body);
+
+  font-size:
+    0.82rem;
+
+  font-weight:
+    400;
+
+  line-height:
+    1.4;
+
+  direction:
+    inherit;
+
+  text-align:
+    start;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
 }
 
 
-::ng-deep
-.mat-mdc-option:hover {
+/* =========================================================
+   INPUT PLACEHOLDER
+   ========================================================= */
 
-  background:
-    var(--color-surface-soft) !important;
-}
-
-
-::ng-deep
-.mat-mdc-option.mdc-list-item--selected {
-
-  background:
-    var(--color-surface-soft) !important;
-}
-
-
-::ng-deep
-.mat-mdc-option.mdc-list-item--selected
-.mdc-list-item__primary-text {
+.form-input::placeholder {
 
   color:
-    var(--color-primary);
+    var(--color-text-light);
+
+  opacity:
+    1;
+}
+
+
+/* =========================================================
+   INPUT FOCUS
+   ========================================================= */
+
+.form-input:focus {
+
+  border-color:
+    var(--color-accent);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(184, 138, 90, 0.12);
+}
+
+
+/* =========================================================
+   INPUT HOVER
+   ========================================================= */
+
+.form-input:hover:not(:focus):not(:disabled) {
+
+  border-color:
+    var(--color-accent-light);
+}
+
+
+/* =========================================================
+   INPUT DISABLED
+   ========================================================= */
+
+.form-input:disabled {
+
+  background:
+    var(--color-surface-soft);
+
+  color:
+    var(--color-text-light);
+
+  cursor:
+    not-allowed;
+
+  opacity:
+    0.7;
+}
+
+
+/* =========================================================
+   SELECT
+   ========================================================= */
+
+.form-select {
+
+  display:
+    block;
+
+  width:
+    100%;
+
+  min-height:
+    46px;
+
+  padding:
+    0 38px 0 13px;
+
+  border:
+    1px solid
+    var(--color-border);
+
+  border-radius:
+    var(--radius-md);
+
+  outline:
+    none;
+
+  background-color:
+    var(--color-surface);
+
+  color:
+    var(--color-text);
+
+  font-family:
+    var(--font-body);
+
+  font-size:
+    0.82rem;
+
+  font-weight:
+    400;
+
+  line-height:
+    1.4;
+
+  direction:
+    inherit;
+
+  text-align:
+    start;
+
+  cursor:
+    pointer;
+
+  appearance:
+    none;
+
+  /*
+   * Down arrow
+   */
+
+  background-image:
+
+    linear-gradient(
+      45deg,
+      transparent 50%,
+      var(--color-text-secondary) 50%
+    ),
+
+    linear-gradient(
+      135deg,
+      var(--color-text-secondary) 50%,
+      transparent 50%
+    );
+
+  background-position:
+
+    calc(100% - 18px) 20px,
+    calc(100% - 13px) 20px;
+
+  background-size:
+    5px 5px,
+    5px 5px;
+
+  background-repeat:
+    no-repeat;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+
+/* =========================================================
+   SELECT FOCUS
+   ========================================================= */
+
+.form-select:focus {
+
+  border-color:
+    var(--color-accent);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(184, 138, 90, 0.12);
+}
+
+
+/* =========================================================
+   SELECT HOVER
+   ========================================================= */
+
+.form-select:hover:not(:focus):not(:disabled) {
+
+  border-color:
+    var(--color-accent-light);
+}
+
+
+/* =========================================================
+   SELECT OPTIONS
+   ========================================================= */
+
+.form-select option {
+
+  background:
+    var(--color-surface);
+
+  color:
+    var(--color-text);
+
+  font-family:
+    var(--font-body);
+
+  font-size:
+    0.82rem;
+}
+
+
+/* =========================================================
+   RTL SELECT
+   ========================================================= */
+
+html[dir="rtl"] .form-select {
+
+  padding-inline-start:
+    38px;
+
+  padding-inline-end:
+    13px;
+
+  background-position:
+
+    13px 20px,
+    18px 20px;
+}
+
+
+/* =========================================================
+   RTL INPUTS
+   ========================================================= */
+
+html[dir="rtl"] .form-input,
+html[dir="rtl"] .form-select {
+
+  text-align:
+    right;
+}
+
+
+/* =========================================================
+   LTR INPUTS
+   ========================================================= */
+
+html[dir="ltr"] .form-input,
+html[dir="ltr"] .form-select {
+
+  text-align:
+    left;
+}
+
+
+/* =========================================================
+   FORM ROW
+   ========================================================= */
+
+.form-row {
+
+  display:
+    grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:
+    16px;
+}
+
+
+/* =========================================================
+   VALIDATION ERROR
+   ========================================================= */
+
+.form-input.ng-invalid.ng-touched,
+.form-select.ng-invalid.ng-touched {
+
+  border-color:
+    var(--color-error);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(166, 93, 77, 0.10);
+}
+
+
+/* =========================================================
+   ERROR MESSAGE
+   ========================================================= */
+
+.form-error {
+
+  margin-top:
+    5px;
+
+  color:
+    var(--color-error);
+
+  font-size:
+    0.65rem;
+
+  line-height:
+    1.4;
+
+  text-align:
+    start;
 }
 
 
@@ -348,17 +656,23 @@ form {
 
 .modal-actions {
 
-  display: flex;
+  display:
+    flex;
 
-  align-items: center;
+  align-items:
+    center;
 
-  justify-content: flex-end;
+  justify-content:
+    flex-end;
 
-  gap: 10px;
+  gap:
+    10px;
 
-  margin-top: 8px;
+  margin-top:
+    24px;
 
-  padding-top: 20px;
+  padding-top:
+    20px;
 
   border-top:
     1px solid
@@ -368,9 +682,11 @@ form {
 
 .modal-actions button {
 
-  min-width: 110px;
+  min-width:
+    110px;
 
-  height: 42px;
+  height:
+    42px;
 
   border-radius:
     var(--radius-sm);
@@ -378,7 +694,8 @@ form {
   font-size:
     0.72rem;
 
-  font-weight: 700;
+  font-weight:
+    700;
 
   letter-spacing:
     0.3px;
@@ -386,7 +703,7 @@ form {
 
 
 /* =========================================================
-   CANCEL
+   CANCEL BUTTON
    ========================================================= */
 
 .cancel-button {
@@ -411,7 +728,7 @@ form {
 
 
 /* =========================================================
-   SUBMIT
+   SUBMIT BUTTON
    ========================================================= */
 
 .submit-button {
@@ -419,13 +736,17 @@ form {
   min-width:
     155px !important;
 
-  display: flex;
+  display:
+    flex;
 
-  align-items: center;
+  align-items:
+    center;
 
-  justify-content: center;
+  justify-content:
+    center;
 
-  gap: 5px;
+  gap:
+    5px;
 
   background:
     var(--color-primary) !important;
@@ -445,10 +766,14 @@ form {
 
 .submit-button mat-icon {
 
-  width: 18px;
-  height: 18px;
+  width:
+    18px;
 
-  font-size: 18px;
+  height:
+    18px;
+
+  font-size:
+    18px;
 
   color:
     var(--color-accent-light);
@@ -485,11 +810,15 @@ form {
 @keyframes overlay-fade {
 
   from {
-    opacity: 0;
+
+    opacity:
+      0;
   }
 
   to {
-    opacity: 1;
+
+    opacity:
+      1;
   }
 }
 
@@ -498,7 +827,8 @@ form {
 
   from {
 
-    opacity: 0;
+    opacity:
+      0;
 
     transform:
       translateY(-25px)
@@ -507,7 +837,8 @@ form {
 
   to {
 
-    opacity: 1;
+    opacity:
+      1;
 
     transform:
       translateY(0)
@@ -520,7 +851,7 @@ form {
    MOBILE
    ========================================================= */
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
 
   .modal-overlay {
 
@@ -553,10 +884,23 @@ form {
   }
 
 
+  .form-row {
+
+    grid-template-columns:
+      1fr;
+
+    gap:
+      16px;
+  }
+
+
   .title-icon {
 
-    width: 38px;
-    height: 38px;
+    width:
+      38px;
+
+    height:
+      38px;
   }
 
 
@@ -564,13 +908,6 @@ form {
 
     font-size:
       1rem;
-  }
-
-
-  .modal-header p {
-
-    font-size:
-      0.65rem;
   }
 
 
@@ -590,6 +927,15 @@ form {
       100%;
   }
 
+
+  .form-input,
+  .form-select {
+
+    min-height:
+      44px;
+
+    font-size:
+      0.78rem;
+  }
+
 }
-.icon{padding: 10px;}
-.error{color: var(--color-error);}

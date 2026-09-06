@@ -1,7 +1,7 @@
-
 <div class="modal-overlay">
 
   <div class="modal-container">
+
 
     <!-- =====================================================
          HEADER
@@ -23,17 +23,14 @@
         <div>
 
           <h2>
-          
-            {{
-            isEditing()
-              ? ('categories.addCategory' | translate)
-              : ('categories.editCategory' | translate)
-          }}
-          </h2>
 
-       <!--    <p>
-            {{ dialogDescription() }}
-          </p> -->
+            {{
+              isEditing()
+                ? ('categories.editCategory' | translate)
+                : ('categories.addCategory' | translate)
+            }}
+
+          </h2>
 
         </div>
 
@@ -44,9 +41,14 @@
         mat-icon-button
         type="button"
         class="close-button"
+
         (click)="onCancel()"
+
         [disabled]="isSubmitting()"
-        [attr.aria-label]="'common.close' | translate"
+
+        [attr.aria-label]="
+          'common.close' | translate
+        "
       >
 
         <mat-icon>
@@ -65,6 +67,7 @@
     <form
       [formGroup]="categoryForm"
       (ngSubmit)="onSubmit()"
+      novalidate
     >
 
       <div class="form-content">
@@ -78,17 +81,27 @@
 
           <div
             class="image-preview-wrapper"
+
             (click)="fileInput.click()"
+
+            role="button"
+            tabindex="0"
+
+            (keydown.enter)="fileInput.click()"
+            (keydown.space)="fileInput.click()"
           >
+
 
             @if (imagePreview()) {
 
               <img
                 [src]="imagePreview()"
+
                 [alt]="
-                  categoryForm.get('name')?.value ||
+                  categoryForm.get('nameEn')?.value ||
                   ('categories.categoryImage' | translate)
                 "
+
                 class="category-image-preview"
               />
 
@@ -129,9 +142,13 @@
 
           <input
             #fileInput
+
             type="file"
+
             accept="image/*"
+
             hidden
+
             (change)="onImageSelected($event)"
           />
 
@@ -139,67 +156,113 @@
 
 
         <!-- =================================================
-             CATEGORY NAME
+             ARABIC NAME
              ================================================= -->
 
-        <mat-form-field
-          appearance="outline"
-        >
+        <div class="form-group">
 
-         <mat-label>
+          <label
+            for="categoryNameAr"
+            class="form-label"
+          >
+
             {{ 'brands.nameAr' | translate }}
-          </mat-label>
+
+            <span class="required">
+              *
+            </span>
+
+          </label>
+
 
           <input
-            matInput
+            id="categoryNameAr"
+
+            type="text"
+
+            class="form-input"
+
             formControlName="nameAr"
-            [placeholder]="'categories.nameArPlaceholder' | translate"
+
+            [placeholder]="
+              'categories.nameArPlaceholder'
+                | translate
+            "
+
+            autocomplete="off"
           />
 
 
           @if (
-            categoryForm
-              .get('nameAr')
-              ?.hasError('required')
+            categoryForm.controls['nameAr'].hasError('required') &&
+            categoryForm.controls['nameAr'].touched
           ) {
 
-            <mat-error class="error">
+            <div class="form-error">
+
               {{ 'categories.nameArRequired' | translate }}
-            </mat-error>
+
+            </div>
 
           }
 
-        </mat-form-field>
- <mat-form-field
-          appearance="outline"
-        >
+        </div>
 
-          <mat-label>
+
+        <!-- =================================================
+             ENGLISH NAME
+             ================================================= -->
+
+        <div class="form-group">
+
+          <label
+            for="categoryNameEn"
+            class="form-label"
+          >
+
             {{ 'brands.nameEn' | translate }}
-          </mat-label>
+
+            <span class="required">
+              *
+            </span>
+
+          </label>
+
 
           <input
-            matInput
+            id="categoryNameEn"
+
+            type="text"
+
+            class="form-input"
+
             formControlName="nameEn"
-            [placeholder]="'categories.nameEnPlaceholder' | translate"
+
+            [placeholder]="
+              'categories.nameEnPlaceholder'
+                | translate
+            "
+
+            autocomplete="off"
           />
 
 
           @if (
-            categoryForm
-              .get('nameEn')
-              ?.hasError('required')
+            categoryForm.controls['nameEn'].hasError('required') &&
+            categoryForm.controls['nameEn'].touched
           ) {
 
-            <mat-error class="error">
+            <div class="form-error">
+
               {{ 'categories.nameEnRequired' | translate }}
-            </mat-error>
+
+            </div>
 
           }
 
-        </mat-form-field>
+        </div>
 
-     
+
         <!-- =================================================
              ERROR
              ================================================= -->
@@ -229,11 +292,16 @@
 
       <div class="modal-actions">
 
+
         <button
           mat-button
+
           type="button"
+
           class="cancel-button"
+
           (click)="onCancel()"
+
           [disabled]="isSubmitting()"
         >
 
@@ -244,24 +312,28 @@
 
         <button
           mat-raised-button
+
           type="submit"
+
           class="submit-button"
+
           [disabled]="
             categoryForm.invalid ||
             isSubmitting()
           "
         >
 
-          <mat-icon>
+        <!--   <mat-icon>
             save
-          </mat-icon>
+          </mat-icon> -->
 
-         
-  {{
+
+          {{
             isEditing()
-              ? ('categories.addCategory' | translate)
-              : ('categories.editCategory' | translate)
+              ? ('categories.editCategory' | translate)
+              : ('categories.addCategory' | translate)
           }}
+
         </button>
 
       </div>

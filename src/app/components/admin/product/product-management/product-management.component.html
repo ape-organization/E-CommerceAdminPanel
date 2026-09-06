@@ -472,8 +472,33 @@
         <!-- ================================================== -->
         <!-- PRICE -->
         <!-- ================================================== -->
+ <ng-container matColumnDef="price">
 
-        <ng-container matColumnDef="price">
+          <th
+            mat-header-cell
+            *matHeaderCellDef>
+
+            {{ 'products.actualPrice' | translate }}
+
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let product"
+            class="price-cell">
+
+              <span class="normal-price">
+
+                {{ product.actualPrice | number:'1.2-2' }}
+
+                {{ 'common.egp' | translate }}
+
+              </span>
+
+          </td>
+
+        </ng-container>
+        <ng-container matColumnDef="sellingPrice">
 
           <th
             mat-header-cell
@@ -768,22 +793,46 @@
       <!-- PAGINATOR -->
       <!-- ==================================================== -->
 
-      <mat-paginator
-        [length]="
-          isLocalFiltering() ||
-          isSearchMode()
-            ? filteredProducts().length
-            : totalCount()
-        "
-        [pageSize]="pageSize()"
-        [pageIndex]="pageIndex()"
-        [pageSizeOptions]="[10, 25, 50, 100]"
-        showFirstLastButtons
-        (page)="onPageChange($event)">
-      </mat-paginator>
+   <mat-paginator
+  [length]="filteredProducts().length"
+  [pageSize]="pageSize()"
+  [pageIndex]="pageIndex()"
+  [pageSizeOptions]="[10, 25, 50, 100]"
+  showFirstLastButtons
+  (page)="onPageChange($event)">
+</mat-paginator>
 
     </div>
 
   }
+@if (hasMore()) {
 
+  <div class="load-more-wrapper">
+
+    <button
+      mat-raised-button
+      class="add-product-btn"
+      type="button"
+      (click)="loadNextPage()"
+      [disabled]="isLoading()">
+
+      @if (isLoading()) {
+
+        <mat-spinner diameter="18"></mat-spinner>
+
+      } @else {
+
+        <mat-icon>
+          expand_more
+        </mat-icon>
+
+      }
+
+      {{ 'products.loadMore' | translate }}
+
+    </button>
+
+  </div>
+
+}
 </div>

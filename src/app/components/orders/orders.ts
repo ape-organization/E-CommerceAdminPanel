@@ -169,7 +169,7 @@ private readonly dialog=inject(MatDialog);
       .subscribe({
 
         next: (orders) => {
-
+console.log(orders)
           const result =
             Array.isArray(orders)
               ? orders

@@ -6,20 +6,41 @@ import {
 } from '@angular/core';
 
 import {
+  CommonModule
+} from '@angular/common';
+
+import {
   FormBuilder,
   FormGroup,
+  ReactiveFormsModule,
   Validators
 } from '@angular/forms';
 
 import {
   MAT_DIALOG_DATA,
+  MatDialogModule,
   MatDialogRef
 } from '@angular/material/dialog';
 
-import { SharedModule } from '../../../../shared/shared.module';
-import { UserService } from '../../../../services/user.service';
-import { User } from '../../../../models/user.model';
-import { TranslatePipe } from '@ngx-translate/core';
+import {
+  MatButtonModule
+} from '@angular/material/button';
+
+import {
+  MatIconModule
+} from '@angular/material/icon';
+
+import {
+  UserService
+} from '../../../../services/user.service';
+
+import {
+  User
+} from '../../../../models/user.model';
+
+import {
+  TranslatePipe
+} from '@ngx-translate/core';
 
 
 interface AddUserDialogData {
@@ -31,26 +52,42 @@ interface AddUserDialogData {
 @Component({
   selector: 'app-add-user',
   standalone: true,
-  imports: [SharedModule,TranslatePipe],
+
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+    TranslatePipe
+  ],
+
   templateUrl: './add-user.component.html',
   styleUrl: './add-user.component.scss'
 })
 export class AddUserComponent implements OnInit {
 
   private readonly fb = inject(FormBuilder);
+
   private readonly userService = inject(UserService);
+
 
   userForm!: FormGroup;
 
+
   editUser: User | null = null;
 
+
   hidePassword = true;
+
 
   errorMessage = '';
 
 
   constructor(
-    private readonly dialogRef: MatDialogRef<AddUserComponent>,
+    private readonly dialogRef:
+      MatDialogRef<AddUserComponent>,
+
     @Inject(MAT_DIALOG_DATA)
     public readonly data: AddUserDialogData
   ) {}
@@ -58,13 +95,29 @@ export class AddUserComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.editUser = this.data.user ?? null;
+    /*
+     * =========================================
+     * Existing user when editing
+     * =========================================
+     */
+
+    this.editUser =
+      this.data.user ?? null;
+
+
+    /*
+     * =========================================
+     * Form
+     * =========================================
+     */
 
     this.userForm = this.fb.group({
+
       name: [
         this.editUser?.name ?? '',
         Validators.required
       ],
+
 
       email: [
         this.editUser?.email ?? '',
@@ -74,8 +127,10 @@ export class AddUserComponent implements OnInit {
         ]
       ],
 
+
       password: [
         '',
+
         this.editUser
           ? []
           : [
@@ -84,47 +139,86 @@ export class AddUserComponent implements OnInit {
             ]
       ],
 
-      role: [
-        this.editUser?.role ?? 'Admin',
-        this.editUser
-          ? []
-          : Validators.required
-      ]
+
+   role: [
+  {
+    value: this.editUser?.role ?? 'Admin',
+    disabled: true
+  }
+]
+
     });
   }
 
 
   onSubmit(): void {
 
+    /*
+     * =========================================
+     * Validate
+     * =========================================
+     */
+
     if (this.userForm.invalid) {
+
       this.userForm.markAllAsTouched();
+
       return;
     }
+
+
+    /*
+     * =========================================
+     * Build request
+     * =========================================
+     */
 
     const userData = {
       ...this.editUser,
       ...this.userForm.value
     };
 
+
+    /*
+     * =========================================
+     * Add / Update
+     * =========================================
+     */
+
     const request = this.data.add
+
       ? this.userService.addUser(userData)
+
       : this.userService.updateUser(
           userData.id,
           userData
         );
 
+
+    /*
+     * =========================================
+     * Request
+     * =========================================
+     */
+
     request.subscribe({
+
       next: response => {
 
         if (!response) {
-          this.errorMessage = 'Something went wrong.';
+
+          this.errorMessage =
+            'Something went wrong.';
+
           return;
         }
+
 
         this.dialogRef.close({
           status: true
         });
       },
+
 
       error: error => {
 
@@ -133,10 +227,11 @@ export class AddUserComponent implements OnInit {
           error
         );
 
+
         this.errorMessage =
-          error?.error?.message ||
           'Something went wrong.';
       }
+
     });
   }
 

@@ -1,6 +1,5 @@
 /* =========================================================
    CATEGORY MODAL
-   Uses GLOBAL APPLICATION VARIABLES
    ========================================================= */
 
 
@@ -9,9 +8,7 @@
    ========================================================= */
 
 .modal-overlay {
-
   position: fixed;
-
   inset: 0;
 
   width: 100%;
@@ -36,7 +33,6 @@
 
   animation:
     overlay-fade 0.25s ease;
-
 }
 
 
@@ -45,7 +41,6 @@
    ========================================================= */
 
 .modal-container {
-
   width: 100%;
 
   max-width: 500px;
@@ -71,7 +66,6 @@
 
   animation:
     modal-slide-in 0.3s ease-out;
-
 }
 
 
@@ -80,7 +74,6 @@
    ========================================================= */
 
 .modal-header {
-
   display: flex;
 
   align-items: center;
@@ -94,23 +87,21 @@
   border-bottom:
     1px solid
     var(--color-border);
-
 }
 
 
 .header-title {
-
   display: flex;
 
   align-items: center;
 
   gap: 12px;
 
+  min-width: 0;
 }
 
 
 .title-icon {
-
   width: 42px;
   height: 42px;
 
@@ -133,22 +124,18 @@
 
   color:
     var(--color-accent);
-
 }
 
 
 .title-icon mat-icon {
-
   width: 21px;
   height: 21px;
 
   font-size: 21px;
-
 }
 
 
 .modal-header h2 {
-
   margin: 0;
 
   color:
@@ -165,21 +152,6 @@
 
   line-height:
     1.3;
-
-}
-
-
-.modal-header p {
-
-  margin:
-    3px 0 0;
-
-  color:
-    var(--color-text-secondary);
-
-  font-size:
-    0.72rem;
-
 }
 
 
@@ -188,7 +160,6 @@
    ========================================================= */
 
 .close-button {
-
   flex-shrink: 0;
 
   color:
@@ -197,26 +168,21 @@
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
-
 }
 
 
-.close-button:hover {
-
+.close-button:hover:not(:disabled) {
   color:
     var(--color-primary);
 
   background:
     rgba(58, 39, 33, 0.06);
-
 }
 
 
 .close-button:disabled {
-
   opacity:
     0.5;
-
 }
 
 
@@ -225,47 +191,182 @@
    ========================================================= */
 
 form {
-
   padding:
     24px;
-
 }
 
 
 .form-content {
-
   display: flex;
 
   flex-direction: column;
 
   gap:
     16px;
-
 }
 
-.icon{padding-right: 10px;}
-/* =========================================
-   MATERIAL INPUT TEXT SPACING
-   ========================================= */
 
-::ng-deep .mat-mdc-form-field .mat-mdc-text-field-wrapper {
-  padding-inline: 8px !important;
+/* =========================================================
+   NORMAL FORM CONTROLS
+   ========================================================= */
+
+.form-group {
+  width: 100%;
 }
 
-::ng-deep .mat-mdc-form-field .mat-mdc-form-field-infix {
-  padding-inline: 4px !important;
+
+.form-label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color:
+    var(--color-text);
+
+  font-size:
+    0.78rem;
+
+  font-weight:
+    600;
+
+  line-height:
+    1.3;
+
+  text-align: start;
 }
 
-::ng-deep .mat-mdc-form-field .mat-mdc-input-element {
-  padding-inline: 0 !important;
+
+.form-label .required {
+  margin-inline-start: 3px;
+
+  color:
+    var(--color-error);
 }
+
+
+.form-input {
+  display: block;
+
+  width: 100%;
+
+  min-height: 46px;
+
+  padding:
+    0 13px;
+
+  box-sizing: border-box;
+
+  border:
+    1px solid
+    var(--color-border);
+
+  border-radius:
+    var(--radius-md);
+
+  outline: none;
+
+  background:
+    var(--color-surface);
+
+  color:
+    var(--color-text);
+
+  font-family:
+    var(--font-body);
+
+  font-size:
+    0.82rem;
+
+  font-weight:
+    400;
+
+  line-height:
+    1.4;
+
+  direction:
+    inherit;
+
+  text-align:
+    start;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+
+.form-input::placeholder {
+  color:
+    var(--color-text-light);
+
+  opacity: 1;
+}
+
+
+.form-input:focus {
+  border-color:
+    var(--color-accent);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(184, 138, 90, 0.12);
+}
+
+
+.form-input:hover:not(:focus):not(:disabled) {
+  border-color:
+    var(--color-accent-light);
+}
+
+
+.form-input:disabled {
+  background:
+    var(--color-surface-soft);
+
+  color:
+    var(--color-text-light);
+
+  cursor:
+    not-allowed;
+
+  opacity:
+    0.7;
+}
+
+
+.form-input.ng-invalid.ng-touched {
+  border-color:
+    var(--color-error);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(166, 93, 77, 0.10);
+}
+
+
+.form-error {
+  margin-top: 5px;
+
+  color:
+    var(--color-error);
+
+  font-size:
+    0.65rem;
+
+  line-height:
+    1.4;
+
+  text-align:
+    start;
+}
+
 
 /* =========================================================
    IMAGE UPLOAD
    ========================================================= */
 
 .image-upload-section {
-
   display: flex;
 
   align-items: center;
@@ -286,7 +387,6 @@ form {
 
   border-radius:
     var(--radius-md);
-
 }
 
 
@@ -295,7 +395,6 @@ form {
    ========================================================= */
 
 .image-preview-wrapper {
-
   position: relative;
 
   width:
@@ -317,7 +416,7 @@ form {
     var(--radius-md);
 
   background:
-    var(--color-surface-muted);
+    var(--color-surface-soft);
 
   border:
     1px solid
@@ -326,11 +425,18 @@ form {
   cursor:
     pointer;
 
+  outline: none;
+}
+
+
+.image-preview-wrapper:focus-visible {
+  box-shadow:
+    0 0 0 3px
+    rgba(184, 138, 90, 0.18);
 }
 
 
 .category-image-preview {
-
   width:
     100%;
 
@@ -342,7 +448,6 @@ form {
 
   object-fit:
     cover;
-
 }
 
 
@@ -351,31 +456,33 @@ form {
    ========================================================= */
 
 .image-placeholder {
-
   width:
     100%;
 
   height:
     100%;
 
-  display: flex;
+  display:
+    flex;
 
-  flex-direction: column;
+  flex-direction:
+    column;
 
-  align-items: center;
-  justify-content: center;
+  align-items:
+    center;
+
+  justify-content:
+    center;
 
   gap:
     6px;
 
   color:
     var(--color-text-secondary);
-
 }
 
 
 .image-placeholder mat-icon {
-
   width:
     30px;
 
@@ -387,18 +494,18 @@ form {
 
   color:
     var(--color-accent);
-
 }
 
 
 .image-placeholder span {
-
   font-size:
     0.68rem;
 
   font-weight:
     600;
 
+  text-align:
+    center;
 }
 
 
@@ -407,7 +514,6 @@ form {
    ========================================================= */
 
 .image-hover-overlay {
-
   position: absolute;
 
   inset: 0;
@@ -433,143 +539,34 @@ form {
 
   transition:
     opacity 0.2s ease;
-
 }
 
 
 .image-hover-overlay mat-icon {
-
   color:
     var(--color-accent-light);
-
 }
 
 
 .image-hover-overlay span {
-
   font-size:
     0.65rem;
 
   font-weight:
     600;
 
+  text-align:
+    center;
 }
 
 
 .image-preview-wrapper:hover
-.image-hover-overlay {
+.image-hover-overlay,
 
+.image-preview-wrapper:focus
+.image-hover-overlay {
   opacity:
     1;
-
-}
-
-
-/* =========================================================
-   IMAGE INFORMATION
-   ========================================================= */
-
-.image-upload-info {
-
-  display: flex;
-
-  flex-direction: column;
-
-  align-items: flex-start;
-
-  gap:
-    4px;
-
-}
-
-
-.image-title {
-
-  color:
-    var(--color-primary);
-
-  font-size:
-    0.82rem;
-
-  font-weight:
-    700;
-
-}
-
-
-.image-description {
-
-  color:
-    var(--color-text-secondary);
-
-  font-size:
-    0.68rem;
-
-  line-height:
-    1.4;
-
-}
-
-
-.image-format {
-
-  color:
-    var(--color-text-muted);
-
-  font-size:
-    0.62rem;
-
-}
-
-
-/* =========================================================
-   MATERIAL FORM FIELDS
-   ========================================================= */
-
-::ng-deep
-.mat-mdc-form-field {
-
-  width:
-    100%;
-
-}
-
-
-::ng-deep
-.mat-mdc-form-field
-.mat-mdc-form-field-icon-prefix {
-
-  color:
-    var(--color-text-secondary);
-
-}
-
-
-::ng-deep
-.mat-mdc-form-field.mat-focused
-.mdc-notched-outline__leading,
-
-::ng-deep
-.mat-mdc-form-field.mat-focused
-.mdc-notched-outline__notch,
-
-::ng-deep
-.mat-mdc-form-field.mat-focused
-.mdc-notched-outline__trailing {
-
-  border-color:
-    var(--color-accent) !important;
-
-}
-
-
-::ng-deep
-.mat-mdc-form-field.mat-focused
-.mat-mdc-floating-label {
-
-  color:
-    var(--color-accent) !important;
-
 }
 
 
@@ -578,7 +575,6 @@ form {
    ========================================================= */
 
 .error-message {
-
   display: flex;
 
   align-items: center;
@@ -605,11 +601,15 @@ form {
   font-size:
     0.72rem;
 
+  line-height:
+    1.4;
+
+  text-align:
+    start;
 }
 
 
 .error-message mat-icon {
-
   width:
     18px;
 
@@ -621,7 +621,6 @@ form {
 
   flex-shrink:
     0;
-
 }
 
 
@@ -630,10 +629,10 @@ form {
    ========================================================= */
 
 .modal-actions {
-
   display: flex;
 
   align-items: center;
+
   justify-content: flex-end;
 
   gap:
@@ -648,12 +647,10 @@ form {
   border-top:
     1px solid
     var(--color-border);
-
 }
 
 
 .modal-actions button {
-
   min-width:
     110px;
 
@@ -671,7 +668,6 @@ form {
 
   letter-spacing:
     0.3px;
-
 }
 
 
@@ -680,25 +676,21 @@ form {
    ========================================================= */
 
 .cancel-button {
-
   color:
     var(--color-text-secondary);
 
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
-
 }
 
 
 .cancel-button:hover:not(:disabled) {
-
   background:
     var(--color-surface-soft);
 
   color:
     var(--color-primary);
-
 }
 
 
@@ -707,14 +699,17 @@ form {
    ========================================================= */
 
 .submit-button {
-
   min-width:
     155px !important;
 
-  display: flex;
+  display:
+    flex;
 
-  align-items: center;
-  justify-content: center;
+  align-items:
+    center;
+
+  justify-content:
+    center;
 
   gap:
     5px;
@@ -732,12 +727,10 @@ form {
     background-color 0.2s ease,
     transform 0.2s ease,
     box-shadow 0.2s ease;
-
 }
 
 
 .submit-button mat-icon {
-
   width:
     18px;
 
@@ -749,12 +742,10 @@ form {
 
   color:
     var(--color-accent-light);
-
 }
 
 
 .submit-button:not(:disabled):hover {
-
   background:
     var(--color-primary-light) !important;
 
@@ -763,18 +754,31 @@ form {
 
   box-shadow:
     var(--shadow-md);
-
 }
 
 
 .submit-button:disabled {
-
   opacity:
     0.5;
 
   box-shadow:
     none;
+}
 
+
+/* =========================================================
+   RTL / LTR
+   ========================================================= */
+
+[dir="rtl"] .form-input {
+  text-align:
+    right;
+}
+
+
+[dir="ltr"] .form-input {
+  text-align:
+    left;
 }
 
 
@@ -785,11 +789,13 @@ form {
 @keyframes overlay-fade {
 
   from {
-    opacity: 0;
+    opacity:
+      0;
   }
 
   to {
-    opacity: 1;
+    opacity:
+      1;
   }
 
 }
@@ -799,7 +805,8 @@ form {
 
   from {
 
-    opacity: 0;
+    opacity:
+      0;
 
     transform:
       translateY(-25px)
@@ -809,7 +816,8 @@ form {
 
   to {
 
-    opacity: 1;
+    opacity:
+      1;
 
     transform:
       translateY(0)
@@ -827,10 +835,8 @@ form {
 @media (max-width: 500px) {
 
   .modal-overlay {
-
     padding:
       12px;
-
   }
 
 
@@ -876,14 +882,6 @@ form {
 
     font-size:
       1rem;
-
-  }
-
-
-  .modal-header p {
-
-    font-size:
-      0.65rem;
 
   }
 
@@ -936,8 +934,4 @@ form {
 
   }
 
-}
-.error
-{
-  color: var(--color-error);
 }

@@ -2,301 +2,339 @@
 
   <div class="modal-container">
 
-    <!-- ========================================= -->
-    <!-- HEADER -->
-    <!-- ========================================= -->
 
-    <div class="modal-header">
-
-      <div class="header-title">
-
-        <div class="title-icon">
-          <mat-icon>verified</mat-icon>
-        </div>
-
-        <div>
-
-          <h2>
-            {{
-              data.add
-                ? ('brands.addNewBrand' | translate)
-                : ('brands.editBrand' | translate)
-            }}
-          </h2>
-
-         <!--  <p>
-            {{
-              data.add
-                ? ('brands.addBrandDescription' | translate)
-                : ('brands.editBrandDescription' | translate)
-            }}
-          </p> -->
-
-        </div>
-
-      </div>
-
-
-      <!-- CLOSE -->
-      <button
-        mat-icon-button
-        type="button"
-        class="close-button"
-        (click)="onCancel()"
-        [attr.aria-label]="'common.close' | translate">
-
-        <mat-icon>
-          close
-        </mat-icon>
-
-      </button>
-
-    </div>
-
-
-    <!-- ========================================= -->
-    <!-- FORM -->
-    <!-- ========================================= -->
-
-    <form
-      [formGroup]="brandForm"
-      (ngSubmit)="onSubmit()">
-
-      <div class="form-content">
-
-
-        <!-- ===================================== -->
-        <!-- IMAGE -->
-        <!-- ===================================== -->
-
-       <!-- ========================================= -->
-<!-- IMAGE UPLOAD -->
+<!-- ========================================= -->
+<!-- HEADER -->
 <!-- ========================================= -->
 
-<div class="image-upload-section">
+<div class="modal-header">
 
-  <!-- IMAGE PREVIEW -->
-  <div
-    class="image-preview-wrapper"
-    (click)="fileInput.click()">
+  <div class="header-title">
 
-    <!-- IMAGE -->
-    <img
-      *ngIf="imagePreview(); else imagePlaceholder"
-      [src]="imagePreview()!"
-      [alt]="
-        languageService.currentLanguage() === 'ar'
-          ? (brandForm.get('nameAr')?.value || ('brands.brandImage' | translate))
-          : (brandForm.get('nameEn')?.value || ('brands.brandImage' | translate))
-      "
-      class="brand-image-preview"
-    />
-
-
-    <!-- PLACEHOLDER -->
-    <ng-template #imagePlaceholder>
-
-      <div class="image-placeholder">
-
-        <mat-icon>
-          image
-        </mat-icon>
-
-        <span>
-          {{ 'brands.brandImage' | translate }}
-        </span>
-
-      </div>
-
-    </ng-template>
-
-
-    <!-- HOVER -->
-    <div class="image-hover-overlay">
-
-      <mat-icon>
-        cloud_upload
-      </mat-icon>
-
-      <span>
-        {{ 'brands.changeImage' | translate }}
-      </span>
-
+    <div class="title-icon">
+      <mat-icon>verified</mat-icon>
     </div>
 
+    <div>
 
-    <!-- HIDDEN FILE INPUT -->
-    <input
-      #fileInput
-      type="file"
-      accept="image/*"
-      (change)="onImageSelected($event)"
-      hidden
-    />
+      <h2>
+        {{
+          data.add
+            ? ('brands.addNewBrand' | translate)
+            : ('brands.editBrand' | translate)
+        }}
+      </h2>
+
+    </div>
 
   </div>
 
 
+  <!-- CLOSE -->
+
+  <button
+    mat-icon-button
+    type="button"
+    class="close-button"
+    (click)="onCancel()"
+    [attr.aria-label]="'common.close' | translate">
+
+    <mat-icon>
+      close
+    </mat-icon>
+
+  </button>
 
 </div>
 
 
-        <!-- ===================================== -->
-        <!-- ENGLISH NAME -->
-        <!-- ===================================== -->
+<!-- ========================================= -->
+<!-- FORM -->
+<!-- ========================================= -->
 
-        <mat-form-field
-          appearance="outline">
+<form
+  [formGroup]="brandForm"
+  (ngSubmit)="onSubmit()">
 
-          <mat-label>
-            {{ 'brands.nameEn' | translate }}
-          </mat-label>
+  <div class="form-content">
 
-          <input
-            matInput
-            type="text"
-            formControlName="nameEn"
-            [placeholder]="
-              'brands.nameEnPlaceholder' | translate
+
+    <!-- ===================================== -->
+    <!-- IMAGE UPLOAD -->
+    <!-- ===================================== -->
+
+    <div class="image-upload-section">
+
+      <div
+        class="image-preview-wrapper"
+        role="button"
+        tabindex="0"
+        (click)="fileInput.click()"
+        (keydown.enter)="fileInput.click()"
+        (keydown.space)="fileInput.click()">
+
+        <!-- IMAGE -->
+
+        @if (imagePreview(); as preview) {
+
+          <img
+            [src]="preview"
+            [alt]="
+              languageService.currentLanguage() === 'ar'
+                ? (brandForm.controls['nameAr'].value || ('brands.brandImage' | translate))
+                : (brandForm.controls['nameEn'].value || ('brands.brandImage' | translate))
             "
-            autocomplete="off"
+            class="brand-image-preview"
           />
 
+        }
 
-          <!-- REQUIRED ERROR -->
-          <mat-error
-            *ngIf="
-              brandForm.get('nameEn')?.hasError('required') &&
-              brandForm.get('nameEn')?.touched
-            ">
+        <!-- PLACEHOLDER -->
 
-            {{ 'brands.nameEnRequired' | translate }}
+        @else {
 
-          </mat-error>
+          <div class="image-placeholder">
 
-        </mat-form-field>
+            <mat-icon>
+              image
+            </mat-icon>
 
+            <span>
+              {{ 'brands.brandImage' | translate }}
+            </span>
 
-        <!-- ===================================== -->
-        <!-- ARABIC NAME -->
-        <!-- ===================================== -->
+          </div>
 
-        <mat-form-field
-          appearance="outline"
-         >
-
-          <mat-label>
-            {{ 'brands.nameAr' | translate }}
-          </mat-label>
-
-          <input
-            matInput
-            type="text"
-            formControlName="nameAr"
-            [placeholder]="
-              'brands.nameArPlaceholder' | translate
-            "
-            autocomplete="off"
-          />
+        }
 
 
-          <!-- REQUIRED ERROR -->
-          <mat-error
-            *ngIf="
-              brandForm.get('nameAr')?.hasError('required') &&
-              brandForm.get('nameAr')?.touched
-            ">
+        <!-- HOVER -->
 
-            {{ 'brands.nameArRequired' | translate }}
-
-          </mat-error>
-
-        </mat-form-field>
-
-
-        <!-- ===================================== -->
-        <!-- ERROR MESSAGE -->
-        <!-- ===================================== -->
-
-        <div
-          *ngIf="errorMessage()"
-          class="error-message">
+        <div class="image-hover-overlay">
 
           <mat-icon>
-            error_outline
+            cloud_upload
           </mat-icon>
 
           <span>
-            {{ errorMessage()! | translate }}
+            {{ 'brands.changeImage' | translate }}
           </span>
 
         </div>
 
 
-        <!-- ===================================== -->
-        <!-- ACTIONS -->
-        <!-- ===================================== -->
+        <!-- HIDDEN FILE INPUT -->
 
-        <div class="modal-actions">
-
-
-          <!-- CANCEL -->
-          <button
-            mat-button
-            type="button"
-            class="cancel-button"
-            (click)="onCancel()"
-            [disabled]="isSubmitting()">
-
-            {{ 'common.cancel' | translate }}
-
-          </button>
-
-
-          <!-- SUBMIT -->
-          <button
-            mat-raised-button
-            type="submit"
-            class="submit-button"
-            [disabled]="isSubmitting() || brandForm.invalid">
-
-
-            <!-- NORMAL ICON -->
-            <mat-icon *ngIf="!isSubmitting()">
-
-              {{
-                data.add
-                  ? 'add'
-                  : 'save'
-              }}
-
-            </mat-icon>
-
-
-            <!-- LOADING ICON -->
-            <mat-icon *ngIf="isSubmitting()">
-              hourglass_empty
-            </mat-icon>
-
-
-            <!-- TEXT -->
-            <span>
-
-              {{
-                data.add
-                  ? ('common.add' | translate)
-                  : ('common.save' | translate)
-              }}
-
-            </span>
-
-          </button>
-
-        </div>
+        <input
+          #fileInput
+          type="file"
+          accept="image/*"
+          (change)="onImageSelected($event)"
+          hidden
+        />
 
       </div>
 
-    </form>
+    </div>
+
+
+    <!-- ===================================== -->
+    <!-- ENGLISH NAME -->
+    <!-- ===================================== -->
+
+    <div class="form-group">
+
+      <label
+        for="brandNameEn"
+        class="form-label">
+
+        {{ 'brands.nameEn' | translate }}
+
+        <span class="required">
+          *
+        </span>
+
+      </label>
+
+
+      <input
+        id="brandNameEn"
+        type="text"
+        class="form-input"
+        formControlName="nameEn"
+        [placeholder]="
+          'brands.nameEnPlaceholder' | translate
+        "
+        autocomplete="off"
+      />
+
+
+      <!-- REQUIRED ERROR -->
+
+      @if (
+        brandForm.controls['nameEn'].hasError('required') &&
+        brandForm.controls['nameEn'].touched
+      ) {
+
+        <div class="form-error">
+
+          {{ 'brands.nameEnRequired' | translate }}
+
+        </div>
+
+      }
+
+    </div>
+
+
+    <!-- ===================================== -->
+    <!-- ARABIC NAME -->
+    <!-- ===================================== -->
+
+    <div class="form-group">
+
+      <label
+        for="brandNameAr"
+        class="form-label">
+
+        {{ 'brands.nameAr' | translate }}
+
+        <span class="required">
+          *
+        </span>
+
+      </label>
+
+
+      <input
+        id="brandNameAr"
+        type="text"
+        class="form-input"
+        formControlName="nameAr"
+        [placeholder]="
+          'brands.nameArPlaceholder' | translate
+        "
+        autocomplete="off"
+      />
+
+
+      <!-- REQUIRED ERROR -->
+
+      @if (
+        brandForm.controls['nameAr'].hasError('required') &&
+        brandForm.controls['nameAr'].touched
+      ) {
+
+        <div class="form-error">
+
+          {{ 'brands.nameArRequired' | translate }}
+
+        </div>
+
+      }
+
+    </div>
+
+
+    <!-- ===================================== -->
+    <!-- ERROR MESSAGE -->
+    <!-- ===================================== -->
+
+    @if (errorMessage(); as error) {
+
+      <div class="error-message">
+
+        <mat-icon>
+          error_outline
+        </mat-icon>
+
+        <span>
+          {{ error | translate }}
+        </span>
+
+      </div>
+
+    }
+
+
+    <!-- ===================================== -->
+    <!-- ACTIONS -->
+    <!-- ===================================== -->
+
+    <div class="modal-actions">
+
+
+      <!-- CANCEL -->
+
+      <button
+        mat-button
+        type="button"
+        class="cancel-button"
+        (click)="onCancel()"
+        [disabled]="isSubmitting()">
+
+        {{ 'common.cancel' | translate }}
+
+      </button>
+
+
+      <!-- SUBMIT -->
+
+      <button
+        mat-raised-button
+        type="submit"
+        class="submit-button"
+        [disabled]="
+          isSubmitting() ||
+          brandForm.invalid
+        ">
+
+        <!-- NORMAL ICON -->
+
+        @if (!isSubmitting()) {
+
+          <!-- <mat-icon>
+
+            {{
+              data.add
+                ? 'add'
+                : 'save'
+            }}
+
+          </mat-icon> -->
+
+        }
+
+        <!-- LOADING ICON -->
+
+        @if (isSubmitting()) {
+
+          <mat-icon>
+            hourglass_empty
+          </mat-icon>
+
+        }
+
+
+        <!-- TEXT -->
+
+        <span>
+
+          {{
+            data.add
+              ? ('common.add' | translate)
+              : ('common.save' | translate)
+          }}
+
+        </span>
+
+      </button>
+
+    </div>
+
+  </div>
+
+</form>
 
   </div>
 

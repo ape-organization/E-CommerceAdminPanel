@@ -1,171 +1,420 @@
-
 <div class="dashboard">
+
+  <!-- ========================================================= -->
+  <!-- HEADER -->
+  <!-- ========================================================= -->
 
   <div class="dashboard-header">
 
-    <div>
+    <div class="header-content">
+
       <span class="eyebrow">
-        {{ 'dashboard.adminDashboard' | translate }}
+        {{ 'dashboard.title' | translate }}
       </span>
 
       <h1>
         {{ 'dashboard.salesOverview' | translate }}
       </h1>
 
-    
+      <p>
+        {{ currentMonthName }}
+        {{ currentYear }}
+      </p>
+
     </div>
 
+
     <div class="header-icon">
+
       <mat-icon>
         dashboard
       </mat-icon>
+
     </div>
 
   </div>
 
 
-  <div
-    class="error-message"
-    *ngIf="errorMessage">
+  <!-- ========================================================= -->
+  <!-- ERROR -->
+  <!-- ========================================================= -->
 
-    <mat-icon>
-      error_outline
-    </mat-icon>
+  @if (errorMessage()) {
 
-    <span>
-      {{ errorMessage }}
-    </span>
+    <div class="error-message">
 
-  </div>
+      <mat-icon>
+        error_outline
+      </mat-icon>
 
-
-  <div class="stats-grid">
-
-
-    <div class="stat-card">
-
-      <div class="icon sales-icon">
-        <mat-icon>
-          shopping_bag
-        </mat-icon>
-      </div>
-
-      <div class="stat-content">
-
-        <span class="label">
-          {{ 'dashboard.totalSales' | translate }}
-        </span>
-
-        <strong>
-          {{ totalSales() }}
-        </strong>
-
-        <span class="description">
-          {{ 'dashboard.activeOrders' | translate }}
-        </span>
-
-      </div>
-
-    </div>
-
-
-    <div class="stat-card">
-
-      <div class="icon revenue-icon">
-        <mat-icon>
-          payments
-        </mat-icon>
-      </div>
-
-      <div class="stat-content">
-
-        <span class="label">
-          {{ 'dashboard.totalRevenue' | translate }}
-        </span>
-
-        <strong>
-          {{ totalRevenue() | number:'1.2-2' }}
-
-          <small>
-            {{ 'common.egp' | translate }}
-          </small>
-        </strong>
-
-        <span class="description">
-          {{ 'dashboard.revenueFromSales' | translate }}
-        </span>
-
-      </div>
-
-    </div>
-
-
-    <div class="stat-card">
-
-      <div class="icon partner-icon">
-        <mat-icon>
-          handshake
-        </mat-icon>
-      </div>
-
-      <div class="stat-content">
-
-        <span class="label">
-          {{ 'dashboard.partnerShare' | translate }}
-        </span>
-
-        <strong>
-          {{ partnerShare() | number:'1.2-2' }}
-
-          <small>
-            {{ 'common.egp' | translate }}
-          </small>
-        </strong>
-
-     
-
-      </div>
-
-      <span class="percentage">
-        30%
+      <span>
+        {{ errorMessage() }}
       </span>
 
     </div>
 
+  }
 
-    <div class="stat-card">
 
-      <div class="icon owner-icon">
-        <mat-icon>
-          account_balance_wallet
-        </mat-icon>
+  <!-- ========================================================= -->
+  <!-- MONTHLY SECTION -->
+  <!-- ========================================================= -->
+
+  <section class="dashboard-section">
+
+    <div class="section-header">
+
+      <div class="section-title">
+
+        <div class="section-icon monthly-section-icon">
+
+          <mat-icon>
+            calendar_month
+          </mat-icon>
+
+        </div>
+
+        <div>
+
+          <h2>
+            {{ 'dashboard.monthlyPerformance' | translate }}
+          </h2>
+
+          <span>
+            {{ currentMonthName }} {{ currentYear }}
+          </span>
+
+        </div>
+
       </div>
-
-      <div class="stat-content">
-
-        <span class="label">
-          {{ 'dashboard.yourShare' | translate }}
-        </span>
-
-        <strong>
-          {{ yourShare() | number:'1.2-2' }}
-
-          <small>
-            {{ 'common.egp' | translate }}
-          </small>
-        </strong>
-
-      
-
-      </div>
-
-      <span class="percentage">
-        70%
-      </span>
 
     </div>
 
 
-  </div>
+    <div class="stats-grid">
+
+
+      <!-- ===================================================== -->
+      <!-- MONTHLY ORDERS -->
+      <!-- ===================================================== -->
+
+      <div class="stat-card">
+
+        <div class="card-top">
+
+          <div class="icon orders-icon">
+
+            <mat-icon>
+              shopping_bag
+            </mat-icon>
+
+          </div>
+
+          <span class="period-badge">
+            {{ 'dashboard.monthly' | translate }}
+          </span>
+
+        </div>
+
+
+        <div class="stat-content">
+
+          <span class="label">
+            {{ 'dashboard.ordersCount' | translate }}
+          </span>
+
+          <strong>
+            {{ monthlyOrders() | number }}
+          </strong>
+
+          <span class="description">
+            {{ 'dashboard.ordersThisMonth' | translate }}
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- ===================================================== -->
+      <!-- MONTHLY SALES -->
+      <!-- ===================================================== -->
+
+      <div class="stat-card">
+
+        <div class="card-top">
+
+          <div class="icon sales-icon">
+
+            <mat-icon>
+              payments
+            </mat-icon>
+
+          </div>
+
+          <span class="period-badge">
+            {{ 'dashboard.monthly' | translate }}
+          </span>
+
+        </div>
+
+
+        <div class="stat-content">
+
+          <span class="label">
+            {{ 'dashboard.sales' | translate }}
+          </span>
+
+          <strong>
+
+            {{ monthlySales() | number:'1.2-2' }}
+
+            <small>
+              {{ 'common.egp' | translate }}
+            </small>
+
+          </strong>
+
+          <span class="description">
+            {{ 'dashboard.salesThisMonth' | translate }}
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- ===================================================== -->
+      <!-- MONTHLY GAIN -->
+      <!-- ===================================================== -->
+
+      <div class="stat-card highlight-card">
+
+        <div class="card-top">
+
+          <div class="icon gain-icon">
+
+            <mat-icon>
+              trending_up
+            </mat-icon>
+
+          </div>
+
+          <span class="period-badge gain-badge">
+            {{ 'dashboard.monthly' | translate }}
+          </span>
+
+        </div>
+
+
+        <div class="stat-content">
+
+          <span class="label">
+            {{ 'dashboard.gain' | translate }}
+          </span>
+
+          <strong>
+
+            {{ monthlyGain() | number:'1.2-2' }}
+
+            <small>
+              {{ 'common.egp' | translate }}
+            </small>
+
+          </strong>
+
+          <span class="description">
+            {{ 'dashboard.gainThisMonth' | translate }}
+          </span>
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+  <!-- ========================================================= -->
+  <!-- ALL TIME SECTION -->
+  <!-- ========================================================= -->
+
+  <section class="dashboard-section all-time-section">
+
+    <div class="section-header">
+
+      <div class="section-title">
+
+        <div class="section-icon total-section-icon">
+
+          <mat-icon>
+            insights
+          </mat-icon>
+
+        </div>
+
+        <div>
+
+          <h2>
+            {{ 'dashboard.totalPerformance' | translate }}
+          </h2>
+
+          <span>
+            {{ 'dashboard.allTime' | translate }}
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="stats-grid">
+
+
+      <!-- ===================================================== -->
+      <!-- TOTAL ORDERS -->
+      <!-- ===================================================== -->
+
+      <div class="stat-card">
+
+        <div class="card-top">
+
+          <div class="icon orders-icon">
+
+            <mat-icon>
+              receipt_long
+            </mat-icon>
+
+          </div>
+
+          <span class="period-badge total-badge">
+            {{ 'dashboard.allTime' | translate }}
+          </span>
+
+        </div>
+
+
+        <div class="stat-content">
+
+          <span class="label">
+            {{ 'dashboard.ordersCount' | translate }}
+          </span>
+
+          <strong>
+            {{ totalOrders() | number }}
+          </strong>
+
+          <span class="description">
+            {{ 'dashboard.totalOrdersAllTime' | translate }}
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- ===================================================== -->
+      <!-- TOTAL SALES -->
+      <!-- ===================================================== -->
+
+      <div class="stat-card">
+
+        <div class="card-top">
+
+          <div class="icon sales-icon">
+
+            <mat-icon>
+              account_balance_wallet
+            </mat-icon>
+
+          </div>
+
+          <span class="period-badge total-badge">
+            {{ 'dashboard.allTime' | translate }}
+          </span>
+
+        </div>
+
+
+        <div class="stat-content">
+
+          <span class="label">
+            {{ 'dashboard.sales' | translate }}
+          </span>
+
+          <strong>
+
+            {{ totalSales() | number:'1.2-2' }}
+
+            <small>
+              {{ 'common.egp' | translate }}
+            </small>
+
+          </strong>
+
+          <span class="description">
+            {{ 'dashboard.totalSalesAllTime' | translate }}
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- ===================================================== -->
+      <!-- TOTAL GAIN -->
+      <!-- ===================================================== -->
+
+      <div class="stat-card highlight-card">
+
+        <div class="card-top">
+
+          <div class="icon gain-icon">
+
+            <mat-icon>
+              savings
+            </mat-icon>
+
+          </div>
+
+          <span class="period-badge gain-badge">
+            {{ 'dashboard.allTime' | translate }}
+          </span>
+
+        </div>
+
+
+        <div class="stat-content">
+
+          <span class="label">
+            {{ 'dashboard.gain' | translate }}
+          </span>
+
+          <strong>
+
+            {{ totalGain() | number:'1.2-2' }}
+
+            <small>
+              {{ 'common.egp' | translate }}
+            </small>
+
+          </strong>
+
+          <span class="description">
+            {{ 'dashboard.totalGainAllTime' | translate }}
+          </span>
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+  </section>
 
 </div>

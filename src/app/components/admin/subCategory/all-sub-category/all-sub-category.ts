@@ -22,7 +22,7 @@ import { ConfirmDeleteComponent } from '../../../../shared/confirm-delete/confir
 
 import { Category } from '../../../../models/category.model';
 import { SubCategory } from '../../../../models/subCategory.model';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 
 @Component({
@@ -47,7 +47,8 @@ export class AllSubCategory implements OnInit {
   // ==========================================================
   // SERVICES
   // ==========================================================
-
+  private readonly translate =
+    inject(TranslateService);
   private readonly dialog =
     inject(MatDialog);
 
@@ -198,7 +199,6 @@ console.log(categories)
           this.subcategories.set([]);
 
           this.errorMessage.set(
-            error?.error?.message ??
             'Failed to load subcategories.'
           );
 
@@ -361,7 +361,6 @@ console.log(categories)
           );
 
           this.errorMessage.set(
-            error?.error?.message ??
             'Failed to create subcategory.'
           );
 
@@ -420,7 +419,6 @@ console.log(categories)
           );
 
           this.errorMessage.set(
-            error?.error?.message ??
             'Failed to update subcategory.'
           );
 
@@ -443,8 +441,8 @@ console.log(categories)
       .open(
         ConfirmDeleteComponent,
         {
-          data:
-            'Are you sure you want to delete this subcategory?'
+          data: this.translate.instant(
+            'subCategories.deleteConfirmation')
         }
       )
       .afterClosed()
@@ -481,7 +479,6 @@ console.log(categories)
               );
 
               this.errorMessage.set(
-                error?.error?.message ??
                 'Failed to delete subcategory.'
               );
 

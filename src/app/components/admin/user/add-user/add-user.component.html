@@ -1,207 +1,436 @@
-
 <div class="modal-overlay">
+
   <div class="modal-container">
 
-    <!-- Header -->
+    <!-- ========================================= -->
+    <!-- HEADER -->
+    <!-- ========================================= -->
+
     <header class="modal-header">
 
       <div class="header-title">
 
         <div class="title-icon">
+
           <mat-icon>
             {{ editUser ? 'manage_accounts' : 'person_add' }}
           </mat-icon>
+
         </div>
 
-        <div>
+
+        <div class="header-text">
+
           <h2>
+
             {{
               editUser
                 ? ('users.editUser' | translate)
                 : ('users.addNewUser' | translate)
             }}
+
           </h2>
 
+
           <p>
+
             {{
               editUser
                 ? ('users.updateUserDescription' | translate)
                 : ('users.createUserDescription' | translate)
             }}
+
           </p>
+
         </div>
 
       </div>
+
 
       <button
         mat-icon-button
         type="button"
         class="close-button"
-        [attr.aria-label]="'common.close' | translate"
+
+        [attr.aria-label]="
+          'common.close' | translate
+        "
+
         (click)="onCancel()"
       >
-        <mat-icon>close</mat-icon>
+
+        <mat-icon>
+          close
+        </mat-icon>
+
       </button>
 
     </header>
 
 
-    <!-- Form -->
+    <!-- ========================================= -->
+    <!-- FORM -->
+    <!-- ========================================= -->
+
     <form
       [formGroup]="userForm"
       (ngSubmit)="onSubmit()"
+      novalidate
     >
 
       <div class="form-content">
 
-        <!-- Username -->
-        <mat-form-field appearance="outline">
 
-         <mat-label>
-            {{ 'brands.name' | translate }}
-          </mat-label>
+        <!-- ===================================== -->
+        <!-- NAME -->
+        <!-- ===================================== -->
+
+        <div class="form-group">
+
+          <label
+            for="userName"
+            class="form-label"
+          >
+
+            {{ 'users.name' | translate }}
+
+            <span class="required">
+              *
+            </span>
+
+          </label>
+
 
           <input
-            matInput
+            id="userName"
+            type="text"
+            class="form-input"
+
             formControlName="name"
-            [placeholder]="'users.enterUsername' | translate"
+
+            autocomplete="off"
           />
 
-          <mat-error
-            *ngIf="userForm.get('name')?.hasError('required')"
-            class="error"
+
+          @if (
+            userForm.controls['name'].hasError('required') &&
+            userForm.controls['name'].touched
+          ) {
+
+            <div class="form-error">
+
+              {{ 'users.usernameRequired' | translate }}
+
+            </div>
+
+          }
+
+        </div>
+
+
+        <!-- ===================================== -->
+        <!-- EMAIL -->
+        <!-- ===================================== -->
+
+        <div class="form-group">
+
+          <label
+            for="userEmail"
+            class="form-label"
           >
-            {{ 'users.usernameRequired' | translate }}
-          </mat-error>
 
-        </mat-form-field>
-
-
-        <!-- Email -->
-        <mat-form-field appearance="outline">
-
-          <mat-label>
             {{ 'users.email' | translate }}
-          </mat-label>
+
+            <span class="required">
+              *
+            </span>
+
+          </label>
+
 
           <input
-            matInput
+            id="userEmail"
             type="email"
+            class="form-input"
+
             formControlName="email"
-            [placeholder]="'users.emailPlaceholder' | translate"
+
+            autocomplete="email"
           />
 
-          <mat-error
-            *ngIf="userForm.get('email')?.hasError('required')"
-            class="error"
-          >
-            {{ 'users.emailRequired' | translate }}
-          </mat-error>
 
-          <mat-error
-            *ngIf="userForm.get('email')?.hasError('email')"
-            class="error"
-          >
-            {{ 'users.invalidEmail' | translate }}
-          </mat-error>
+          @if (
+            userForm.controls['email'].hasError('required') &&
+            userForm.controls['email'].touched
+          ) {
 
-        </mat-form-field>
+            <div class="form-error">
+
+              {{ 'users.emailRequired' | translate }}
+
+            </div>
+
+          }
 
 
-        <!-- Password -->
-        <mat-form-field
-          *ngIf="!editUser"
-          appearance="outline"
-        >
+          @if (
+            userForm.controls['email'].hasError('email') &&
+            userForm.controls['email'].touched
+          ) {
 
-           <mat-label>
-            {{ 'users.password' | translate }}
-          </mat-label>
+            <div class="form-error">
 
-          <input
-            matInput
-            [type]="hidePassword ? 'password' : 'text'"
-            formControlName="password"
-            [placeholder]="'users.enterPassword' | translate"
-          />
+              {{ 'users.invalidEmail' | translate }}
 
-          <button
-            mat-icon-button
-            matSuffix
-            type="button"
-            class="password-toggle"
-            [attr.aria-label]="
-              hidePassword
-                ? ('users.showPassword' | translate)
-                : ('users.hidePassword' | translate)
-            "
-            (click)="hidePassword = !hidePassword"
-          >
-            <mat-icon>
-              {{ hidePassword ? 'visibility_off' : 'visibility' }}
-            </mat-icon>
-          </button>
+            </div>
 
-          <mat-error
-            *ngIf="userForm.get('password')?.hasError('required')"
-            class="error"
-          >
-            {{ 'users.passwordRequired' | translate }}
-          </mat-error>
+          }
 
-          <mat-error
-            *ngIf="userForm.get('password')?.hasError('minlength')"
-            class="error"
-          >
-            {{ 'users.passwordMinLength' | translate }}
-          </mat-error>
+        </div>
 
-        </mat-form-field>
 
-        <p class="pass">
-          {{ 'users.passwordHint' | translate }}
-        </p>
+        <!-- ===================================== -->
+        <!-- PASSWORD -->
+        <!-- ===================================== -->
+
+        @if (!editUser) {
+
+          <div class="form-group">
+
+            <label
+              for="userPassword"
+              class="form-label"
+            >
+
+              {{ 'users.password' | translate }}
+
+              <span class="required">
+                *
+              </span>
+
+            </label>
+
+
+            <div class="password-wrapper">
+
+              <input
+                id="userPassword"
+
+                [type]="
+                  hidePassword
+                    ? 'password'
+                    : 'text'
+                "
+
+                class="form-input password-input"
+
+                formControlName="password"
+
+                autocomplete="new-password"
+              />
+
+
+              <button
+                type="button"
+                class="password-toggle"
+
+                [attr.aria-label]="
+                  hidePassword
+                    ? ('users.showPassword' | translate)
+                    : ('users.hidePassword' | translate)
+                "
+
+                (click)="
+                  hidePassword = !hidePassword
+                "
+              >
+
+                <mat-icon>
+
+                  {{
+                    hidePassword
+                      ? 'visibility_off'
+                      : 'visibility'
+                  }}
+
+                </mat-icon>
+
+              </button>
+
+            </div>
+
+
+            @if (
+              userForm.controls['password'].hasError('required') &&
+              userForm.controls['password'].touched
+            ) {
+
+              <div class="form-error">
+
+                {{ 'users.passwordRequired' | translate }}
+
+              </div>
+
+            }
+
+
+            @if (
+              userForm.controls['password'].hasError('minlength') &&
+              userForm.controls['password'].touched
+            ) {
+
+              <div class="form-error">
+
+                {{ 'users.passwordMinLength' | translate }}
+
+              </div>
+
+            }
+
+          </div>
+
+
+          <p class="pass">
+
+            {{ 'users.passwordHint' | translate }}
+
+          </p>
+
+        }
+
+
+        <!-- ===================================== -->
+        <!-- ROLE -->
+        <!-- ===================================== -->
+
+        @if (!editUser) {
+
+          <div class="form-group">
+
+            <label
+              for="userRole"
+              class="form-label"
+            >
+
+              {{ 'users.role' | translate }}
+
+              <span class="required">
+                *
+              </span>
+
+            </label>
+
+
+            <select
+              id="userRole"
+              class="form-select"
+              formControlName="role"
+            >
+
+              <option
+                value="Admin"
+              >
+                Admin
+              </option>
+
+
+              <option
+                value="User"
+              >
+                User
+              </option>
+
+            </select>
+
+
+            @if (
+              userForm.controls['role'].hasError('required') &&
+              userForm.controls['role'].touched
+            ) {
+
+              <div class="form-error">
+
+                {{ 'users.roleRequired' | translate }}
+
+              </div>
+
+            }
+
+          </div>
+
+        }
 
       </div>
 
 
-      <!-- Error -->
-      <div
-        class="error-message"
-        *ngIf="errorMessage"
-      >
-        <mat-icon>error_outline</mat-icon>
-        <span>{{ errorMessage }}</span>
-      </div>
+      <!-- ========================================= -->
+      <!-- SERVER ERROR -->
+      <!-- ========================================= -->
+
+      @if (errorMessage) {
+
+        <div class="error-message">
+
+          <mat-icon>
+            error_outline
+          </mat-icon>
+
+          <span>
+            {{ errorMessage }}
+          </span>
+
+        </div>
+
+      }
 
 
-      <!-- Actions -->
+      <!-- ========================================= -->
+      <!-- ACTIONS -->
+      <!-- ========================================= -->
+
       <div class="modal-actions">
+
 
         <button
           mat-button
           type="button"
+
           class="cancel-button"
+
           (click)="onCancel()"
         >
+
           {{ 'common.cancel' | translate }}
+
         </button>
+
 
         <button
           mat-raised-button
           type="submit"
+
           class="submit-button"
+
           [disabled]="userForm.invalid"
         >
-          <mat-icon>
-            {{ editUser ? 'save' : 'person_add' }}
-          </mat-icon>
+
+      <!--     <mat-icon>
+
+            {{
+              editUser
+                ? 'save'
+                : 'person_add'
+            }}
+
+          </mat-icon> -->
+
 
           {{
             editUser
               ? ('users.updateUser' | translate)
               : ('users.createUser' | translate)
           }}
+
         </button>
 
       </div>
@@ -209,4 +438,5 @@
     </form>
 
   </div>
+
 </div>

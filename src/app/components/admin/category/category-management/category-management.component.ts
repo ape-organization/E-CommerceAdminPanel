@@ -21,7 +21,7 @@ import { AddCategoryComponent } from '../add-category/add-category.component';
 import { ConfirmDeleteComponent } from '../../../../shared/confirm-delete/confirm-delete.component';
 
 import { environment } from '../../../../../environments/environment';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 
 @Component({
@@ -219,7 +219,8 @@ console.log(categories)
   // ==========================================================
   // DELETE
   // ==========================================================
-
+  private readonly translate =
+    inject(TranslateService);
   deleteCategory(
     id: number
   ): void {
@@ -228,8 +229,8 @@ console.log(categories)
       .open(
         ConfirmDeleteComponent,
         {
-          data:
-            'Are you sure you want to delete this category?'
+          data:this.translate.instant(
+            'categories.deleteConfirmation')
         }
       )
       .afterClosed()

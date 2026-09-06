@@ -11,9 +11,10 @@
   align-items: center;
   justify-content: center;
 
-  padding: 20px;
+  padding: 16px;
 
   background: rgba(46, 37, 33, 0.72);
+
   backdrop-filter: blur(5px);
 
   animation: fadeIn 0.25s ease;
@@ -21,17 +22,19 @@
 
 
 /* ============================================================
-   MODAL
+   MODAL CONTAINER
    ============================================================ */
 
 .modal-container {
   width: 100%;
-  max-width: 480px;
+  max-width: 430px;
 
   overflow: hidden;
 
   background: var(--color-surface);
+
   border: 1px solid var(--color-border);
+
   border-radius: var(--radius-lg);
 
   box-shadow: var(--shadow-lg);
@@ -49,20 +52,27 @@
   align-items: center;
   justify-content: space-between;
 
-  padding: 20px 24px;
+  gap: 12px;
+
+  padding: 15px 18px;
 
   border-bottom: 1px solid var(--color-border);
 }
 
+
 .header-title {
   display: flex;
   align-items: center;
-  gap: 12px;
+
+  gap: 10px;
+
+  min-width: 0;
 }
 
+
 .title-icon {
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
 
   display: flex;
   align-items: center;
@@ -73,38 +83,59 @@
   border-radius: var(--radius-md);
 
   background: var(--color-surface-soft);
+
   color: var(--color-accent);
 }
 
+
 .title-icon mat-icon {
-  font-size: 21px;
-  width: 21px;
-  height: 21px;
+  width: 19px;
+  height: 19px;
+
+  font-size: 19px;
 }
+
+
+/* ============================================================
+   HEADER TEXT
+   ============================================================ */
+
+.header-text {
+  min-width: 0;
+}
+
 
 .modal-header h2 {
   margin: 0;
 
   color: var(--color-primary);
 
-  font-size: 1.15rem;
+  font-size: 1.05rem;
+
   font-weight: 700;
+
+  line-height: 1.3;
 }
 
+
 .modal-header p {
-  margin: 3px 0 0;
+  margin: 2px 0 0;
 
   color: var(--color-text-secondary);
 
-  font-size: 0.72rem;
+  font-size: 0.68rem;
+
+  line-height: 1.4;
 }
 
 
 /* ============================================================
-   CLOSE
+   CLOSE BUTTON
    ============================================================ */
 
 .close-button {
+  flex-shrink: 0;
+
   color: var(--color-text-secondary);
 
   transition:
@@ -112,9 +143,12 @@
     background-color 0.2s ease;
 }
 
+
 .close-button:hover {
   color: var(--color-primary);
-  background: var(--color-surface-soft);
+
+  background:
+    var(--color-surface-soft);
 }
 
 
@@ -123,100 +157,114 @@
    ============================================================ */
 
 form {
-  padding: 24px;
+  padding: 18px;
 }
+
 
 .form-content {
   display: flex;
+
   flex-direction: column;
-  gap: 15px;
+
+  gap: 12px;
 }
 
-
-/* ============================================================
-   MATERIAL FORM FIELDS
-   ============================================================ */
-
-::ng-deep .mat-mdc-form-field {
-  width: 100%;
-}
-
-::ng-deep
-.mat-mdc-form-field.mat-focused
-.mdc-notched-outline__leading,
-::ng-deep
-.mat-mdc-form-field.mat-focused
-.mdc-notched-outline__notch,
-::ng-deep
-.mat-mdc-form-field.mat-focused
-.mdc-notched-outline__trailing {
-  border-color: var(--color-accent) !important;
-}
-
-::ng-deep
-.mat-mdc-form-field.mat-focused
-.mat-mdc-floating-label {
-  color: var(--color-accent) !important;
-}
-
-::ng-deep
-.mat-mdc-form-field
-.mat-mdc-form-field-icon-prefix {
-  display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
-
-  color: var(--color-text-light);
-
-  padding-left: 10px;
-  padding-right: 8px;
-
-  flex-shrink: 0;
-}
-/* =========================================
-   MATERIAL INPUT TEXT SPACING
-   ========================================= */
-
-::ng-deep .mat-mdc-form-field .mat-mdc-text-field-wrapper {
-  padding-inline: 8px !important;
-}
-
-::ng-deep .mat-mdc-form-field .mat-mdc-form-field-infix {
-  padding-inline: 4px !important;
-}
-
-::ng-deep .mat-mdc-form-field .mat-mdc-input-element {
-  padding-inline: 0 !important;
-}
 
 /* ============================================================
    PASSWORD
    ============================================================ */
 
-.password-toggle {
-  color: var(--color-text-secondary);
+.password-wrapper {
+  position: relative;
+
+  width: 100%;
 }
 
+
+.password-input {
+  padding-inline-end: 46px;
+}
+
+
+.password-toggle {
+  position: absolute;
+
+  top: 50%;
+
+  inset-inline-end: 5px;
+
+  transform: translateY(-50%);
+
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 0;
+
+  border-radius: 50%;
+
+  background: transparent;
+
+  color: var(--color-text-secondary);
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+
 .password-toggle:hover {
+  background: var(--color-surface-soft);
+
   color: var(--color-primary);
 }
 
-.pass
-{
-  color: rgb(3, 45, 3);
-  font-size: 10px;
+
+.password-toggle mat-icon {
+  width: 19px;
+  height: 19px;
+
+  font-size: 19px;
 }
+
+
 /* ============================================================
-   ERROR
+   PASSWORD HINT
+   ============================================================ */
+
+.pass {
+  margin: -4px 0 1px;
+
+  color: rgb(3, 45, 3);
+
+  font-size: 9px;
+
+  line-height: 1.4;
+
+  text-align: start;
+}
+
+
+/* ============================================================
+   ERROR MESSAGE
    ============================================================ */
 
 .error-message {
   display: flex;
   align-items: center;
-  gap: 8px;
 
-  margin-top: 4px;
-  padding: 11px 13px;
+  gap: 7px;
+
+  margin-top: 5px;
+
+  padding: 9px 11px;
 
   border: 1px solid color-mix(
     in srgb,
@@ -234,14 +282,21 @@ form {
 
   color: var(--color-error);
 
-  font-size: 0.78rem;
+  font-size: 0.72rem;
+
+  line-height: 1.4;
+
+  text-align: start;
 }
 
-.error-message mat-icon {
-  width: 18px;
-  height: 18px;
 
-  font-size: 18px;
+.error-message mat-icon {
+  width: 17px;
+  height: 17px;
+
+  flex-shrink: 0;
+
+  font-size: 17px;
 }
 
 
@@ -254,57 +309,69 @@ form {
   align-items: center;
   justify-content: flex-end;
 
-  gap: 10px;
+  gap: 8px;
 
-  margin-top: 24px;
-  padding-top: 20px;
+  margin-top: 17px;
+
+  padding-top: 15px;
 
   border-top: 1px solid var(--color-border);
 }
 
+
 .modal-actions button {
-  min-width: 110px;
-  height: 42px;
+  min-width: 95px;
+
+  height: 38px;
 
   border-radius: var(--radius-sm);
 
-  font-size: 0.72rem;
+  font-size: 0.68rem;
+
   font-weight: 700;
-  letter-spacing: 0.3px;
+
+  letter-spacing: 0.2px;
 }
 
 
 /* ============================================================
-   CANCEL
+   CANCEL BUTTON
    ============================================================ */
 
 .cancel-button {
   color: var(--color-text-secondary);
 }
 
+
 .cancel-button:hover {
   background: var(--color-surface-soft);
+
   color: var(--color-primary);
 }
 
 
 /* ============================================================
-   SUBMIT
+   SUBMIT BUTTON
    ============================================================ */
 
 .submit-button {
-  min-width: 145px !important;
+  min-width: 125px !important;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
 
-  gap: 5px;
+  gap: 4px;
 
-  background: var(--color-primary) !important;
-  color: var(--color-surface) !important;
+  background:
+    var(--color-primary) !important;
 
-  box-shadow: var(--shadow-sm);
+  color:
+    var(--color-surface) !important;
+
+  box-shadow:
+    var(--shadow-sm);
 
   transition:
     background-color 0.2s ease,
@@ -312,25 +379,54 @@ form {
     box-shadow 0.2s ease;
 }
 
-.submit-button mat-icon {
-  color: var(--color-accent-light);
 
-  font-size: 18px;
-  width: 18px;
-  height: 18px;
+.submit-button mat-icon {
+  width: 17px;
+  height: 17px;
+
+  font-size: 17px;
+
+  color:
+    var(--color-accent-light);
 }
+
 
 .submit-button:not(:disabled):hover {
-  background: var(--color-primary-light) !important;
+  background:
+    var(--color-primary-light) !important;
 
-  transform: translateY(-1px);
+  transform:
+    translateY(-1px);
 
-  box-shadow: var(--shadow-md);
+  box-shadow:
+    var(--shadow-md);
 }
+
 
 .submit-button:disabled {
   opacity: 0.5;
+
   box-shadow: none;
+}
+
+
+/* ============================================================
+   RTL
+   ============================================================ */
+
+[dir="rtl"] .modal-header {
+  text-align: right;
+}
+
+
+[dir="rtl"] .modal-actions {
+  justify-content: flex-start;
+}
+
+
+[dir="rtl"] .pass,
+[dir="rtl"] .error-message {
+  text-align: right;
 }
 
 
@@ -341,40 +437,80 @@ form {
 @media (max-width: 500px) {
 
   .modal-overlay {
-    padding: 12px;
+    padding: 10px;
   }
+
 
   .modal-container {
-    border-radius: var(--radius-md);
+    max-width: 100%;
+
+    border-radius:
+      var(--radius-md);
   }
+
 
   .modal-header {
-    padding: 16px;
+    padding: 13px 15px;
   }
+
 
   form {
-    padding: 20px 16px;
+    padding: 16px 14px;
   }
+
 
   .title-icon {
-    width: 38px;
-    height: 38px;
+    width: 35px;
+    height: 35px;
   }
+
+
+  .title-icon mat-icon {
+    width: 18px;
+    height: 18px;
+
+    font-size: 18px;
+  }
+
 
   .modal-header h2 {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 
+
   .modal-header p {
-    font-size: 0.65rem;
+    font-size: 0.61rem;
   }
+
+
+  .form-content {
+    gap: 10px;
+  }
+
 
   .modal-actions {
     flex-direction: column-reverse;
+
     align-items: stretch;
+
+    gap: 7px;
   }
+
 
   .modal-actions button {
     width: 100%;
   }
+
+}
+
+
+/* ============================================================
+   ANIMATION
+   ============================================================ */
+
+.modal-container {
+  animation:
+    slideIn
+    0.3s
+    ease-out;
 }
