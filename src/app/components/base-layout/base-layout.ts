@@ -103,7 +103,7 @@ export class BaseLayout {
      ========================================================= */
 
   protected readonly title =
-    signal('Cosmetics');
+    signal('common.cosmetics');
 
   readonly isLoggedIn =
     this.authService.isLoggedIn;

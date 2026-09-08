@@ -43,7 +43,13 @@ var data=
   Password:this.loginForm.value.password
 }
      this.authService.login(data).subscribe({
-      next: () => { 
+      next: (res) => {
+        if(!res.isAuthSuccessful)
+          {
+             this.errorMessage.set('Invalid email or password');
+        this.isLoading.set(false);
+        return
+          } 
         const token = this.authService.getToken();
         const role = this.authService.getUserRole();
         const isAdmin = this.authService.isAdmin();
@@ -58,7 +64,7 @@ var data=
         this.isLoading.set(false);
        },
       error: (err) => {
-        this.errorMessage.set('Invalid email or password');
+        this.errorMessage.set('Invalid authentication');
         this.isLoading.set(false);
       } 
     });
