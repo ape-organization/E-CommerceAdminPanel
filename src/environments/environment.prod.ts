@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://ecommercepinkyauraapi.ape-org.com/api',
-    imageBaseUrl: 'https://ecommercepinkyauraapi.ape-org.com'
+  apiBaseUrl: 'https://ecommerceapi.ape-org.com/api',
+    imageBaseUrl: 'https://ecommerceapi.ape-org.com'
 
 };
