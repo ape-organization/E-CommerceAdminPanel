@@ -26,6 +26,7 @@ export interface Order {
   clientName: string;
 
   phoneNumber: string;
+  governorate :string;
 
   address: string | null;
 

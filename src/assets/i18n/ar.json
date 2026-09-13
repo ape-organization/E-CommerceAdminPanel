@@ -1,8 +1,9 @@
 
 {
   "common": {
+    "governorate":"المحافظه",
         "saveChanges":"احفظ التغييرات",
-
+"noData":"_________",
      "allCategories": "كل التصنيفات",
     "allSubCategories": "كل التصنيفات الفرعية",
     "allBrands": "كل العلامات التجارية",
@@ -47,6 +48,9 @@
   },
 
    "dashboard": {
+      "monthlyVisitors": "Monthly Visitors",
+    "count":"Count",
+    "totalVisitorsMonthly":"Total monthly Visitors ",
     "monthly":"شهري",
 "ordersCount":"عدد الطلبات",
 "ordersThisMonth":"طلبات هذا الشهر",
@@ -177,6 +181,8 @@
 
   "products": {
         "selected":"اختار",
+    "addProductSubtitle":"اضف المنتج مع كل بياناته ",
+    "nameEnRequired":"الاسم الانجليزي مطلوب ",
 
       "noProductsFound":"لا يوجد منتجات",
     "startAddingFirstProduct":"ابدا باضافه اول منتج ",

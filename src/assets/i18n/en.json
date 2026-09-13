@@ -1,6 +1,7 @@
 
 {
   "common": {
+    "governorate":"Governorate",
     "saveChanges":"Save Changes",
       "allCategories": "All Categories",
     "allSubCategories": "All Subcategories",
@@ -26,6 +27,7 @@
     "email": "Email",
     "address": "Address",
     "egp": "EGP",
+    "noData":"________",
     "close": "Close",
     "actions": "Actions",
      "uploadImage": "Upload Image",
@@ -46,6 +48,9 @@
   },
 
    "dashboard": {
+      "monthlyVisitors": "Monthly Visitors",
+    "count":"Count",
+    "totalVisitorsMonthly":"Total monthly Visitors ",
     "salesOverview":"sales Overview",
     "adminDashboard":"Admin Dashboard",
     "title": "Dashboard",
@@ -179,6 +184,7 @@
   },
 
   "products": {
+    "addProductSubtitle":"Add Product with all its info needed to illustrate it",
     "selected":"selected",
     "noProductsFound":"No Products Found",
     "startAddingFirstProduct":"Start Adding First Product",
@@ -290,7 +296,8 @@
     "cancel": "Cancel",
     "saving": "Saving...",
     "saveChanges": "Save Changes",
-    "addProductAction": "Add Product"
+    "addProductAction": "Add Product",
+    "nameEnRequired":"English name is required"
   },
 
   "users": {

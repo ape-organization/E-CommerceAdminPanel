@@ -236,7 +236,94 @@
 
   </section>
 
+  <!-- ========================================================= -->
+  <!-- Monthly visitors  -->
+  <!-- ========================================================= -->
 
+  <section class="dashboard-section all-time-section">
+
+    <div class="section-header">
+
+      <div class="section-title">
+
+        <div class="section-icon total-section-icon">
+
+          <mat-icon>
+            people
+          </mat-icon>
+
+        </div>
+
+        <div>
+
+          <h2>
+            {{ 'dashboard.totalVisitorsMonthly' | translate }}
+          </h2>
+
+          <span>
+            {{ 'dashboard.monthly' | translate }}
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="stats-grid">
+
+
+      <!-- ===================================================== -->
+      <!-- monthly visitors -->
+      <!-- ===================================================== -->
+
+      <div class="stat-card">
+
+        <div class="card-top">
+
+          <div class="icon orders-icon">
+
+            <mat-icon>
+              people
+            </mat-icon>
+
+          </div>
+
+          <span class="period-badge total-badge">
+            {{ 'dashboard.monthly' | translate }}
+          </span>
+
+        </div>
+
+
+        <div class="stat-content">
+
+          <span class="label">
+            {{ 'dashboard.count' | translate }}
+          </span>
+
+          <strong>
+            {{ visitors() | number }}
+          </strong>
+
+          <span class="description">
+            {{ 'dashboard.totalVisitorsMonthly' | translate }}
+          </span>
+
+        </div>
+
+      </div>
+
+
+  
+
+    
+
+
+    </div>
+
+  </section>
   <!-- ========================================================= -->
   <!-- ALL TIME SECTION -->
   <!-- ========================================================= -->
