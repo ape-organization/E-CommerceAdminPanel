@@ -1,3 +1,4 @@
+
 import {
   Component,
   OnInit,
@@ -22,16 +23,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { TranslatePipe } from '@ngx-translate/core';
 
 
-// ============================================================
-// MODELS
-// ============================================================
-
-
-
-// ============================================================
-// COMPONENT
-// ============================================================
-
 @Component({
 
   selector: 'app-orders',
@@ -45,7 +36,8 @@ import { TranslatePipe } from '@ngx-translate/core';
     MatIconModule,
 
     MatButtonModule,
-TranslatePipe,
+    TranslatePipe,
+
     MatProgressSpinnerModule,
 
     MatSelectModule,
@@ -68,7 +60,9 @@ export class Orders implements OnInit {
 
   private readonly orderService =
     inject(OrderService);
-private readonly dialog=inject(MatDialog);
+
+  private readonly dialog=inject(MatDialog);
+
 
   // ==========================================================
   // SIGNAL STATE
@@ -104,6 +98,26 @@ private readonly dialog=inject(MatDialog);
 
   readonly pageSizeOptions =
     [5, 10, 25, 50];
+
+
+  // ==========================================================
+  // SERVER PAGINATION STATE
+  // ==========================================================
+
+  readonly serverPage =
+    signal(1);
+
+
+  readonly serverPageSize =
+    signal(30);
+
+
+  readonly hasNextPage =
+    signal(false);
+
+
+  readonly loadingMore =
+    signal(false);
 
 
   // ==========================================================
@@ -164,25 +178,46 @@ private readonly dialog=inject(MatDialog);
     this.errorMessage.set(null);
 
 
+    // Reset server pagination
+    this.serverPage.set(1);
+
+
     this.orderService
-      .getOrders()
+      .getOrders(
+
+        this.serverPage(),
+        this.serverPageSize()
+      )
       .subscribe({
 
-        next: (orders) => {
-console.log(orders)
-          const result =
-            Array.isArray(orders)
-              ? orders
-              : [];
+        next: (response) => {
 
+          console.log(response);
+
+
+          /*
+           * First server page replaces
+           * the currently loaded orders.
+           */
 
           this.orders.set(
-            result
+            response.items ?? []
           );
 
 
           /*
-           * Reset pagination whenever
+           * Store whether another
+           * server page exists.
+           */
+
+          this.hasNextPage.set(
+            response.hasMore
+
+          );
+
+
+          /*
+           * Reset local pagination whenever
            * orders are loaded again.
            */
 
@@ -214,6 +249,8 @@ console.log(orders)
 
           this.orders.set([]);
 
+          this.hasNextPage.set(false);
+
           this.loading.set(false);
 
 
@@ -224,6 +261,118 @@ console.log(orders)
             error?.message ||
 
             'Failed to load orders.'
+
+          );
+
+        }
+
+      });
+
+  }
+
+
+  // ==========================================================
+  // LOAD MORE ORDERS
+  // ==========================================================
+
+  loadMoreOrders(): void {
+
+    /*
+     * Do not send another request if
+     * a Load More request is already running.
+     */
+
+    if (this.loadingMore()) {
+      return;
+    }
+
+
+    /*
+     * Do not request another page if
+     * the API says there isn't one.
+     */
+
+    if (!this.hasNextPage()) {
+      return;
+    }
+
+
+    const nextPage =
+      this.serverPage() + 1;
+
+
+    this.loadingMore.set(true);
+
+    this.errorMessage.set(null);
+
+
+    this.orderService
+      .getOrders(
+        nextPage,
+        this.serverPageSize()
+      )
+      .subscribe({
+
+        next: (response) => {
+
+          /*
+           * Append the new orders to
+           * the orders already loaded.
+           */
+
+          this.orders.update(
+            currentOrders => [
+
+              ...currentOrders,
+
+              ...(response.items ?? [])
+
+            ]
+          );
+
+
+          /*
+           * Update the current server page.
+           */
+
+          this.serverPage.set(
+            response.page
+          );
+
+
+          /*
+           * Update whether another page
+           * exists on the server.
+           */
+
+          this.hasNextPage.set(
+            response.hasMore
+          );
+
+
+          this.loadingMore.set(false);
+
+        },
+
+
+        error: (error) => {
+
+          console.error(
+            'Load more orders error:',
+            error
+          );
+
+
+          this.loadingMore.set(false);
+
+
+          this.errorMessage.set(
+
+            error?.error?.message ||
+
+            error?.message ||
+
+            'Failed to load more orders.'
 
           );
 
@@ -340,9 +489,8 @@ console.log(orders)
 
 
     this.orderService
-      .updateStatus(
-        order.id,
-        status
+      .cancelOrder(
+        order.id
       )
       .subscribe({
 
@@ -404,65 +552,65 @@ console.log(orders)
 
     }
 
-  this.dialog
+
+    this.dialog
       .open(ConfirmDeleteComponent, {
         data: `Are you sure you want to cancel Order #${order.id}?`
       })
       .afterClosed()
       .subscribe(result => {
-   
+
         if (!result?.status) {
           return;
         }
- 
-
-    
 
 
-    this.orderService
-      .cancelOrder(
-        order.id
-      )
-      .subscribe({
+        this.orderService
+          .cancelOrder(
+            order.id
+          )
+          .subscribe({
 
-        next: () => {
+            next: () => {
 
-          this.orders.update(
-            orders =>
-              orders.map(
-                currentOrder =>
-                  currentOrder.id === order.id
-                    ? {
-                        ...currentOrder,
-                        status: 'Cancelled'
-                      }
-                    : currentOrder
-              )
-          );
+              this.orders.update(
+                orders =>
+                  orders.map(
+                    currentOrder =>
+                      currentOrder.id === order.id
+                        ? {
+                            ...currentOrder,
+                            status: 'Cancelled'
+                          }
+                        : currentOrder
+                  )
+              );
 
-        },
-
-
-        error: (error) => {
-
-          console.error(
-            'Cancel order error:',
-            error
-          );
+            },
 
 
-          this.errorMessage.set(
+            error: (error) => {
 
-            error?.error?.message ||
+              console.error(
+                'Cancel order error:',
+                error
+              );
 
-            'Failed to cancel order.'
 
-          );
+              this.errorMessage.set(
 
-        }
+                error?.error?.message ||
+
+                'Failed to cancel order.'
+
+              );
+
+            }
+
+          });
 
       });
-    })
+
   }
 
 
@@ -512,7 +660,9 @@ console.log(orders)
   // ==========================================================
   // IMAGE URL
   // ==========================================================
-api=environment.imageBaseUrl;
+
+  api=environment.imageBaseUrl;
+
   getImageUrl(
     imageUrl: string | null
   ): string {

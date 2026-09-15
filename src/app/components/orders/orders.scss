@@ -577,3 +577,16 @@
   padding: 12px 20px;
   border-top: 1px solid var(--color-border);
 }
+.loadMore
+{
+  display: flex;
+  justify-content: flex-end;
+  margin: 5px;
+
+}
+.loadMore button
+{
+ 
+  background-color: var(--color-primary-light);
+  color: var(--color-surface-soft);
+}

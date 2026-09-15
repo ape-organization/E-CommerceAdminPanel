@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { Order } from '../models/order.model';
+import { Order, PagedResponse } from '../models/order.model';
 import { DashboardStats } from '../models/DashboardStats.model';
 
 @Injectable({
@@ -20,41 +20,21 @@ export class OrderService {
   // ============================================================
   // ORDERS
   // ============================================================
+getOrders(
+  page: number = 1,
+  pageSize: number = 1
+): Observable<PagedResponse<Order>> {
 
-  getOrders(): Observable<Order[]> {
-
-    return this.http.get<Order[]>(
-      this.apiUrl
-    );
-
-  }
-
-
-  getOrder(id: number): Observable<Order> {
-
-    return this.http.get<Order>(
-      `${this.apiUrl}/${id}`
-    );
-
-  }
-
-
-  updateStatus(
-    id: number,
-    status: string
-  ): Observable<any> {
-
-    return this.http.put(
-      `${this.apiUrl}/${id}/status`,
-      JSON.stringify(status),
-      {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+  return this.http.get<PagedResponse<Order>>(
+    `${environment.apiBaseUrl}/orders`,
+    {
+      params: {
+        page,
+        pageSize
       }
-    );
-
-  }
+    }
+  );
+}
 
 
   cancelOrder(

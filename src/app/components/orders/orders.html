@@ -547,23 +547,46 @@
       </table>
 
 
-      <!-- PAGINATION -->
-      <div class="orders-pagination">
+     <div class="orders-pagination">
 
-        <mat-paginator
-          [length]="totalOrders()"
-          [pageIndex]="pageIndex()"
-          [pageSize]="pageSize()"
-          [pageSizeOptions]="pageSizeOptions"
-          
-          (page)="onPageChange($event)"
-        >
-        </mat-paginator>
+  <mat-paginator
+    [length]="totalOrders()"
+    [pageIndex]="pageIndex()"
+    [pageSize]="pageSize()"
+    [pageSizeOptions]="pageSizeOptions"
+    (page)="onPageChange($event)"
+  >
+  </mat-paginator>
 
-      </div>
+ 
+
+</div>
+
 
     </div>
 
   }
+<div class="loadMore">
+   @if (hasNextPage()) {
 
+    <button
+      mat-stroked-button
+      type="button"
+      class="load-more-btn"
+      [disabled]="loadingMore()"
+      (click)="loadMoreOrders()"
+    >
+
+        <mat-icon>
+          expand_more
+        </mat-icon>
+
+        <span>
+          {{ 'products.loadMore' | translate }}
+        </span>
+
+    </button>
+
+  }
+</div>
 </div>
