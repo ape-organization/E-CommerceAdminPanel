@@ -6,7 +6,9 @@
 }
 
 
-/* Header */
+/* ==========================================================
+   HEADER
+   ========================================================== */
 
 .page-header {
   margin-bottom: 24px;
@@ -38,7 +40,161 @@
 }
 
 
-/* Error */
+/* ==========================================================
+   FILTERS
+   ========================================================== */
+
+.orders-filters {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-group label {
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+}
+
+
+/* ==========================================================
+   ORDER ID FILTER
+   ========================================================== */
+
+.order-id-input {
+  display: flex;
+  align-items: center;
+  width: 230px;
+  height: 40px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  transition:
+    border-color .2s ease,
+    box-shadow .2s ease;
+}
+
+.order-id-input:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px rgba(184, 138, 90, .12);
+}
+
+.order-id-input input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0 11px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.order-id-input input::placeholder {
+  color: var(--color-text-light);
+}
+
+
+/* Remove number arrows */
+
+.order-id-input input::-webkit-outer-spin-button,
+.order-id-input input::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.order-id-input input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+
+/* Search / Clear buttons */
+
+.order-id-input button {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+}
+
+.order-id-input button:hover {
+  color: var(--color-accent);
+  background: var(--color-surface-soft);
+}
+
+
+/* ==========================================================
+   STATUS FILTER
+   ========================================================== */
+
+.filter-group select {
+  width: 180px;
+  height: 40px;
+  padding: 0 34px 0 11px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  outline: none;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition:
+    border-color .2s ease,
+    box-shadow .2s ease;
+}
+
+.filter-group select:hover {
+  border-color: var(--color-accent);
+}
+
+.filter-group select:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px rgba(184, 138, 90, .12);
+}
+
+
+/* ==========================================================
+   CLEAR FILTERS
+   ========================================================== */
+
+.clear-filters-btn {
+  height: 40px;
+  color: var(--color-text-secondary) !important;
+  border-color: var(--color-border) !important;
+}
+
+.clear-filters-btn mat-icon {
+  margin-right: 5px;
+  font-size: 18px;
+}
+
+.clear-filters-btn:hover {
+  color: var(--color-accent) !important;
+  background: var(--color-surface-soft);
+}
+
+
+/* ==========================================================
+   ERROR
+   ========================================================== */
 
 .error-message {
   display: flex;
@@ -65,7 +221,9 @@
 }
 
 
-/* Loading / Empty */
+/* ==========================================================
+   LOADING / EMPTY
+   ========================================================== */
 
 .loading-container,
 .empty-state {
@@ -91,6 +249,9 @@
   color: var(--color-text-secondary);
 }
 
+
+/* Empty */
+
 .empty-state > mat-icon {
   width: 48px;
   height: 48px;
@@ -113,7 +274,9 @@
 }
 
 
-/* Main table */
+/* ==========================================================
+   MAIN TABLE
+   ========================================================== */
 
 .orders-table-container {
   width: 100%;
@@ -132,7 +295,9 @@
 }
 
 
-/* Table header */
+/* ==========================================================
+   TABLE HEADER
+   ========================================================== */
 
 .orders-table thead th {
   height: 52px;
@@ -149,7 +314,9 @@
 }
 
 
-/* Order row */
+/* ==========================================================
+   ORDER ROW
+   ========================================================== */
 
 .order-row {
   background: var(--color-surface);
@@ -176,7 +343,9 @@
 }
 
 
-/* Date */
+/* ==========================================================
+   DATE
+   ========================================================== */
 
 .date-cell {
   white-space: nowrap;
@@ -187,7 +356,9 @@
 }
 
 
-/* Items */
+/* ==========================================================
+   ITEMS
+   ========================================================== */
 
 .items-count {
   display: inline-flex;
@@ -208,7 +379,9 @@
 }
 
 
-/* Total */
+/* ==========================================================
+   TOTAL
+   ========================================================== */
 
 .total-cell {
   display: flex;
@@ -228,7 +401,9 @@
 }
 
 
-/* Status */
+/* ==========================================================
+   STATUS BADGE
+   ========================================================== */
 
 .status-badge {
   display: inline-flex;
@@ -269,7 +444,9 @@
 }
 
 
-/* Expand button */
+/* ==========================================================
+   EXPAND BUTTON
+   ========================================================== */
 
 .orders-table td:last-child button {
   color: var(--color-primary);
@@ -281,7 +458,9 @@
 }
 
 
-/* Order details */
+/* ==========================================================
+   ORDER DETAILS
+   ========================================================== */
 
 .details-row > td {
   padding: 0 !important;
@@ -296,7 +475,9 @@
 }
 
 
-/* Sections */
+/* ==========================================================
+   DETAILS SECTIONS
+   ========================================================== */
 
 .details-section {
   margin-bottom: 24px;
@@ -324,7 +505,9 @@
 }
 
 
-/* Customer details */
+/* ==========================================================
+   CUSTOMER DETAILS
+   ========================================================== */
 
 .customer-details-grid {
   display: grid;
@@ -355,7 +538,9 @@
 }
 
 
-/* Items table */
+/* ==========================================================
+   ITEMS TABLE
+   ========================================================== */
 
 .items-table-container {
   overflow-x: auto;
@@ -393,7 +578,9 @@
 }
 
 
-/* Product */
+/* ==========================================================
+   PRODUCT
+   ========================================================== */
 
 .product-cell {
   display: flex;
@@ -430,7 +617,9 @@
 }
 
 
-/* Quantity */
+/* ==========================================================
+   QUANTITY
+   ========================================================== */
 
 .quantity-badge {
   display: inline-flex;
@@ -446,7 +635,9 @@
 }
 
 
-/* Footer */
+/* ==========================================================
+   DETAILS FOOTER
+   ========================================================== */
 
 .order-details-footer {
   display: flex;
@@ -475,7 +666,9 @@
 }
 
 
-/* Status control */
+/* ==========================================================
+   STATUS CONTROL
+   ========================================================== */
 
 .status-control {
   display: flex;
@@ -489,21 +682,45 @@
   font-weight: 600;
 }
 
-.status-control mat-select {
+.status-control select {
   width: 145px;
-  padding: 8px 10px;
+  height: 38px;
+  padding: 0 10px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
+  outline: none;
   background: var(--color-surface);
   color: var(--color-text);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition:
+    border-color .2s ease,
+    box-shadow .2s ease;
+}
+
+.status-control select:hover {
+  border-color: var(--color-accent);
+}
+
+.status-control select:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px rgba(184, 138, 90, .12);
 }
 
 
-/* Cancel */
+/* ==========================================================
+   ACTION BUTTONS
+   ========================================================== */
 
 .cancel-btn {
-  border-color: var(--color-error) !important;
-  color: var(--color-error) !important;
+  background-color: var(--color-error) !important;
+  color: var(--color-surface) !important;
+}
+
+.complete-btn {
+  background-color: var(--color-primary-light) !important;
+  color: var(--color-surface) !important;
 }
 
 .cancel-btn mat-icon {
@@ -511,7 +728,9 @@
 }
 
 
-/* No items */
+/* ==========================================================
+   NO ITEMS
+   ========================================================== */
 
 .no-items {
   display: flex;
@@ -523,15 +742,52 @@
 }
 
 
-/* Responsive */
+/* ==========================================================
+   PAGINATION
+   ========================================================== */
+
+.orders-pagination {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 20px;
+  border-top: 1px solid var(--color-border);
+}
+
+
+/* ==========================================================
+   LOAD MORE
+   ========================================================== */
+
+.loadMore {
+  display: flex;
+  justify-content: flex-end;
+  margin: 5px;
+}
+
+.loadMore button {
+  background-color: var(--color-primary-light);
+  color: var(--color-surface-soft);
+}
+
+
+/* ==========================================================
+   RESPONSIVE - 1000px
+   ========================================================== */
 
 @media (max-width: 1000px) {
+
   .customer-details-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
+
+/* ==========================================================
+   RESPONSIVE - 700px
+   ========================================================== */
+
 @media (max-width: 700px) {
+
   .orders-page {
     padding: 16px;
   }
@@ -539,6 +795,31 @@
   .header-content h1 {
     font-size: 24px;
   }
+
+
+  /* Filters */
+
+  .orders-filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .filter-group {
+    width: 100%;
+  }
+
+  .order-id-input,
+  .filter-group select {
+    width: 100%;
+  }
+
+  .clear-filters-btn {
+    width: 100%;
+  }
+
+
+  /* Details */
 
   .order-details {
     padding: 18px;
@@ -563,30 +844,11 @@
     align-items: stretch;
   }
 
-  .status-control mat-select {
+  .status-control select {
     width: 100%;
   }
 
   .cancel-btn {
     width: 100%;
   }
-}
-.orders-pagination {
-  display: flex;
-  justify-content: flex-end;
-  padding: 12px 20px;
-  border-top: 1px solid var(--color-border);
-}
-.loadMore
-{
-  display: flex;
-  justify-content: flex-end;
-  margin: 5px;
-
-}
-.loadMore button
-{
- 
-  background-color: var(--color-primary-light);
-  color: var(--color-surface-soft);
 }

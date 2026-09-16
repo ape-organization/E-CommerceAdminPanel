@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
@@ -20,7 +20,7 @@ export class OrderService {
   // ============================================================
   // ORDERS
   // ============================================================
-getOrders(
+/* getOrders(
   page: number = 1,
   pageSize: number = 1
 ): Observable<PagedResponse<Order>> {
@@ -34,9 +34,46 @@ getOrders(
       }
     }
   );
+} */
+
+getOrders(
+  page: number,
+  pageSize: number,
+  orderId?: number | null,
+  status?: string | null
+): Observable<PagedResponse<Order>> {
+
+  let params = new HttpParams()
+    .set('page', page)
+    .set('pageSize', pageSize);
+
+
+  if (orderId) {
+
+    params = params.set(
+      'orderId',
+      orderId
+    );
+
+  }
+
+
+  if (status) {
+
+    params = params.set(
+      'status',
+      status
+    );
+
+  }
+
+
+  return this.http.get<PagedResponse<Order>>(
+    `${environment.apiBaseUrl}/orders`,
+    { params }
+  );
+
 }
-
-
   cancelOrder(
     id: number
   ): Observable<any> {
@@ -47,7 +84,16 @@ getOrders(
     );
 
   }
+completeOrder(
+    id: number
+  ): Observable<any> {
 
+    return this.http.put(
+      `${this.apiUrl}/${id}/complete`,
+      {}
+    );
+
+  }
 
   // ============================================================
   // DASHBOARD

@@ -1,4 +1,3 @@
-
 import {
   Component,
   OnInit,
@@ -13,14 +12,27 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import {
+  MatPaginatorModule,
+  PageEvent
+} from '@angular/material/paginator';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { MatDialog } from '@angular/material/dialog';
 
 import { OrderService } from '../../services/order.service';
-import { Order, OrderItem } from '../../models/order.model';
+
+import {
+  Order,
+  OrderItem
+} from '../../models/order.model';
+
 import { environment } from '../../../environments/environment';
-import { ConfirmDeleteComponent } from '../../shared/confirm-delete/confirm-delete.component';
-import { MatDialog } from '@angular/material/dialog';
-import { TranslatePipe } from '@ngx-translate/core';
+
+import {
+  ConfirmDeleteComponent
+} from '../../shared/confirm-delete/confirm-delete.component';
 
 
 @Component({
@@ -36,13 +48,14 @@ import { TranslatePipe } from '@ngx-translate/core';
     MatIconModule,
 
     MatButtonModule,
-    TranslatePipe,
 
     MatProgressSpinnerModule,
 
     MatSelectModule,
 
-    MatPaginatorModule
+    MatPaginatorModule,
+
+    TranslatePipe
 
   ],
 
@@ -61,11 +74,13 @@ export class Orders implements OnInit {
   private readonly orderService =
     inject(OrderService);
 
-  private readonly dialog=inject(MatDialog);
+
+  private readonly dialog =
+    inject(MatDialog);
 
 
   // ==========================================================
-  // SIGNAL STATE
+  // ORDERS
   // ==========================================================
 
   readonly orders =
@@ -73,6 +88,10 @@ export class Orders implements OnInit {
 
 
   readonly loading =
+    signal(false);
+
+
+  readonly loadingMore =
     signal(false);
 
 
@@ -85,7 +104,36 @@ export class Orders implements OnInit {
 
 
   // ==========================================================
-  // PAGINATION STATE
+  // FILTERS
+  // ==========================================================
+
+  /*
+   * What the user is currently typing.
+   * This does NOT automatically call the API.
+   */
+
+  readonly orderIdInput =
+    signal('');
+
+
+  /*
+   * The actual order ID sent to the API.
+   */
+
+  readonly orderIdFilter =
+    signal<number | null>(null);
+
+
+  /*
+   * Empty string means all statuses.
+   */
+
+  readonly statusFilter =
+    signal('');
+
+
+  // ==========================================================
+  // PAGINATION
   // ==========================================================
 
   readonly pageIndex =
@@ -101,7 +149,7 @@ export class Orders implements OnInit {
 
 
   // ==========================================================
-  // SERVER PAGINATION STATE
+  // SERVER PAGINATION
   // ==========================================================
 
   readonly serverPage =
@@ -116,12 +164,8 @@ export class Orders implements OnInit {
     signal(false);
 
 
-  readonly loadingMore =
-    signal(false);
-
-
   // ==========================================================
-  // PAGINATED ORDERS
+  // LOCAL PAGINATION
   // ==========================================================
 
   readonly paginatedOrders =
@@ -147,7 +191,7 @@ export class Orders implements OnInit {
 
 
   // ==========================================================
-  // TOTAL ORDERS
+  // TOTAL
   // ==========================================================
 
   readonly totalOrders =
@@ -177,57 +221,36 @@ export class Orders implements OnInit {
 
     this.errorMessage.set(null);
 
-
-    // Reset server pagination
     this.serverPage.set(1);
-
 
     this.orderService
       .getOrders(
 
-        this.serverPage(),
-        this.serverPageSize()
+        1,
+
+        this.serverPageSize(),
+
+        this.orderIdFilter(),
+
+        this.statusFilter() || null
+
       )
       .subscribe({
 
         next: (response) => {
-
-          console.log(response);
-
-
-          /*
-           * First server page replaces
-           * the currently loaded orders.
-           */
-
+console.log(response)
           this.orders.set(
             response.items ?? []
           );
 
 
-          /*
-           * Store whether another
-           * server page exists.
-           */
-
           this.hasNextPage.set(
             response.hasMore
-
           );
 
 
-          /*
-           * Reset local pagination whenever
-           * orders are loaded again.
-           */
-
           this.pageIndex.set(0);
 
-
-          /*
-           * Close any expanded order
-           * after refreshing.
-           */
 
           this.expandedOrderId.set(
             null
@@ -255,13 +278,7 @@ export class Orders implements OnInit {
 
 
           this.errorMessage.set(
-
-            error?.error?.message ||
-
-            error?.message ||
-
             'Failed to load orders.'
-
           );
 
         }
@@ -272,25 +289,15 @@ export class Orders implements OnInit {
 
 
   // ==========================================================
-  // LOAD MORE ORDERS
+  // LOAD MORE
   // ==========================================================
 
   loadMoreOrders(): void {
-
-    /*
-     * Do not send another request if
-     * a Load More request is already running.
-     */
 
     if (this.loadingMore()) {
       return;
     }
 
-
-    /*
-     * Do not request another page if
-     * the API says there isn't one.
-     */
 
     if (!this.hasNextPage()) {
       return;
@@ -308,17 +315,19 @@ export class Orders implements OnInit {
 
     this.orderService
       .getOrders(
+
         nextPage,
-        this.serverPageSize()
+
+        this.serverPageSize(),
+
+        this.orderIdFilter(),
+
+        this.statusFilter() || null
+
       )
       .subscribe({
 
         next: (response) => {
-
-          /*
-           * Append the new orders to
-           * the orders already loaded.
-           */
 
           this.orders.update(
             currentOrders => [
@@ -331,19 +340,10 @@ export class Orders implements OnInit {
           );
 
 
-          /*
-           * Update the current server page.
-           */
-
           this.serverPage.set(
             response.page
           );
 
-
-          /*
-           * Update whether another page
-           * exists on the server.
-           */
 
           this.hasNextPage.set(
             response.hasMore
@@ -367,18 +367,139 @@ export class Orders implements OnInit {
 
 
           this.errorMessage.set(
-
-            error?.error?.message ||
-
-            error?.message ||
-
             'Failed to load more orders.'
-
           );
 
         }
 
       });
+
+  }
+
+
+  // ==========================================================
+  // ORDER ID INPUT
+  // ==========================================================
+
+  onOrderIdInput(
+    event: Event
+  ): void {
+
+    const input =
+      event.target as HTMLInputElement;
+
+    this.orderIdInput.set(
+      input.value
+    );
+
+  }
+
+
+  // ==========================================================
+  // SEARCH ORDER
+  // ==========================================================
+
+  searchOrder(): void {
+
+    const value =
+      this.orderIdInput()
+        .trim();
+
+
+    /*
+     * Empty input means remove
+     * the order ID filter.
+     */
+
+    if (!value) {
+
+      this.orderIdFilter.set(null);
+
+      this.loadOrders();
+
+      return;
+
+    }
+
+
+    const orderId =
+      Number(value);
+
+
+    /*
+     * Invalid order ID.
+     */
+
+    if (
+      !Number.isInteger(orderId) ||
+      orderId <= 0
+    ) {
+
+      return;
+
+    }
+
+
+    this.orderIdFilter.set(
+      orderId
+    );
+
+
+    this.loadOrders();
+
+  }
+
+
+  // ==========================================================
+  // CLEAR ORDER ID
+  // ==========================================================
+
+  clearOrderId(): void {
+
+    this.orderIdInput.set('');
+
+    this.orderIdFilter.set(null);
+
+    this.loadOrders();
+
+  }
+
+
+  // ==========================================================
+  // STATUS FILTER
+  // ==========================================================
+
+  onStatusChange(
+    event: Event
+  ): void {
+
+    const select =
+      event.target as HTMLSelectElement;
+
+
+    this.statusFilter.set(
+      select.value
+    );
+
+
+    this.loadOrders();
+
+  }
+
+
+  // ==========================================================
+  // CLEAR FILTERS
+  // ==========================================================
+
+  clearFilters(): void {
+
+    this.orderIdInput.set('');
+
+    this.orderIdFilter.set(null);
+
+    this.statusFilter.set('');
+
+    this.loadOrders();
 
   }
 
@@ -400,11 +521,6 @@ export class Orders implements OnInit {
       event.pageSize
     );
 
-
-    /*
-     * Close expanded order when
-     * changing page.
-     */
 
     this.expandedOrderId.set(
       null
@@ -470,10 +586,6 @@ export class Orders implements OnInit {
       order.status;
 
 
-    /*
-     * Optimistic update.
-     */
-
     this.orders.update(
       orders =>
         orders.map(
@@ -502,10 +614,6 @@ export class Orders implements OnInit {
           );
 
 
-          /*
-           * Rollback.
-           */
-
           this.orders.update(
             orders =>
               orders.map(
@@ -521,11 +629,7 @@ export class Orders implements OnInit {
 
 
           this.errorMessage.set(
-
-            error?.error?.message ||
-
             'Failed to update order status.'
-
           );
 
         }
@@ -554,9 +658,13 @@ export class Orders implements OnInit {
 
 
     this.dialog
-      .open(ConfirmDeleteComponent, {
-        data: `Are you sure you want to cancel Order #${order.id}?`
-      })
+      .open(
+        ConfirmDeleteComponent,
+        {
+          data:
+            `Are you sure you want to cancel Order #${order.id}?`
+        }
+      )
       .afterClosed()
       .subscribe(result => {
 
@@ -598,11 +706,86 @@ export class Orders implements OnInit {
 
 
               this.errorMessage.set(
-
-                error?.error?.message ||
-
                 'Failed to cancel order.'
+              );
 
+            }
+
+          });
+
+      });
+
+  }
+
+
+  // ==========================================================
+  // COMPLETE ORDER
+  // ==========================================================
+
+  completeOrder(
+    order: Order
+  ): void {
+
+    if (
+      order.status?.toLowerCase() ===
+      'confirmed'
+    ) {
+
+      return;
+
+    }
+
+
+    this.dialog
+      .open(
+        ConfirmDeleteComponent,
+        {
+          data:
+            `Are you sure you want to complete Order #${order.id}?`
+        }
+      )
+      .afterClosed()
+      .subscribe(result => {
+
+        if (!result?.status) {
+          return;
+        }
+
+
+        this.orderService
+          .completeOrder(
+            order.id
+          )
+          .subscribe({
+
+            next: () => {
+
+              this.orders.update(
+                orders =>
+                  orders.map(
+                    currentOrder =>
+                      currentOrder.id === order.id
+                        ? {
+                            ...currentOrder,
+                            status: 'Confirmed'
+                          }
+                        : currentOrder
+                  )
+              );
+
+            },
+
+
+            error: (error) => {
+
+              console.error(
+                'Confirmed order error:',
+                error
+              );
+
+
+              this.errorMessage.set(
+                'Failed to Confirmed order.'
               );
 
             }
@@ -661,23 +844,21 @@ export class Orders implements OnInit {
   // IMAGE URL
   // ==========================================================
 
-  api=environment.imageBaseUrl;
+  api =
+    environment.imageBaseUrl;
+
 
   getImageUrl(
     imageUrl: string | null
   ): string {
 
     if (!imageUrl) {
-
       return '';
-
     }
 
 
     return imageUrl.startsWith('http')
-
       ? imageUrl
-
       : `${this.api}${imageUrl}`;
 
   }

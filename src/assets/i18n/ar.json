@@ -356,6 +356,21 @@
   },
 
   "orders": {
+      "filters": {
+      "orderId": "رقم الطلب",
+      "orderIdPlaceholder": "أدخل رقم الطلب",
+      "status": "الحالة",
+      "allStatuses": "كل الحالات",
+      "clear": "مسح الفلاتر"
+    },
+
+    "status": {
+      "pending": "قيد الانتظار",
+      "confirmed": "تم التأكيد",
+    
+      "cancelled": "ملغي"
+    },
+    "completeOrder":"تاكيد الطلب",
     "title": "الطلبات",
     "subtitle": "إدارة ومتابعة جميع طلبات العملاء",
 

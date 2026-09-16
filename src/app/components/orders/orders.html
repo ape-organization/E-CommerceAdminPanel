@@ -1,7 +1,9 @@
-
 <div class="orders-page">
 
-  <!-- HEADER -->
+  <!-- ========================================================
+       HEADER
+       ======================================================== -->
+
   <header class="page-header">
 
     <div class="header-content">
@@ -9,6 +11,7 @@
       <div>
 
         <h1>
+
           <mat-icon>
             receipt_long
           </mat-icon>
@@ -28,7 +31,133 @@
   </header>
 
 
-  <!-- ERROR -->
+  <!-- ========================================================
+       FILTERS
+       ======================================================== -->
+
+  <div class="orders-filters">
+
+    <!-- ORDER ID -->
+
+    <div class="filter-group">
+
+      <label>
+        {{ 'orders.filters.orderId' | translate }}
+      </label>
+
+      <div class="order-id-input">
+
+        <input
+          type="number"
+          min="1"
+          [value]="orderIdInput()"
+          (input)="onOrderIdInput($event)"
+          (keyup.enter)="searchOrder()"
+          [placeholder]="
+            'orders.filters.orderIdPlaceholder'
+              | translate
+          "
+        />
+
+        @if (orderIdInput()) {
+
+          <button
+            mat-icon-button
+            type="button"
+            (click)="clearOrderId()"
+            aria-label="Clear order ID"
+          >
+
+            <mat-icon>
+              close
+            </mat-icon>
+
+          </button>
+
+        }
+
+        <button
+          mat-icon-button
+          type="button"
+          (click)="searchOrder()"
+          aria-label="Search order"
+        >
+
+          <mat-icon>
+            search
+          </mat-icon>
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- STATUS -->
+
+    <div class="filter-group">
+
+      <label>
+        {{ 'orders.filters.status' | translate }}
+      </label>
+
+      <select
+  [value]="statusFilter()"
+  (change)="onStatusChange($event)"
+>
+  <option value="">
+    {{ 'orders.filters.allStatuses' | translate }}
+  </option>
+
+  <option value="Pending">
+    {{ 'orders.status.pending' | translate }}
+  </option>
+
+  <option value="Confirmed">
+    {{ 'orders.status.confirmed' | translate }}
+  </option>
+
+
+  <option value="Cancelled">
+    {{ 'orders.status.cancelled' | translate }}
+  </option>
+</select>
+
+    </div>
+
+
+    <!-- CLEAR FILTERS -->
+
+    @if (
+      orderIdFilter() !== null ||
+      statusFilter()
+    ) {
+
+      <button
+        mat-stroked-button
+        type="button"
+        class="clear-filters-btn"
+        (click)="clearFilters()"
+      >
+
+        <mat-icon>
+          filter_alt_off
+        </mat-icon>
+
+        {{ 'orders.filters.clear' | translate }}
+
+      </button>
+
+    }
+
+  </div>
+
+
+  <!-- ========================================================
+       ERROR
+       ======================================================== -->
+
   @if (
     !loading() &&
     errorMessage()
@@ -47,7 +176,8 @@
       <button
         mat-button
         type="button"
-        (click)="loadOrders()">
+        (click)="loadOrders()"
+      >
 
         {{ 'common.tryAgain' | translate }}
 
@@ -58,12 +188,17 @@
   }
 
 
-  <!-- LOADING -->
+  <!-- ========================================================
+       LOADING
+       ======================================================== -->
+
   @if (loading()) {
 
     <div class="loading-container">
 
-      <mat-spinner diameter="45"></mat-spinner>
+      <mat-spinner
+        diameter="45"
+      ></mat-spinner>
 
       <p>
         {{ 'orders.loading' | translate }}
@@ -74,7 +209,10 @@
   }
 
 
-  <!-- EMPTY -->
+  <!-- ========================================================
+       EMPTY
+       ======================================================== -->
+
   @if (
     !loading() &&
     !errorMessage() &&
@@ -92,28 +230,69 @@
       </h2>
 
       <p>
-        {{ 'orders.empty.description' | translate }}
+
+        @if (
+          orderIdFilter() !== null ||
+          statusFilter()
+        ) {
+
+          {{ 'orders.empty.noFilterResults' | translate }}
+
+        } @else {
+
+          {{ 'orders.empty.description' | translate }}
+
+        }
+
       </p>
 
-      <button
-        mat-raised-button
-        type="button"
-        (click)="loadOrders()">
 
-        <mat-icon>
-          refresh
-        </mat-icon>
+      @if (
+        orderIdFilter() !== null ||
+        statusFilter()
+      ) {
 
-        {{ 'common.refresh' | translate }}
+        <button
+          mat-raised-button
+          type="button"
+          (click)="clearFilters()"
+        >
 
-      </button>
+          <mat-icon>
+            filter_alt_off
+          </mat-icon>
+
+          {{ 'orders.filters.clear' | translate }}
+
+        </button>
+
+      } @else {
+
+        <button
+          mat-raised-button
+          type="button"
+          (click)="loadOrders()"
+        >
+
+          <mat-icon>
+            refresh
+          </mat-icon>
+
+          {{ 'common.refresh' | translate }}
+
+        </button>
+
+      }
 
     </div>
 
   }
 
 
-  <!-- ORDERS -->
+  <!-- ========================================================
+       ORDERS
+       ======================================================== -->
+
   @if (
     !loading() &&
     !errorMessage() &&
@@ -128,12 +307,29 @@
 
           <tr>
 
-            <th>{{ 'orders.table.customer' | translate }}</th>
-            <th>{{ 'orders.table.date' | translate }}</th>
-            <th>{{ 'orders.table.items' | translate }}</th>
-            <th>{{ 'orders.table.total' | translate }}</th>
-            <th>{{ 'orders.table.status' | translate }}</th>
-            <th>{{ 'orders.table.actions' | translate }}</th>
+            <th>
+              {{ 'orders.table.customer' | translate }}
+            </th>
+
+            <th>
+              {{ 'orders.table.date' | translate }}
+            </th>
+
+            <th>
+              {{ 'orders.table.items' | translate }}
+            </th>
+
+            <th>
+              {{ 'orders.table.total' | translate }}
+            </th>
+
+            <th>
+              {{ 'orders.table.status' | translate }}
+            </th>
+
+            <th>
+              {{ 'orders.table.actions' | translate }}
+            </th>
 
           </tr>
 
@@ -153,22 +349,35 @@
             >
 
               <!-- CUSTOMER -->
+
               <td>
 
                 <strong>
-                  {{ order.clientName || ('orders.unknownClient' | translate) }}
+
+                  {{
+                    order.clientName ||
+                    (
+                      'orders.unknownClient'
+                      | translate
+                    )
+                  }}
+
                 </strong>
 
               </td>
 
 
               <!-- DATE -->
+
               <td>
 
                 <div class="date-cell">
 
                   <strong>
-                    {{ order.orderDate | date:'dd/MM/yyyy' }}
+                    {{
+                      order.orderDate
+                        | date:'dd/MM/yyyy'
+                    }}
                   </strong>
 
                 </div>
@@ -177,6 +386,7 @@
 
 
               <!-- ITEMS -->
+
               <td>
 
                 <span class="items-count">
@@ -193,12 +403,18 @@
 
 
               <!-- TOTAL -->
+
               <td>
 
                 <div class="total-cell">
 
                   <strong>
-                    {{ order.totalAmount | number:'1.2-2' }}
+
+                    {{
+                      order.totalAmount
+                        | number:'1.2-2'
+                    }}
+
                   </strong>
 
                   <small>
@@ -211,11 +427,14 @@
 
 
               <!-- STATUS -->
+
               <td>
 
                 <span
                   class="status-badge"
-                  [ngClass]="getStatusClass(order.status)"
+                  [ngClass]="
+                    getStatusClass(order.status)
+                  "
                 >
 
                   {{ order.status }}
@@ -226,6 +445,7 @@
 
 
               <!-- ACTION -->
+
               <td>
 
                 <button
@@ -234,17 +454,25 @@
                   (click)="toggleOrder(order.id)"
                   [attr.aria-label]="
                     isExpanded(order.id)
-                      ? ('orders.hideDetails' | translate)
-                      : ('orders.showDetails' | translate)
+                      ? (
+                          'orders.hideDetails'
+                          | translate
+                        )
+                      : (
+                          'orders.showDetails'
+                          | translate
+                        )
                   "
                 >
 
                   <mat-icon>
+
                     {{
                       isExpanded(order.id)
                         ? 'expand_less'
                         : 'expand_more'
                     }}
+
                   </mat-icon>
 
                 </button>
@@ -254,7 +482,10 @@
             </tr>
 
 
-            <!-- DETAILS -->
+            <!-- ==================================================
+                 DETAILS
+                 ================================================== -->
+
             @if (isExpanded(order.id)) {
 
               <tr class="details-row">
@@ -264,7 +495,8 @@
                   <div class="order-details">
 
 
-                    <!-- CUSTOMER -->
+                    <!-- CUSTOMER INFORMATION -->
+
                     <section class="details-section">
 
                       <div class="section-title">
@@ -274,13 +506,19 @@
                         </mat-icon>
 
                         <h3>
-                          {{ 'orders.customerInformation' | translate }}
+                          {{
+                            'orders.customerInformation'
+                              | translate
+                          }}
                         </h3>
 
                       </div>
 
 
                       <div class="customer-details-grid">
+
+
+                        <!-- NAME -->
 
                         <div class="detail-item">
 
@@ -295,6 +533,8 @@
                         </div>
 
 
+                        <!-- PHONE -->
+
                         <div class="detail-item">
 
                           <span>
@@ -307,6 +547,8 @@
 
                         </div>
 
+
+                        <!-- EMAIL -->
 
                         <div class="detail-item">
 
@@ -321,6 +563,8 @@
                         </div>
 
 
+                        <!-- GOVERNORATE -->
+
                         <div class="detail-item">
 
                           <span>
@@ -332,6 +576,10 @@
                           </strong>
 
                         </div>
+
+
+                        <!-- ADDRESS -->
+
                         <div class="detail-item">
 
                           <span>
@@ -349,7 +597,10 @@
                     </section>
 
 
-                    <!-- ITEMS -->
+                    <!-- ==================================================
+                         ITEMS
+                         ================================================== -->
+
                     <section class="details-section">
 
                       <div class="section-title">
@@ -359,7 +610,10 @@
                         </mat-icon>
 
                         <h3>
-                          {{ 'orders.orderItems' | translate }}
+                          {{
+                            'orders.orderItems'
+                              | translate
+                          }}
                         </h3>
 
                       </div>
@@ -375,10 +629,33 @@
 
                               <tr>
 
-                                <th>{{ 'orders.table.product' | translate }}</th>
-                                <th>{{ 'orders.table.quantity' | translate }}</th>
-                                <th>{{ 'orders.table.unitPrice' | translate }}</th>
-                                <th>{{ 'orders.table.total' | translate }}</th>
+                                <th>
+                                  {{
+                                    'orders.table.product'
+                                      | translate
+                                  }}
+                                </th>
+
+                                <th>
+                                  {{
+                                    'orders.table.quantity'
+                                      | translate
+                                  }}
+                                </th>
+
+                                <th>
+                                  {{
+                                    'orders.table.unitPrice'
+                                      | translate
+                                  }}
+                                </th>
+
+                                <th>
+                                  {{
+                                    'orders.table.total'
+                                      | translate
+                                  }}
+                                </th>
 
                               </tr>
 
@@ -395,6 +672,7 @@
                                 <tr>
 
                                   <!-- PRODUCT -->
+
                                   <td>
 
                                     <div class="product-cell">
@@ -404,8 +682,14 @@
                                         @if (item.imageUrl) {
 
                                           <img
-                                            [src]="getImageUrl(item.imageUrl)"
-                                            [alt]="item.productName"
+                                            [src]="
+                                              getImageUrl(
+                                                item.imageUrl
+                                              )
+                                            "
+                                            [alt]="
+                                              item.productName
+                                            "
                                           />
 
                                         } @else {
@@ -418,6 +702,7 @@
 
                                       </div>
 
+
                                       <strong>
                                         {{ item.productName }}
                                       </strong>
@@ -428,19 +713,26 @@
 
 
                                   <!-- QUANTITY -->
+
                                   <td>
 
                                     <span class="quantity-badge">
+
                                       {{ item.quantity }}
+
                                     </span>
 
                                   </td>
 
 
                                   <!-- UNIT PRICE -->
+
                                   <td>
 
-                                    {{ item.unitPrice | number:'1.2-2' }}
+                                    {{
+                                      item.unitPrice
+                                        | number:'1.2-2'
+                                    }}
 
                                     {{ 'common.egp' | translate }}
 
@@ -448,11 +740,15 @@
 
 
                                   <!-- TOTAL -->
+
                                   <td>
 
                                     <strong>
 
-                                      {{ item.totalPrice | number:'1.2-2' }}
+                                      {{
+                                        item.totalPrice
+                                          | number:'1.2-2'
+                                      }}
 
                                       {{ 'common.egp' | translate }}
 
@@ -489,8 +785,14 @@
                     </section>
 
 
-                    <!-- FOOTER -->
+                    <!-- ==================================================
+                         FOOTER
+                         ================================================== -->
+
                     <div class="order-details-footer">
+
+
+                      <!-- TOTAL -->
 
                       <div class="details-total">
 
@@ -500,7 +802,10 @@
 
                         <strong>
 
-                          {{ order.totalAmount | number:'1.2-2' }}
+                          {{
+                            order.totalAmount
+                              | number:'1.2-2'
+                          }}
 
                           {{ 'common.egp' | translate }}
 
@@ -509,8 +814,11 @@
                       </div>
 
 
+                      <!-- CANCEL -->
+
                       @if (
-                        order.status.toLowerCase() !== 'cancelled'
+                        order.status.toLowerCase() !==
+                        'cancelled'
                       ) {
 
                         <button
@@ -525,6 +833,31 @@
                           </mat-icon>
 
                           {{ 'orders.cancelOrder' | translate }}
+
+                        </button>
+
+                      }
+
+
+                      <!-- COMPLETE -->
+
+                      @if (
+                        order.status.toLowerCase() !==
+                        'confirmed'
+                      ) {
+
+                        <button
+                          mat-stroked-button
+                          class="complete-btn"
+                          type="button"
+                          (click)="completeOrder(order)"
+                        >
+
+                          <mat-icon>
+                            check_circle
+                          </mat-icon>
+
+                          {{ 'orders.completeOrder' | translate }}
 
                         </button>
 
@@ -547,46 +880,66 @@
       </table>
 
 
-     <div class="orders-pagination">
+      <!-- ========================================================
+           PAGINATION
+           ======================================================== -->
 
-  <mat-paginator
-    [length]="totalOrders()"
-    [pageIndex]="pageIndex()"
-    [pageSize]="pageSize()"
-    [pageSizeOptions]="pageSizeOptions"
-    (page)="onPageChange($event)"
-  >
-  </mat-paginator>
+      <div class="orders-pagination">
 
- 
+        <mat-paginator
+          [length]="totalOrders()"
+          [pageIndex]="pageIndex()"
+          [pageSize]="pageSize()"
+          [pageSizeOptions]="pageSizeOptions"
+          (page)="onPageChange($event)"
+        >
+        </mat-paginator>
 
-</div>
-
+      </div>
 
     </div>
 
   }
-<div class="loadMore">
-   @if (hasNextPage()) {
 
-    <button
-      mat-stroked-button
-      type="button"
-      class="load-more-btn"
-      [disabled]="loadingMore()"
-      (click)="loadMoreOrders()"
-    >
 
-        <mat-icon>
-          expand_more
-        </mat-icon>
+  <!-- ========================================================
+       LOAD MORE
+       ======================================================== -->
+
+  <div class="loadMore">
+
+    @if (hasNextPage()) {
+
+      <button
+        mat-stroked-button
+        type="button"
+        class="load-more-btn"
+        [disabled]="loadingMore()"
+        (click)="loadMoreOrders()"
+      >
+
+        @if (loadingMore()) {
+
+          <mat-spinner
+            diameter="20"
+          ></mat-spinner>
+
+        } @else {
+
+          <mat-icon>
+            expand_more
+          </mat-icon>
+
+        }
 
         <span>
           {{ 'products.loadMore' | translate }}
         </span>
 
-    </button>
+      </button>
 
-  }
-</div>
+    }
+
+  </div>
+
 </div>

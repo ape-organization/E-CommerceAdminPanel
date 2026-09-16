@@ -382,6 +382,21 @@
     "orderItems": "Order Items",
     "noItems": "No items found.",
     "orderTotal": "Order Total",
-    "cancelOrder": "Cancel Order"
+    "cancelOrder": "Cancel Order",
+    "completeOrder":"Complete Order",
+        "filters": {
+      "orderId": "Order ID",
+      "orderIdPlaceholder": "Enter order ID",
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "clear": "Clear filters"
+    },
+
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+     
+      "cancelled": "Cancelled"
+    }
   }
 }
