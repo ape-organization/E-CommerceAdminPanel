@@ -55,7 +55,125 @@
 
   }
 
+  <!-- ========================================================= -->
+  <!-- SMS SECTION -->
+  <!-- ========================================================= -->
 
+  <section class="dashboard-section">
+
+    <div class="section-header">
+
+      <div class="section-title">
+
+        <div class="section-icon monthly-section-icon">
+
+          <mat-icon>
+            money
+          </mat-icon>
+
+        </div>
+
+        <div>
+
+          <h2>
+            {{ 'dashboard.monthlyPerformance' | translate }}
+          </h2>
+
+          <span>
+            {{ currentMonthName }} {{ currentYear }}
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="stats-grid">
+
+
+      <!-- ===================================================== -->
+      <!-- MONTHLY ORDERS -->
+      <!-- ===================================================== -->
+
+      <div class="stat-card">
+
+        <div class="card-top">
+
+          <div class="icon orders-icon">
+
+            <mat-icon>
+              numbers
+            </mat-icon>
+
+          </div>
+
+          <span class="period-badge">
+            {{ 'dashboard.monthly' | translate }}
+          </span>
+
+        </div>
+
+
+        <div class="stat-content">
+
+          <span class="label">
+            {{ 'dashboard.msgCount' | translate }}
+          </span>
+
+          <strong>
+            {{ totalMsg() | number }}
+          </strong>
+
+          <span class="description">
+            {{ 'dashboard.msgThisMonth' | translate }}
+          </span>
+
+        </div>
+
+      </div>
+
+ <div class="stat-card">
+
+        <div class="card-top">
+
+          <div class="icon orders-icon">
+
+            <mat-icon>
+              money
+            </mat-icon>
+
+          </div>
+
+          <span class="period-badge">
+            {{ 'dashboard.monthly' | translate }}
+          </span>
+
+        </div>
+
+
+        <div class="stat-content">
+
+          <span class="label">
+            {{ 'dashboard.msgCost' | translate }}
+          </span>
+
+          <strong>
+            {{ totalCost() | number }}
+          </strong>
+
+          <span class="description">
+            {{ 'dashboard.costThisMonth' | translate }}
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
   <!-- ========================================================= -->
   <!-- MONTHLY SECTION -->
   <!-- ========================================================= -->

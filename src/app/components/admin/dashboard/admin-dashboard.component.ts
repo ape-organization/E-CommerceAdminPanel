@@ -14,6 +14,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { OrderService } from '../../../services/order.service';
 import { LanguageService } from '../../../services/language.service';
 import { WebsiteVisitService } from '../../../services/website-visit.service';
+import { SMSService } from '../../../services/otp.service';
 
 
 @Component({
@@ -38,6 +39,8 @@ export class AdminDashboardComponent implements OnInit {
  private readonly visitorService =
     inject(WebsiteVisitService);
 
+     private readonly SmsService =
+    inject(SMSService);
   // ============================================================
   // CURRENT DATE
   // ============================================================
@@ -68,7 +71,8 @@ export class AdminDashboardComponent implements OnInit {
   // ============================================================
   // TOTAL VALUES
   // ============================================================
-
+  totalCost=signal(0);
+totalMsg=signal(0);
   totalOrders =
     signal(0);
 
@@ -101,11 +105,47 @@ visitors=signal(0);
   // ============================================================
 
   ngOnInit(): void {
-
+this.loadTotalCost();
     this.loadDashboard();
 
   }
+ loadTotalCost(): void {
+  this.isLoading.set(true);
+  this.errorMessage.set('');
 
+  let completed = 0;
+
+  const requestCompleted = () => {
+    completed++;
+
+    if (completed === 2) {
+      this.isLoading.set(false);
+    }
+  };
+
+  this.SmsService.getTotalCost().subscribe({
+    next: stats => {
+      console.log(stats)
+      if(stats.success)
+      {
+      this.totalCost.set(stats.data.totalSmsPartCount*.60);
+      this.totalMsg.set(stats.data.totalSmsPartCount)
+      requestCompleted();
+
+      }
+    },
+
+    error: () => {
+      this.errorMessage.set(
+        'Failed to load current month sms cost.'
+      );
+
+      requestCompleted();
+    }
+  });
+
+ 
+}
 
   // ============================================================
   // LOAD DASHBOARD

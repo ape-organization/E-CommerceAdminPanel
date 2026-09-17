@@ -61,6 +61,12 @@
 "monthly":"monthly",
 "ordersCount":"orders count",
 "ordersThisMonth":"orders This Month",
+
+"msgThisMonth":"messages This Month",
+"msgCount":"messages count",
+"msgCost":"messages cost",
+"costThisMonth":"cost This Month",
+
 "salesThisMonth":"Sales This Month",
 "gainThisMonth":"Gain This Month",
 "totalOrdersAllTime":"Total Orders All Time",
