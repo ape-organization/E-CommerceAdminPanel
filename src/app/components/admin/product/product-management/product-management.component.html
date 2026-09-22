@@ -42,11 +42,11 @@
     </button>
 
   </header>
-<div>
+<!-- <div>
    <p>
           {{ 'products.Pagination' | translate }}
         </p>
-</div>
+</div> -->
 
   <!-- ====================================================== -->
   <!-- SEARCH -->
@@ -805,34 +805,5 @@
     </div>
 
   }
-@if (hasMore()) {
 
-  <div class="load-more-wrapper">
-
-    <button
-      mat-raised-button
-      class="add-product-btn"
-      type="button"
-      (click)="loadNextPage()"
-      [disabled]="isLoading()">
-
-      @if (isLoading()) {
-
-        <mat-spinner diameter="18"></mat-spinner>
-
-      } @else {
-
-        <mat-icon>
-          expand_more
-        </mat-icon>
-
-      }
-
-      {{ 'products.loadMore' | translate }}
-
-    </button>
-
-  </div>
-
-}
 </div>

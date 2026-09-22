@@ -1,3 +1,4 @@
+
 import {
   CommonModule
 } from '@angular/common';
@@ -45,8 +46,7 @@ import {
 } from '@angular/material/tooltip';
 
 import {
-  ProductService,
-  PagedResponse
+  ProductService
 } from '../../../../services/product.service';
 
 import {
@@ -108,137 +108,34 @@ export class ProductManagementComponent implements OnInit {
 
 
   // ==========================================================
-  // API PAGE SIZE
-  // ==========================================================
-
-  /*
-   * The API controls the actual page size.
-   *
-   * For example, if the backend uses:
-   *
-   * pageSize = 100
-   *
-   * then:
-   *
-   * API page 1 = products 1 - 100
-   * API page 2 = products 101 - 200
-   * API page 3 = products 201 - 300
-   */
-  private readonly apiPageSize = 50;
-
-
-  // ==========================================================
   // DATA
   // ==========================================================
 
+  /**
+   * Contains ALL products returned by the API.
+   *
+   * There is no server-side pagination anymore.
+   */
+  readonly hasLocalFilters =
+  computed(() =>
+    !!this.selectedCategory() ||
+    !!this.selectedSubCategory() ||
+    !!this.selectedBrand()
+  );
   readonly products =
     signal<Product[]>([]);
+
 
   readonly searchTerm =
     signal('');
 
+
   readonly isLoading =
     signal(false);
 
+
   readonly errorMessage =
     signal<string | null>(null);
-
-
-  // ==========================================================
-  // SERVER PAGINATION
-  // ==========================================================
-
-  readonly totalCount =
-    signal(0);
-
-  readonly totalPages =
-    signal(0);
-
-  readonly hasMore =
-    signal(false);
-
-
-  // ==========================================================
-  // CURRENT API PAGE
-  // ==========================================================
-
-  /*
-   * This is the last API page that has been loaded.
-   *
-   * It is NOT the Material paginator page.
-   */
-  readonly currentApiPage =
-    signal(1);
-
-
-  // ==========================================================
-  // API PAGE CACHE
-  // ==========================================================
-
-  /*
-   * Stores API pages that have already been loaded.
-   *
-   * Example:
-   *
-   * page 1 -> 100 products
-   * page 2 -> 100 products
-   * page 3 -> 100 products
-   */
-  private readonly pageCache =
-    signal<Map<number, Product[]>>(
-      new Map<number, Product[]>()
-    );
-
-
-  // ==========================================================
-  // ALL PRODUCTS LOADED
-  // ==========================================================
-
-  readonly allProductsLoaded =
-    computed(() => {
-
-      const pages =
-        this.totalPages();
-
-      const cache =
-        this.pageCache();
-
-      return (
-        pages > 0 &&
-        !this.hasMore() &&
-        cache.size >= pages
-      );
-
-    });
-
-
-  // ==========================================================
-  // ALL CACHED PRODUCTS
-  // ==========================================================
-
-  readonly allCachedProducts =
-    computed(() => {
-
-      const cache =
-        this.pageCache();
-
-      const allProducts: Product[] = [];
-
-      const pages =
-        Array.from(cache.keys())
-          .sort((a, b) => a - b);
-
-      for (const page of pages) {
-
-        allProducts.push(
-          ...(cache.get(page) ?? [])
-        );
-
-      }
-
-      return allProducts;
-
-    });
 
 
   // ==========================================================
@@ -248,23 +145,27 @@ export class ProductManagementComponent implements OnInit {
   readonly selectedCategory =
     signal('');
 
+
   readonly selectedSubCategory =
     signal('');
+
 
   readonly selectedBrand =
     signal('');
 
 
   // ==========================================================
-  // FILTER ACTIVE
+  // ALL PRODUCTS
   // ==========================================================
 
-  readonly hasLocalFilters =
-    computed(() =>
-      !!this.selectedCategory() ||
-      !!this.selectedSubCategory() ||
-      !!this.selectedBrand()
-    );
+  /**
+   * Alias used by the dropdown computed signals.
+   *
+   * Since the API returns all products, the products signal
+   * itself is our complete local collection.
+   */
+  readonly allCachedProducts =
+    computed(() => this.products());
 
 
   // ==========================================================
@@ -276,6 +177,7 @@ export class ProductManagementComponent implements OnInit {
 
       const categories =
         new Set<string>();
+
 
       for (
         const product of this.allCachedProducts()
@@ -302,6 +204,7 @@ export class ProductManagementComponent implements OnInit {
 
       }
 
+
       return Array.from(categories)
         .sort((a, b) =>
           a.localeCompare(b)
@@ -322,8 +225,10 @@ export class ProductManagementComponent implements OnInit {
           .trim()
           .toLowerCase();
 
+
       const subCategories =
         new Set<string>();
+
 
       for (
         const product of this.allCachedProducts()
@@ -338,15 +243,19 @@ export class ProductManagementComponent implements OnInit {
             subCategory.nameEn
               ?.trim();
 
+
           const categoryName =
             subCategory.categoryName
               ?.trim()
               .toLowerCase();
 
+
           if (!subCategoryName) {
             continue;
           }
 
+
+          // No category selected
           if (!selectedCategory) {
 
             subCategories.add(
@@ -354,9 +263,10 @@ export class ProductManagementComponent implements OnInit {
             );
 
             continue;
-
           }
 
+
+          // Category selected
           if (
             categoryName ===
             selectedCategory
@@ -371,6 +281,7 @@ export class ProductManagementComponent implements OnInit {
         }
 
       }
+
 
       return Array.from(subCategories)
         .sort((a, b) =>
@@ -390,6 +301,7 @@ export class ProductManagementComponent implements OnInit {
       const brands =
         new Set<string>();
 
+
       for (
         const product of this.allCachedProducts()
       ) {
@@ -397,6 +309,7 @@ export class ProductManagementComponent implements OnInit {
         const brandName =
           product.brand?.nameEn
             ?.trim();
+
 
         if (brandName) {
 
@@ -407,6 +320,7 @@ export class ProductManagementComponent implements OnInit {
         }
 
       }
+
 
       return Array.from(brands)
         .sort((a, b) =>
@@ -420,50 +334,33 @@ export class ProductManagementComponent implements OnInit {
   // LOCAL TABLE PAGINATION
   // ==========================================================
 
-  /*
-   * IMPORTANT:
-   *
-   * These belong ONLY to the Angular Material paginator.
+  /**
+   * These belong only to the Angular Material paginator.
    *
    * They do NOT represent API pages.
    */
   readonly pageIndex =
     signal(0);
 
+
   readonly pageSize =
     signal(10);
-
-
-  // ==========================================================
-  // SEARCH MODE
-  // ==========================================================
-
-  readonly isSearchMode =
-    computed(() =>
-      this.searchTerm()
-        .trim()
-        .length > 0
-    );
-
-
-  // ==========================================================
-  // LOCAL FILTERING
-  // ==========================================================
-
-  readonly isLocalFiltering =
-    computed(() =>
-      this.hasLocalFilters() ||
-      (
-        this.isSearchMode() &&
-        this.allProductsLoaded()
-      )
-    );
 
 
   // ==========================================================
   // FILTERED PRODUCTS
   // ==========================================================
 
+  /**
+   * Applies:
+   *
+   * - Search
+   * - Category
+   * - Subcategory
+   * - Brand
+   *
+   * completely in memory.
+   */
   readonly filteredProducts =
     computed(() => {
 
@@ -472,79 +369,94 @@ export class ProductManagementComponent implements OnInit {
           .trim()
           .toLowerCase();
 
+
       const category =
         this.selectedCategory()
           .trim()
           .toLowerCase();
+
 
       const subCategory =
         this.selectedSubCategory()
           .trim()
           .toLowerCase();
 
+
       const brand =
         this.selectedBrand()
           .trim()
           .toLowerCase();
 
+
       const currentProducts =
         this.products();
 
 
-      return currentProducts.filter(product => {
+      return currentProducts.filter(
+        product => {
 
-        // ====================================================
-        // SEARCH
-        // ====================================================
+          // ====================================================
+          // SEARCH
+          // ====================================================
 
-        let matchesSearch = true;
+          let matchesSearch = true;
 
-        if (term) {
 
-          const nameEn =
-            product.nameEn
-              ?.toLowerCase()
-              .includes(term);
+          if (term) {
 
-          const nameAr =
-            product.nameAr
-              ?.toLowerCase()
-              .includes(term);
-
-          const descriptionEn =
-            product.descriptionEn
-              ?.toLowerCase()
-              .includes(term);
-
-          const descriptionAr =
-            product.descriptionAr
-              ?.toLowerCase()
-              .includes(term);
-
-          const brandName =
-            product.brand?.nameEn
-              ?.toLowerCase()
-              .includes(term);
-
-          const subCategoryName =
-            product.subCategories?.some(sub =>
-              sub.nameEn
+            const nameEn =
+              product.nameEn
                 ?.toLowerCase()
-                .includes(term) ||
-              sub.nameAr
-                ?.toLowerCase()
-                .includes(term)
-            );
+                .includes(term);
 
-          const categoryName =
-            product.subCategories?.some(sub =>
-              sub.categoryName
-                ?.toLowerCase()
-                .includes(term)
-            );
 
-          matchesSearch =
-            !!(
+            const nameAr =
+              product.nameAr
+                ?.toLowerCase()
+                .includes(term);
+
+
+            const descriptionEn =
+              product.descriptionEn
+                ?.toLowerCase()
+                .includes(term);
+
+
+            const descriptionAr =
+              product.descriptionAr
+                ?.toLowerCase()
+                .includes(term);
+
+
+            const brandName =
+              product.brand?.nameEn
+                ?.toLowerCase()
+                .includes(term);
+
+
+            const subCategoryName =
+              product.subCategories?.some(
+                sub =>
+                  sub.nameEn
+                    ?.toLowerCase()
+                    .includes(term) ||
+
+                  sub.nameAr
+                    ?.toLowerCase()
+                    .includes(term)
+              );
+
+
+            const categoryName =
+              product.subCategories?.some(
+                sub =>
+                  sub.categoryName
+                    ?.toLowerCase()
+                    .includes(term)
+              );
+
+
+            matchesSearch = !!(
               nameEn ||
               nameAr ||
               descriptionEn ||
@@ -554,85 +466,97 @@ export class ProductManagementComponent implements OnInit {
               categoryName
             );
 
-        }
+          }
 
 
-        // ====================================================
-        // CATEGORY
-        // ====================================================
+          // ====================================================
+          // CATEGORY
+          // ====================================================
 
-        let matchesCategory = true;
-
-        if (category) {
-
-          matchesCategory =
-            !!product.subCategories?.some(sub =>
-              sub.categoryName
-                ?.trim()
-                .toLowerCase() === category
-            );
-
-        }
+          let matchesCategory = true;
 
 
-        // ====================================================
-        // SUBCATEGORY
-        // ====================================================
+          if (category) {
 
-        let matchesSubCategory = true;
+            matchesCategory =
+              !!product.subCategories?.some(
+                sub =>
+                  sub.categoryName
+                    ?.trim()
+                    .toLowerCase() ===
+                  category
+              );
 
-        if (subCategory) {
+          }
 
-          matchesSubCategory =
-            !!product.subCategories?.some(sub =>
-              (
-                sub.nameEn ||
-                sub.nameAr
-              )
+
+          // ====================================================
+          // SUBCATEGORY
+          // ====================================================
+
+          let matchesSubCategory = true;
+
+
+          if (subCategory) {
+
+            matchesSubCategory =
+              !!product.subCategories?.some(
+                sub =>
+                  (
+                    sub.nameEn ||
+                    sub.nameAr
+                  )
+                    ?.trim()
+                    .toLowerCase() ===
+                  subCategory
+              );
+
+          }
+
+
+          // ====================================================
+          // BRAND
+          // ====================================================
+
+          let matchesBrand = true;
+
+
+          if (brand) {
+
+            matchesBrand =
+              product.brand?.nameEn
                 ?.trim()
                 .toLowerCase() ===
-              subCategory
-            );
+              brand;
+
+          }
+
+
+          // ====================================================
+          // FINAL RESULT
+          // ====================================================
+
+          return (
+            matchesSearch &&
+            matchesCategory &&
+            matchesSubCategory &&
+            matchesBrand
+          );
 
         }
-
-
-        // ====================================================
-        // BRAND
-        // ====================================================
-
-        let matchesBrand = true;
-
-        if (brand) {
-
-          matchesBrand =
-            product.brand?.nameEn
-              ?.trim()
-              .toLowerCase() === brand;
-
-        }
-
-
-        return (
-          matchesSearch &&
-          matchesCategory &&
-          matchesSubCategory &&
-          matchesBrand
-        );
-
-      });
+      );
 
     });
 
 
   // ==========================================================
-  // LOCAL TABLE PAGINATION
+  // LOCAL PAGINATED PRODUCTS
   // ==========================================================
 
-  /*
-   * This does NOT call the API.
+  /**
+   * This is the list actually displayed in the table.
    *
-   * It only slices products that are already in memory.
+   * Pagination happens completely locally.
    */
   readonly paginatedProducts =
     computed(() => {
@@ -640,9 +564,11 @@ export class ProductManagementComponent implements OnInit {
       const filtered =
         this.filteredProducts();
 
+
       const start =
         this.pageIndex() *
         this.pageSize();
+
 
       return filtered.slice(
         start,
@@ -676,200 +602,62 @@ export class ProductManagementComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.loadApiPage(1);
+    this.loadProducts();
 
   }
 
 
   // ==========================================================
-  // LOAD API PAGE
+  // LOAD ALL PRODUCTS
   // ==========================================================
 
-  private loadApiPage(
-    apiPage: number,
-    append = false,
-    afterLoad?: () => void
-  ): void {
-
-    // ========================================================
-    // INVALID PAGE
-    // ========================================================
-
-    if (apiPage < 1) {
-      return;
-    }
-
-
-    // ========================================================
-    // ALREADY LOADING
-    // ========================================================
+  /**
+   * Loads the complete product list once.
+   *
+   * There is no API pagination.
+   */
+  private loadProducts(): void {
 
     if (this.isLoading()) {
       return;
     }
 
 
-    // ========================================================
-    // PAGE DOES NOT EXIST
-    // ========================================================
-
-    if (
-      this.totalPages() > 0 &&
-      apiPage > this.totalPages()
-    ) {
-
-      this.hasMore.set(false);
-
-      return;
-
-    }
-
-
-    // ========================================================
-    // CACHE
-    // ========================================================
-
-    const cached =
-      this.pageCache()
-        .get(apiPage);
-
-    if (cached) {
-
-      if (append) {
-
-        const current =
-          this.products();
-
-        this.products.set([
-          ...current,
-          ...cached
-        ]);
-
-      } else {
-
-        this.products.set(
-          cached
-        );
-
-      }
-
-
-      this.currentApiPage.set(
-        apiPage
-      );
-
-
-      afterLoad?.();
-
-      return;
-
-    }
-
-
-    // ========================================================
-    // LOADING
-    // ========================================================
-
     this.isLoading.set(true);
 
     this.errorMessage.set(null);
 
 
-    // ========================================================
-    // API REQUEST
-    // ========================================================
-
     this.productService
-      .getProducts(apiPage)
+      .getAdminProducts()
       .subscribe({
 
         next: (
-          response: PagedResponse<Product>
+          response: Product[]
         ) => {
 
-          console.log(
-            'Products page:',
-            apiPage,
-            response
-          );
-
-
-          // ==================================================
-          // PRODUCTS
-          // ==================================================
-
           const items =
-            Array.isArray(response?.items)
-              ? response.items
+            Array.isArray(response)
+              ? response
               : [];
 
 
-          // ==================================================
-          // CACHE
-          // ==================================================
+          console.log(
+            'Loaded products:',
+            items.length
+          );
 
-          this.updatePageCache(
-            apiPage,
+
+          this.products.set(
             items
           );
 
 
-          // ==================================================
-          // APPEND OR REPLACE
-          // ==================================================
+          // Reset table pagination
+          this.pageIndex.set(0);
 
-          if (append) {
-
-            const current =
-              this.products();
-
-            this.products.set([
-              ...current,
-              ...items
-            ]);
-
-          } else {
-
-            this.products.set(
-              items
-            );
-
-          }
-
-
-          // ==================================================
-          // CURRENT API PAGE
-          // ==================================================
-
-          this.currentApiPage.set(
-            apiPage
-          );
-
-
-          // ==================================================
-          // SERVER PAGINATION
-          // ==================================================
-
-          this.totalCount.set(
-            Number(response?.totalCount) || 0
-          );
-
-          this.totalPages.set(
-            Number(response?.totalPages) || 0
-          );
-
-          this.hasMore.set(
-            !!response?.hasMore
-          );
-
-
-          // ==================================================
-          // FINISHED
-          // ==================================================
 
           this.isLoading.set(false);
-
-          afterLoad?.();
 
         },
 
@@ -882,238 +670,7 @@ export class ProductManagementComponent implements OnInit {
           );
 
 
-          this.errorMessage.set(
-            'Failed to load products.'
-          );
-
-
-          this.isLoading.set(false);
-
-        }
-
-      });
-
-  }
-
-
-  // ==========================================================
-  // LOAD NEXT API PAGE
-  // ==========================================================
-
-  loadNextPage(): void {
-
-    // ========================================================
-    // PREVENT DOUBLE CLICK
-    // ========================================================
-
-    if (this.isLoading()) {
-      return;
-    }
-
-
-    // ========================================================
-    // NO MORE PAGES
-    // ========================================================
-
-    if (!this.hasMore()) {
-      return;
-    }
-
-
-    // ========================================================
-    // NEXT API PAGE
-    // ========================================================
-
-    const nextPage =
-      this.currentApiPage() + 1;
-
-
-    // ========================================================
-    // SAFETY CHECK
-    // ========================================================
-
-    if (
-      this.totalPages() > 0 &&
-      nextPage > this.totalPages()
-    ) {
-
-      this.hasMore.set(false);
-
-      return;
-
-    }
-
-
-    // ========================================================
-    // LOAD AND APPEND
-    // ========================================================
-
-    this.loadApiPage(
-      nextPage,
-      true
-    );
-
-  }
-
-
-  // ==========================================================
-  // UPDATE CACHE
-  // ==========================================================
-
-  private updatePageCache(
-    page: number,
-    products: Product[]
-  ): void {
-
-    const newCache =
-      new Map(
-        this.pageCache()
-      );
-
-    newCache.set(
-      page,
-      products
-    );
-
-    this.pageCache.set(
-      newCache
-    );
-
-  }
-
-
-  // ==========================================================
-  // LOAD ALL PRODUCTS
-  // ==========================================================
-
-  private loadAllProducts(
-    afterLoad?: () => void
-  ): void {
-
-    // ========================================================
-    // EVERYTHING ALREADY LOADED
-    // ========================================================
-
-    if (this.allProductsLoaded()) {
-
-      this.setAllProducts();
-
-      this.isLoading.set(false);
-
-      afterLoad?.();
-
-      return;
-
-    }
-
-
-    // ========================================================
-    // FIND NEXT MISSING PAGE
-    // ========================================================
-
-    const nextPage =
-      this.getNextMissingPage();
-
-
-    if (!nextPage) {
-
-      this.setAllProducts();
-
-      this.isLoading.set(false);
-
-      afterLoad?.();
-
-      return;
-
-    }
-
-
-    this.isLoading.set(true);
-
-    this.errorMessage.set(null);
-
-
-    // ========================================================
-    // API
-    // ========================================================
-
-    this.productService
-      .getProducts(nextPage)
-      .subscribe({
-
-        next: (
-          response: PagedResponse<Product>
-        ) => {
-
-          const items =
-            Array.isArray(response?.items)
-              ? response.items
-              : [];
-
-
-          // ==================================================
-          // CACHE
-          // ==================================================
-
-          this.updatePageCache(
-            nextPage,
-            items
-          );
-
-
-          // ==================================================
-          // SERVER INFORMATION
-          // ==================================================
-
-          this.totalCount.set(
-            Number(response?.totalCount) ||
-            this.totalCount()
-          );
-
-          this.totalPages.set(
-            Number(response?.totalPages) ||
-            this.totalPages()
-          );
-
-          this.hasMore.set(
-            !!response?.hasMore
-          );
-
-
-          // ==================================================
-          // CONTINUE
-          // ==================================================
-
-          if (response?.hasMore) {
-
-            this.loadAllProducts(
-              afterLoad
-            );
-
-            return;
-
-          }
-
-
-          // ==================================================
-          // ALL DONE
-          // ==================================================
-
-          this.setAllProducts();
-
-          this.isLoading.set(false);
-
-          afterLoad?.();
-
-        },
-
-
-        error: error => {
-
-          console.error(
-            'Error loading all products:',
-            error
-          );
+          this.products.set([]);
 
 
           this.errorMessage.set(
@@ -1126,89 +683,6 @@ export class ProductManagementComponent implements OnInit {
         }
 
       });
-
-  }
-
-
-  // ==========================================================
-  // GET NEXT MISSING PAGE
-  // ==========================================================
-
-  private getNextMissingPage(): number | null {
-
-    const totalPages =
-      this.totalPages();
-
-    if (totalPages <= 0) {
-      return null;
-    }
-
-
-    const cache =
-      this.pageCache();
-
-
-    for (
-      let page = 1;
-      page <= totalPages;
-      page++
-    ) {
-
-      if (!cache.has(page)) {
-
-        return page;
-
-      }
-
-    }
-
-
-    return null;
-
-  }
-
-
-  // ==========================================================
-  // SET ALL PRODUCTS
-  // ==========================================================
-
-  private setAllProducts(): void {
-
-    const allProducts: Product[] = [];
-
-    const cache =
-      this.pageCache();
-
-    const pages =
-      Array.from(cache.keys())
-        .sort((a, b) => a - b);
-
-
-    for (const page of pages) {
-
-      allProducts.push(
-        ...(cache.get(page) ?? [])
-      );
-
-    }
-
-
-    this.products.set(
-      allProducts
-    );
-
-
-    // ========================================================
-    // KEEP LAST API PAGE
-    // ========================================================
-
-    if (pages.length > 0) {
-
-      this.currentApiPage.set(
-        Math.max(...pages)
-      );
-
-    }
 
   }
 
@@ -1217,14 +691,6 @@ export class ProductManagementComponent implements OnInit {
   // LOCAL TABLE PAGINATOR
   // ==========================================================
 
-  /*
-   * IMPORTANT:
-   *
-   * This method NEVER calls the API.
-   *
-   * It only changes which locally loaded products
-   * are displayed in the table.
-   */
   onPageChange(
     event: PageEvent
   ): void {
@@ -1232,6 +698,7 @@ export class ProductManagementComponent implements OnInit {
     this.pageIndex.set(
       event.pageIndex
     );
+
 
     this.pageSize.set(
       event.pageSize
@@ -1244,147 +711,22 @@ export class ProductManagementComponent implements OnInit {
   // SEARCH
   // ==========================================================
 
+  /**
+   * Search is completely local.
+   *
+   * No API request is made.
+   */
   onSearch(
     value: string
   ): void {
 
-    const term =
-      value.trim();
-
-
     this.searchTerm.set(
-      value
+      value.trim()
     );
 
 
-    // Reset local table pagination
+    // Always return to page 1
     this.pageIndex.set(0);
-
-
-    // ========================================================
-    // EMPTY SEARCH
-    // ========================================================
-
-    if (!term) {
-
-      if (this.hasLocalFilters()) {
-
-        this.prepareLocalFiltering();
-
-        return;
-
-      }
-
-
-      this.loadApiPage(1);
-
-      return;
-
-    }
-
-
-    // ========================================================
-    // LOCAL SEARCH
-    // ========================================================
-
-    if (this.allProductsLoaded()) {
-
-      this.setAllProducts();
-
-      return;
-
-    }
-
-
-    // ========================================================
-    // API SEARCH
-    // ========================================================
-
-    this.searchProductsFromApi(
-      term
-    );
-
-  }
-
-
-  // ==========================================================
-  // SEARCH DATABASE
-  // ==========================================================
-
-  private searchProductsFromApi(
-    name: string
-  ): void {
-
-    this.isLoading.set(true);
-
-    this.errorMessage.set(null);
-
-
-    this.productService
-      .getProductsByName(name)
-      .subscribe({
-
-        next: products => {
-
-          const results =
-            Array.isArray(products)
-              ? products
-              : [];
-
-
-          this.products.set(
-            results
-          );
-
-
-          this.currentApiPage.set(
-            1
-          );
-
-
-          this.totalCount.set(
-            results.length
-          );
-
-
-          this.totalPages.set(
-            results.length > 0
-              ? 1
-              : 0
-          );
-
-
-          this.hasMore.set(
-            false
-          );
-
-
-          this.isLoading.set(false);
-
-        },
-
-
-        error: error => {
-
-          this.products.set([]);
-
-          this.totalCount.set(0);
-
-          this.totalPages.set(0);
-
-          this.hasMore.set(false);
-
-
-          this.errorMessage.set(
-            'Failed to search products.'
-          );
-
-
-          this.isLoading.set(false);
-
-        }
-
-      });
 
   }
 
@@ -1406,15 +748,13 @@ export class ProductManagementComponent implements OnInit {
     );
 
 
-    // Changing category resets subcategory
+    // A category change resets
+    // the selected subcategory.
     this.selectedSubCategory.set('');
 
 
-    // Reset local table paginator
+    // Return to first page.
     this.pageIndex.set(0);
-
-
-    this.prepareLocalFiltering();
 
   }
 
@@ -1427,20 +767,13 @@ export class ProductManagementComponent implements OnInit {
     value: string
   ): void {
 
-    const subCategory =
-      value?.trim() ?? '';
-
-
     this.selectedSubCategory.set(
-      subCategory
+      value?.trim() ?? ''
     );
 
 
-    // Reset local table paginator
+    // Return to first page.
     this.pageIndex.set(0);
-
-
-    this.prepareLocalFiltering();
 
   }
 
@@ -1453,84 +786,13 @@ export class ProductManagementComponent implements OnInit {
     value: string
   ): void {
 
-    const brand =
-      value?.trim() ?? '';
-
-
     this.selectedBrand.set(
-      brand
+      value?.trim() ?? ''
     );
 
 
-    // Reset local table paginator
+    // Return to first page.
     this.pageIndex.set(0);
-
-
-    this.prepareLocalFiltering();
-
-  }
-
-
-  // ==========================================================
-  // PREPARE LOCAL FILTERING
-  // ==========================================================
-
-  private prepareLocalFiltering(): void {
-
-    // ========================================================
-    // NO FILTERS
-    // ========================================================
-
-    if (!this.hasLocalFilters()) {
-
-      if (this.isSearchMode()) {
-
-        if (this.allProductsLoaded()) {
-
-          this.setAllProducts();
-
-        } else {
-
-          this.searchProductsFromApi(
-            this.searchTerm().trim()
-          );
-
-        }
-
-        return;
-
-      }
-
-
-      // ======================================================
-      // NO FILTERS / NO SEARCH
-      // ======================================================
-
-      this.loadApiPage(1);
-
-      return;
-
-    }
-
-
-    // ========================================================
-    // FILTERS ACTIVE
-    // ========================================================
-
-    if (this.allProductsLoaded()) {
-
-      this.setAllProducts();
-
-      return;
-
-    }
-
-
-    // ========================================================
-    // LOAD ALL PRODUCTS
-    // ========================================================
-
-    this.loadAllProducts();
 
   }
 
@@ -1548,30 +810,8 @@ export class ProductManagementComponent implements OnInit {
     this.selectedBrand.set('');
 
 
-    // Reset local table paginator
+    // Return to first page.
     this.pageIndex.set(0);
-
-
-    if (this.isSearchMode()) {
-
-      if (this.allProductsLoaded()) {
-
-        this.setAllProducts();
-
-      } else {
-
-        this.searchProductsFromApi(
-          this.searchTerm().trim()
-        );
-
-      }
-
-      return;
-
-    }
-
-
-    this.loadApiPage(1);
 
   }
 
@@ -1585,20 +825,8 @@ export class ProductManagementComponent implements OnInit {
     this.searchTerm.set('');
 
 
-    // Reset local table paginator
+    // Return to first page.
     this.pageIndex.set(0);
-
-
-    if (this.hasLocalFilters()) {
-
-      this.prepareLocalFiltering();
-
-      return;
-
-    }
-
-
-    this.loadApiPage(1);
 
   }
 
@@ -1614,8 +842,11 @@ export class ProductManagementComponent implements OnInit {
     const price =
       Number(product.price) || 0;
 
+
     const discount =
-      Number(product.discountPercentage) || 0;
+      Number(
+        product.discountPercentage
+      ) || 0;
 
 
     return (
@@ -1697,48 +928,24 @@ export class ProductManagementComponent implements OnInit {
 
 
   // ==========================================================
-  // REFRESH
+  // REFRESH PRODUCTS
   // ==========================================================
 
+  /**
+   * Reloads the complete product list after
+   * adding, editing or deleting a product.
+   */
   private refreshProducts(): void {
 
-    // ========================================================
-    // CLEAR API CACHE
-    // ========================================================
-
-    this.pageCache.set(
-      new Map<number, Product[]>()
-    );
-
-
-    // ========================================================
-    // RESET API PAGINATION
-    // ========================================================
-
-    this.totalCount.set(0);
-
-    this.totalPages.set(0);
-
-    this.hasMore.set(false);
-
-    this.currentApiPage.set(1);
-
-
-    // ========================================================
-    // RESET LOCAL TABLE PAGINATION
-    // ========================================================
-
+    // Reset table pagination
     this.pageIndex.set(0);
 
-    this.pageSize.set(10);
 
-
-    // ========================================================
-    // RESET SEARCH / FILTERS
-    // ========================================================
-
+    // Reset search
     this.searchTerm.set('');
 
+
+    // Reset filters
     this.selectedCategory.set('');
 
     this.selectedSubCategory.set('');
@@ -1746,24 +953,18 @@ export class ProductManagementComponent implements OnInit {
     this.selectedBrand.set('');
 
 
-    // ========================================================
-    // CLEAR PRODUCTS
-    // ========================================================
-
+    // Clear current data before reload
     this.products.set([]);
 
 
-    // ========================================================
-    // LOAD API PAGE 1
-    // ========================================================
-
-    this.loadApiPage(1);
+    // Reload everything
+    this.loadProducts();
 
   }
 
 
   // ==========================================================
-  // DELETE
+  // DELETE PRODUCT
   // ==========================================================
 
   deleteProduct(
@@ -1774,9 +975,10 @@ export class ProductManagementComponent implements OnInit {
       .open(
         ConfirmDeleteComponent,
         {
-          data: this.translate.instant(
-            'products.deleteConfirmation'
-          )
+          data:
+            this.translate.instant(
+              'products.deleteConfirmation'
+            )
         }
       )
       .afterClosed()
@@ -1799,6 +1001,12 @@ export class ProductManagementComponent implements OnInit {
 
 
             error: error => {
+
+              console.error(
+                'Error deleting product:',
+                error
+              );
+
 
               this.errorMessage.set(
                 'Failed to delete product.'

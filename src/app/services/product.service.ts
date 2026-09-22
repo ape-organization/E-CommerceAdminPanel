@@ -135,7 +135,11 @@ getProductsByName(
       }
     );
   }
+getAdminProducts(  ): Observable<any> {
 
+    return this.http.get<any>(
+      this.apiUrl+"/admin");
+  }
 
   // ==========================================================
   // GET BY ID
