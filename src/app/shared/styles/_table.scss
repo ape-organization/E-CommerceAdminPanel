@@ -1,15 +1,9 @@
 // ============================================================
 // SHARED TABLE DESIGN
 // ------------------------------------------------------------
-// Visual-only styles shared by every admin table.
-// Usage (at the root of a component stylesheet):
-//
-//   @use '<relative-path>/shared/styles/table' as table;
-//
-//   .table-responsive { @include table.card; }
-//   @include table.mat-table;
-//   .edit-btn   { @include table.action-btn(var(--color-accent)); }
-//   .delete-btn { @include table.action-btn(var(--color-error)); }
+// Mixins shared by the admin list pages (see _card-list.scss):
+//   action-btn($color)  - tinted square icon button
+//   paginator           - themed mat-paginator
 // ============================================================
 
 $mobile: 700px;
@@ -17,54 +11,10 @@ $small: 480px;
 
 
 // ============================================================
-// CARD WRAPPER
-// ============================================================
-
-@mixin card {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-
-  background: var(--color-surface);
-
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
-
-  box-shadow:
-    0 1px 2px rgba(58, 39, 33, 0.04),
-    var(--shadow-sm);
-
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-border) transparent;
-
-  &::-webkit-scrollbar {
-    height: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: var(--color-border);
-    border-radius: 8px;
-
-    &:hover {
-      background: var(--color-text-light);
-    }
-  }
-
-  @media (max-width: $mobile) {
-    border-radius: var(--radius-lg);
-  }
-}
-
-
-// ============================================================
 // ACTION ICON BUTTON
 // ============================================================
 
-@mixin action-btn($color) {
+@mixin action-btn($color, $deep: true) {
   width: 36px !important;
   height: 36px !important;
   padding: 6px !important;
@@ -99,10 +49,18 @@ $small: 480px;
     line-height: 19px;
   }
 
-  ::ng-deep .mat-mdc-button-persistent-ripple,
-  ::ng-deep .mat-mdc-button-ripple,
-  ::ng-deep .mat-mdc-focus-indicator {
-    border-radius: inherit;
+  @if $deep {
+    ::ng-deep .mat-mdc-button-persistent-ripple,
+    ::ng-deep .mat-mdc-button-ripple,
+    ::ng-deep .mat-mdc-focus-indicator {
+      border-radius: inherit;
+    }
+  } @else {
+    .mat-mdc-button-persistent-ripple,
+    .mat-mdc-button-ripple,
+    .mat-mdc-focus-indicator {
+      border-radius: inherit;
+    }
   }
 
   &:hover {
@@ -197,207 +155,6 @@ $small: 480px;
 
     .mat-mdc-paginator-range-label {
       margin: 0 8px;
-    }
-  }
-}
-
-
-// ============================================================
-// ANGULAR MATERIAL TABLE
-// ------------------------------------------------------------
-// Include at the root of a component stylesheet.
-// ============================================================
-
-@mixin mat-table {
-
-  :host ::ng-deep {
-
-    .mat-mdc-table {
-      --mat-table-background-color: var(--color-surface);
-      --mat-table-header-container-height: 52px;
-      --mat-table-row-item-container-height: 66px;
-      --mat-table-row-item-outline-color: var(--color-border-light);
-
-      width: 100%;
-
-      background: var(--color-surface);
-
-      font-family: var(--font-body);
-    }
-
-
-    // ---------- HEADER ----------
-
-    .mat-mdc-header-row {
-      height: 52px;
-      background: var(--color-surface-soft);
-    }
-
-    .mat-mdc-header-cell {
-      padding: 0 16px;
-
-      background: var(--color-surface-soft);
-
-      color: var(--color-text-secondary) !important;
-
-      font-size: 10.5px;
-      font-weight: 700;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      white-space: nowrap;
-
-      border-bottom: 1px solid var(--color-border) !important;
-    }
-
-
-    // ---------- ROWS ----------
-
-    .mat-mdc-row {
-      --row-bg: var(--color-surface);
-
-      height: auto;
-      min-height: 66px;
-
-      background: var(--row-bg);
-
-      transition: background-color .15s ease;
-
-      &:nth-child(even) {
-        --row-bg: color-mix(in srgb, var(--color-surface-soft) 35%, var(--color-surface));
-      }
-
-      &:hover {
-        --row-bg: var(--color-surface-soft);
-      }
-
-      &:hover .mat-mdc-cell:first-child {
-        box-shadow: inset 3px 0 0 var(--color-accent);
-      }
-
-      &:last-child .mat-mdc-cell {
-        border-bottom: 0 !important;
-      }
-    }
-
-    .mat-mdc-cell {
-      padding: 12px 16px;
-
-      background: var(--row-bg, var(--color-surface));
-
-      color: var(--color-text);
-
-      font-size: 13px;
-      line-height: 1.45;
-      vertical-align: middle;
-
-      border-bottom: 1px solid var(--color-border-light) !important;
-
-      transition: background-color .15s ease;
-    }
-
-
-    // ---------- EDGE PADDING ----------
-
-    .mat-mdc-header-cell:first-child,
-    .mat-mdc-cell:first-child {
-      padding-inline-start: 24px;
-    }
-
-    .mat-mdc-header-cell:last-child,
-    .mat-mdc-cell:last-child {
-      padding-inline-end: 24px;
-    }
-
-
-    // ---------- COLUMN SIZING ----------
-
-    .mat-column-image {
-      width: 76px;
-    }
-
-    .mat-column-actions {
-      width: 1%;
-      white-space: nowrap;
-      text-align: center !important;
-    }
-
-
-    // ---------- NO DATA ----------
-
-    .no-data {
-      padding: 48px 16px !important;
-
-      color: var(--color-text-light) !important;
-
-      font-size: 13px;
-      text-align: center;
-    }
-
-
-    @include paginator;
-
-
-    // ---------- MOBILE ----------
-
-    @media (max-width: $mobile) {
-
-      .mat-mdc-header-cell,
-      .mat-mdc-cell {
-        padding-inline: 12px;
-      }
-
-      .mat-mdc-cell {
-        font-size: 12px;
-      }
-
-      .mat-mdc-header-cell:first-child,
-      .mat-mdc-cell:first-child {
-        padding-inline-start: 16px;
-      }
-
-      .mat-mdc-header-cell:last-child,
-      .mat-mdc-cell:last-child {
-        padding-inline-end: 16px;
-      }
-
-      // Keep actions reachable while scrolling wide tables
-      .mat-column-actions {
-        position: sticky;
-        inset-inline-end: 0;
-        z-index: 1;
-
-        border-inline-start: 1px solid var(--color-border-light);
-      }
-
-      .mat-mdc-header-cell.mat-column-actions {
-        z-index: 2;
-      }
-    }
-
-    @media (max-width: $small) {
-
-      .mat-mdc-header-cell {
-        font-size: 10px;
-        letter-spacing: .05em;
-      }
-
-      .mat-column-image {
-        width: 60px;
-      }
-    }
-  }
-
-
-  // ---------- RTL ----------
-
-  :host-context([dir='rtl']) ::ng-deep {
-
-    .mat-mdc-header-cell {
-      letter-spacing: 0;
-    }
-
-    .mat-mdc-row:hover .mat-mdc-cell:first-child {
-      box-shadow: inset -3px 0 0 var(--color-accent);
     }
   }
 }

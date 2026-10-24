@@ -3,10 +3,8 @@
 // ------------------------------------------------------------
 // Card-per-record layout used by the admin list pages
 // (same visual language as the orders page).
-// Usage (at the root of a component stylesheet):
-//
-//   @use '<relative-path>/shared/styles/card-list' as cards;
-//   @include cards.card-list;
+// Included ONCE globally from src/styles.scss so the CSS is
+// not duplicated into every component (component budgets).
 // ============================================================
 
 @use 'table';
@@ -244,12 +242,12 @@ $small: 420px;
 
     .edit-btn,
     .edit-button {
-      @include table.action-btn(var(--color-accent));
+      @include table.action-btn(var(--color-accent), $deep: false);
     }
 
     .delete-btn,
     .delete-button {
-      @include table.action-btn(var(--color-error));
+      @include table.action-btn(var(--color-error), $deep: false);
     }
   }
 
@@ -305,7 +303,7 @@ $small: 420px;
     box-shadow: var(--shadow-sm);
   }
 
-  :host ::ng-deep .list-pagination {
+  .list-pagination {
     @include table.paginator;
 
     mat-paginator,
@@ -319,7 +317,7 @@ $small: 420px;
   // RTL
   // ============================================================
 
-  :host-context([dir='rtl']) {
+  [dir='rtl'] {
 
     .field-label {
       letter-spacing: 0;
