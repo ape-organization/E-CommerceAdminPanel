@@ -113,7 +113,6 @@ export class CategoryManagementComponent implements OnInit {
       .subscribe({
 
         next: categories => {
-console.log(categories)
           this.categories.set(
             Array.isArray(categories)
               ? categories
@@ -125,13 +124,7 @@ console.log(categories)
         },
 
         error: error => {
-
-          console.error(
-            'Error loading categories:',
-            error
-          );
-
-        }
+}
 
       });
   }
@@ -259,13 +252,7 @@ console.log(categories)
             },
 
             error: error => {
-
-              console.error(
-                'Error deleting category:',
-                error
-              );
-
-            }
+}
 
           });
 

@@ -144,7 +144,6 @@ export class AllSubCategory implements OnInit {
       .subscribe({
 
         next: categories => {
-console.log(categories)
           this.categories.set(
             Array.isArray(categories)
               ? categories
@@ -154,13 +153,7 @@ console.log(categories)
         },
 
         error: error => {
-
-          console.error(
-            'Error loading categories:',
-            error
-          );
-
-        }
+ }
 
       });
 
@@ -190,13 +183,7 @@ console.log(categories)
         },
 
         error: error => {
-
-          console.error(
-            'Error loading subcategories:',
-            error
-          );
-
-          this.subcategories.set([]);
+ this.subcategories.set([]);
 
           this.errorMessage.set(
             'Failed to load subcategories.'
@@ -354,13 +341,7 @@ console.log(categories)
         },
 
         error: error => {
-
-          console.error(
-            'Error creating subcategory:',
-            error
-          );
-
-          this.errorMessage.set(
+this.errorMessage.set(
             'Failed to create subcategory.'
           );
 
@@ -412,13 +393,7 @@ console.log(categories)
         },
 
         error: error => {
-
-          console.error(
-            'Error updating subcategory:',
-            error
-          );
-
-          this.errorMessage.set(
+this.errorMessage.set(
             'Failed to update subcategory.'
           );
 
@@ -472,13 +447,7 @@ console.log(categories)
             },
 
             error: error => {
-
-              console.error(
-                'Error deleting subcategory:',
-                error
-              );
-
-              this.errorMessage.set(
+ this.errorMessage.set(
                 'Failed to delete subcategory.'
               );
 

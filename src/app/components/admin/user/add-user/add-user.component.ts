@@ -221,14 +221,7 @@ export class AddUserComponent implements OnInit {
 
 
       error: error => {
-
-        console.error(
-          'User operation failed:',
-          error
-        );
-
-
-        this.errorMessage =
+ this.errorMessage =
           'Something went wrong.';
       }
 

@@ -1121,7 +1121,6 @@ const discount =
       return;
     }
  const discountedPrice = sellingPrice - (sellingPrice * discount / 100);
-console.log(actualPrice > discountedPrice)
 if (actualPrice > discountedPrice) {
 
   this.errorMessage.set(
@@ -1141,10 +1140,7 @@ if (actualPrice > discountedPrice) {
       .subscribe({
 
         next: (exists: boolean) => {
-console.log(exists)
-console.log(this.isEditing())
           if (!exists  ) {
-console.log("inside")
             this.errorMessage.set(
               'A product with this name already exists.'
             );

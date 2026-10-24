@@ -143,7 +143,6 @@ export class BrandManagement implements OnInit {
       .subscribe({
 
         next: brands => {
-console.log(brands)
           const result =
             Array.isArray(brands)
               ? brands
@@ -172,13 +171,7 @@ console.log(brands)
         },
 
         error: error => {
-
-          console.error(
-            'Error loading brands:',
-            error
-          );
-
-          this.brands.set([]);
+this.brands.set([]);
 
           this.pageIndex.set(0);
 
@@ -376,13 +369,7 @@ console.log(brands)
             },
 
             error: error => {
-
-              console.error(
-                'Error deleting brand:',
-                error
-              );
-
-            }
+}
 
           });
 

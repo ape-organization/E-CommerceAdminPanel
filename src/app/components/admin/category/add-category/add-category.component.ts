@@ -142,9 +142,7 @@ export class AddCategoryComponent
     this.isEditing.set(
       !this.data?.add
     );
-console.log(this.isEditing())
-
-    /*
+  /*
      * =========================================
      * EDIT EXISTING CATEGORY
      * =========================================
@@ -467,14 +465,7 @@ console.log(this.isEditing())
 
 
     catch (error) {
-
-      console.error(
-        'Error saving category:',
-        error
-      );
-
-
-      this.errorMessage.set('Something went wrong while saving the category.'
+ this.errorMessage.set('Something went wrong while saving the category.'
 
       );
 

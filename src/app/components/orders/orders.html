@@ -299,61 +299,36 @@
     orders().length
   ) {
 
-    <div class="orders-table-container">
+    <div class="orders-list">
 
-      <table class="orders-table">
+      @for (
+        order of paginatedOrders();
+        track order.id
+      ) {
 
-        <thead>
+        <article
+          class="order-card"
+          [ngClass]="getStatusClass(order.status)"
+          [class.expanded]="isExpanded(order.id)"
+        >
 
-          <tr>
+          <!-- ==================================================
+               SUMMARY
+               ================================================== -->
 
-            <th>
-              {{ 'orders.table.customer' | translate }}
-            </th>
+          <div class="order-summary">
 
-            <th>
-              {{ 'orders.table.date' | translate }}
-            </th>
+            <!-- CUSTOMER -->
 
-            <th>
-              {{ 'orders.table.items' | translate }}
-            </th>
+            <div class="summary-customer">
 
-            <th>
-              {{ 'orders.table.total' | translate }}
-            </th>
+              <div class="customer-avatar">
+                <mat-icon>person</mat-icon>
+              </div>
 
-            <th>
-              {{ 'orders.table.status' | translate }}
-            </th>
+              <div class="customer-text">
 
-            <th>
-              {{ 'orders.table.actions' | translate }}
-            </th>
-
-          </tr>
-
-        </thead>
-
-
-        <tbody>
-
-          @for (
-            order of paginatedOrders();
-            track order.id
-          ) {
-
-            <tr
-              class="order-row"
-              [class.expanded]="isExpanded(order.id)"
-            >
-
-              <!-- CUSTOMER -->
-
-              <td>
-
-                <strong>
-
+                <strong class="customer-name">
                   {{
                     order.clientName ||
                     (
@@ -361,52 +336,392 @@
                       | translate
                     )
                   }}
-
                 </strong>
 
-              </td>
-
-
-              <!-- DATE -->
-
-              <td>
-
-                <div class="date-cell">
-
-                  <strong>
-                    {{
-                      order.orderDate
-                        | date:'dd/MM/yyyy'
-                    }}
-                  </strong>
-
-                </div>
-
-              </td>
-
-
-              <!-- ITEMS -->
-
-              <td>
-
-                <span class="items-count">
-
-                  <mat-icon>
-                    inventory_2
-                  </mat-icon>
-
-                  {{ getItemsCount(order) }}
-
+                <span class="order-number">
+                  #{{ order.id }}
                 </span>
 
-              </td>
+              </div>
+
+            </div>
 
 
-              <!-- TOTAL -->
+            <!-- DATE -->
 
-              <td>
+            <div class="summary-field summary-date">
 
-                <div class="total-cell">
+              <span class="field-label">
+                {{ 'orders.table.date' | translate }}
+              </span>
+
+              <span class="field-value">
+
+                <mat-icon>calendar_today</mat-icon>
+
+                {{
+                  order.orderDate
+                    | date:'dd/MM/yyyy'
+                }}
+
+              </span>
+
+            </div>
+
+
+            <!-- ITEMS -->
+
+            <div class="summary-field summary-items">
+
+              <span class="field-label">
+                {{ 'orders.table.items' | translate }}
+              </span>
+
+              <span class="field-value">
+
+                <mat-icon>inventory_2</mat-icon>
+
+                {{ getItemsCount(order) }}
+
+              </span>
+
+            </div>
+
+
+            <!-- TOTAL -->
+
+            <div class="summary-field summary-total">
+
+              <span class="field-label">
+                {{ 'orders.table.total' | translate }}
+              </span>
+
+              <span class="field-value total-value">
+
+                {{
+                  order.totalAmount
+                    | number:'1.2-2'
+                }}
+
+                <small>
+                  {{ 'common.egp' | translate }}
+                </small>
+
+              </span>
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div class="summary-status">
+
+              <span
+                class="status-badge"
+                [ngClass]="
+                  getStatusClass(order.status)
+                "
+              >
+
+                <span class="status-dot"></span>
+
+                {{ order.status }}
+
+              </span>
+
+            </div>
+
+
+            <!-- TOGGLE -->
+
+            <button
+              mat-icon-button
+              type="button"
+              class="toggle-btn"
+              (click)="toggleOrder(order.id)"
+              [attr.aria-label]="
+                isExpanded(order.id)
+                  ? (
+                      'orders.hideDetails'
+                      | translate
+                    )
+                  : (
+                      'orders.showDetails'
+                      | translate
+                    )
+              "
+            >
+
+              <mat-icon>
+
+                {{
+                  isExpanded(order.id)
+                    ? 'expand_less'
+                    : 'expand_more'
+                }}
+
+              </mat-icon>
+
+            </button>
+
+          </div>
+
+
+          <!-- ==================================================
+               DETAILS
+               ================================================== -->
+
+          @if (isExpanded(order.id)) {
+
+            <div class="order-details">
+
+              <div class="details-grid">
+
+                <!-- CUSTOMER INFORMATION -->
+
+                <section class="details-section customer-section">
+
+                  <div class="section-title">
+
+                    <mat-icon>
+                      person
+                    </mat-icon>
+
+                    <h3>
+                      {{
+                        'orders.customerInformation'
+                          | translate
+                      }}
+                    </h3>
+
+                  </div>
+
+
+                  <ul class="customer-details">
+
+                    <li class="detail-item">
+
+                      <mat-icon>badge</mat-icon>
+
+                      <div>
+                        <span>
+                          {{ 'common.name' | translate }}
+                        </span>
+
+                        <strong>
+                          {{ order.clientName || '-' }}
+                        </strong>
+                      </div>
+
+                    </li>
+
+                    <li class="detail-item">
+
+                      <mat-icon>call</mat-icon>
+
+                      <div>
+                        <span>
+                          {{ 'common.phone' | translate }}
+                        </span>
+
+                        <strong>
+                          {{ order.phoneNumber || '-' }}
+                        </strong>
+                      </div>
+
+                    </li>
+
+                    <li class="detail-item">
+
+                      <mat-icon>mail</mat-icon>
+
+                      <div>
+                        <span>
+                          {{ 'common.email' | translate }}
+                        </span>
+
+                        <strong>
+                          {{ order.email || '-' }}
+                        </strong>
+                      </div>
+
+                    </li>
+
+                    <li class="detail-item">
+
+                      <mat-icon>location_city</mat-icon>
+
+                      <div>
+                        <span>
+                          {{ 'common.governorate' | translate }}
+                        </span>
+
+                        <strong>
+                          {{ order.governorate || '-' }}
+                        </strong>
+                      </div>
+
+                    </li>
+
+                    <li class="detail-item">
+
+                      <mat-icon>home</mat-icon>
+
+                      <div>
+                        <span>
+                          {{ 'common.address' | translate }}
+                        </span>
+
+                        <strong>
+                          {{ order.address || '-' }}
+                        </strong>
+                      </div>
+
+                    </li>
+
+                  </ul>
+
+                </section>
+
+
+                <!-- ITEMS -->
+
+                <section class="details-section items-section">
+
+                  <div class="section-title">
+
+                    <mat-icon>
+                      shopping_cart
+                    </mat-icon>
+
+                    <h3>
+                      {{
+                        'orders.orderItems'
+                          | translate
+                      }}
+                    </h3>
+
+                  </div>
+
+
+                  @if (order.items.length) {
+
+                    <ul class="items-list">
+
+                      @for (
+                        item of order.items;
+                        track item.id
+                      ) {
+
+                        <li class="item-row">
+
+                          <div class="product-image">
+
+                            @if (item.imageUrl) {
+
+                              <img
+                                [src]="
+                                  getImageUrl(
+                                    item.imageUrl
+                                  )
+                                "
+                                [alt]="
+                                  item.productName
+                                "
+                              />
+
+                            } @else {
+
+                              <mat-icon>
+                                image
+                              </mat-icon>
+
+                            }
+
+                          </div>
+
+
+                          <div class="item-info">
+
+                            <strong class="item-name">
+                              {{ item.productName }}
+                            </strong>
+
+                            <span class="item-meta">
+
+                              <span class="quantity-badge">
+                                × {{ item.quantity }}
+                              </span>
+
+                              <span class="item-unit">
+
+                                {{
+                                  item.unitPrice
+                                    | number:'1.2-2'
+                                }}
+
+                                {{ 'common.egp' | translate }}
+
+                              </span>
+
+                            </span>
+
+                          </div>
+
+
+                          <strong class="item-total">
+
+                            {{
+                              item.totalPrice
+                                | number:'1.2-2'
+                            }}
+
+                            <small>
+                              {{ 'common.egp' | translate }}
+                            </small>
+
+                          </strong>
+
+                        </li>
+
+                      }
+
+                    </ul>
+
+                  } @else {
+
+                    <div class="no-items">
+
+                      <mat-icon>
+                        shopping_cart
+                      </mat-icon>
+
+                      <span>
+                        {{ 'orders.noItems' | translate }}
+                      </span>
+
+                    </div>
+
+                  }
+
+                </section>
+
+              </div>
+
+
+              <!-- ==================================================
+                   FOOTER
+                   ================================================== -->
+
+              <div class="order-details-footer">
+
+                <!-- TOTAL -->
+
+                <div class="details-total">
+
+                  <span>
+                    {{ 'orders.orderTotal' | translate }}
+                  </span>
 
                   <strong>
 
@@ -415,487 +730,93 @@
                         | number:'1.2-2'
                     }}
 
-                  </strong>
-
-                  <small>
                     {{ 'common.egp' | translate }}
-                  </small>
+
+                  </strong>
 
                 </div>
 
-              </td>
 
+                <div class="footer-actions">
 
-              <!-- STATUS -->
+                  <!-- CANCEL -->
 
-              <td>
+                  @if (
+                    order.status.toLowerCase() !==
+                    'cancelled'
+                  ) {
 
-                <span
-                  class="status-badge"
-                  [ngClass]="
-                    getStatusClass(order.status)
-                  "
-                >
+                    <button
+                      mat-stroked-button
+                      class="cancel-btn"
+                      type="button"
+                      (click)="cancelOrder(order)"
+                    >
 
-                  {{ order.status }}
+                      <mat-icon>
+                        cancel
+                      </mat-icon>
 
-                </span>
+                      {{ 'orders.cancelOrder' | translate }}
 
-              </td>
+                    </button>
 
+                  }
 
-              <!-- ACTION -->
 
-              <td>
+                  <!-- COMPLETE -->
 
-                <button
-                  mat-icon-button
-                  type="button"
-                  (click)="toggleOrder(order.id)"
-                  [attr.aria-label]="
-                    isExpanded(order.id)
-                      ? (
-                          'orders.hideDetails'
-                          | translate
-                        )
-                      : (
-                          'orders.showDetails'
-                          | translate
-                        )
-                  "
-                >
+                  @if (
+                    order.status.toLowerCase() !==
+                    'confirmed'
+                  ) {
 
-                  <mat-icon>
+                    <button
+                      mat-stroked-button
+                      class="complete-btn"
+                      type="button"
+                      (click)="completeOrder(order)"
+                    >
 
-                    {{
-                      isExpanded(order.id)
-                        ? 'expand_less'
-                        : 'expand_more'
-                    }}
+                      <mat-icon>
+                        check_circle
+                      </mat-icon>
 
-                  </mat-icon>
+                      {{ 'orders.completeOrder' | translate }}
 
-                </button>
+                    </button>
 
-              </td>
+                  }
 
-            </tr>
+                </div>
 
+              </div>
 
-            <!-- ==================================================
-                 DETAILS
-                 ================================================== -->
-
-            @if (isExpanded(order.id)) {
-
-              <tr class="details-row">
-
-                <td colspan="6">
-
-                  <div class="order-details">
-
-
-                    <!-- CUSTOMER INFORMATION -->
-
-                    <section class="details-section">
-
-                      <div class="section-title">
-
-                        <mat-icon>
-                          person
-                        </mat-icon>
-
-                        <h3>
-                          {{
-                            'orders.customerInformation'
-                              | translate
-                          }}
-                        </h3>
-
-                      </div>
-
-
-                      <div class="customer-details-grid">
-
-
-                        <!-- NAME -->
-
-                        <div class="detail-item">
-
-                          <span>
-                            {{ 'common.name' | translate }}
-                          </span>
-
-                          <strong>
-                            {{ order.clientName || '-' }}
-                          </strong>
-
-                        </div>
-
-
-                        <!-- PHONE -->
-
-                        <div class="detail-item">
-
-                          <span>
-                            {{ 'common.phone' | translate }}
-                          </span>
-
-                          <strong>
-                            {{ order.phoneNumber || '-' }}
-                          </strong>
-
-                        </div>
-
-
-                        <!-- EMAIL -->
-
-                        <div class="detail-item">
-
-                          <span>
-                            {{ 'common.email' | translate }}
-                          </span>
-
-                          <strong>
-                            {{ order.email || '-' }}
-                          </strong>
-
-                        </div>
-
-
-                        <!-- GOVERNORATE -->
-
-                        <div class="detail-item">
-
-                          <span>
-                            {{ 'common.governorate' | translate }}
-                          </span>
-
-                          <strong>
-                            {{ order.governorate || '-' }}
-                          </strong>
-
-                        </div>
-
-
-                        <!-- ADDRESS -->
-
-                        <div class="detail-item">
-
-                          <span>
-                            {{ 'common.address' | translate }}
-                          </span>
-
-                          <strong>
-                            {{ order.address || '-' }}
-                          </strong>
-
-                        </div>
-
-                      </div>
-
-                    </section>
-
-
-                    <!-- ==================================================
-                         ITEMS
-                         ================================================== -->
-
-                    <section class="details-section">
-
-                      <div class="section-title">
-
-                        <mat-icon>
-                          shopping_cart
-                        </mat-icon>
-
-                        <h3>
-                          {{
-                            'orders.orderItems'
-                              | translate
-                          }}
-                        </h3>
-
-                      </div>
-
-
-                      @if (order.items.length) {
-
-                        <div class="items-table-container">
-
-                          <table class="items-table">
-
-                            <thead>
-
-                              <tr>
-
-                                <th>
-                                  {{
-                                    'orders.table.product'
-                                      | translate
-                                  }}
-                                </th>
-
-                                <th>
-                                  {{
-                                    'orders.table.quantity'
-                                      | translate
-                                  }}
-                                </th>
-
-                                <th>
-                                  {{
-                                    'orders.table.unitPrice'
-                                      | translate
-                                  }}
-                                </th>
-
-                                <th>
-                                  {{
-                                    'orders.table.total'
-                                      | translate
-                                  }}
-                                </th>
-
-                              </tr>
-
-                            </thead>
-
-
-                            <tbody>
-
-                              @for (
-                                item of order.items;
-                                track item.id
-                              ) {
-
-                                <tr>
-
-                                  <!-- PRODUCT -->
-
-                                  <td>
-
-                                    <div class="product-cell">
-
-                                      <div class="product-image">
-
-                                        @if (item.imageUrl) {
-
-                                          <img
-                                            [src]="
-                                              getImageUrl(
-                                                item.imageUrl
-                                              )
-                                            "
-                                            [alt]="
-                                              item.productName
-                                            "
-                                          />
-
-                                        } @else {
-
-                                          <mat-icon>
-                                            image
-                                          </mat-icon>
-
-                                        }
-
-                                      </div>
-
-
-                                      <strong>
-                                        {{ item.productName }}
-                                      </strong>
-
-                                    </div>
-
-                                  </td>
-
-
-                                  <!-- QUANTITY -->
-
-                                  <td>
-
-                                    <span class="quantity-badge">
-
-                                      {{ item.quantity }}
-
-                                    </span>
-
-                                  </td>
-
-
-                                  <!-- UNIT PRICE -->
-
-                                  <td>
-
-                                    {{
-                                      item.unitPrice
-                                        | number:'1.2-2'
-                                    }}
-
-                                    {{ 'common.egp' | translate }}
-
-                                  </td>
-
-
-                                  <!-- TOTAL -->
-
-                                  <td>
-
-                                    <strong>
-
-                                      {{
-                                        item.totalPrice
-                                          | number:'1.2-2'
-                                      }}
-
-                                      {{ 'common.egp' | translate }}
-
-                                    </strong>
-
-                                  </td>
-
-                                </tr>
-
-                              }
-
-                            </tbody>
-
-                          </table>
-
-                        </div>
-
-                      } @else {
-
-                        <div class="no-items">
-
-                          <mat-icon>
-                            shopping_cart
-                          </mat-icon>
-
-                          <span>
-                            {{ 'orders.noItems' | translate }}
-                          </span>
-
-                        </div>
-
-                      }
-
-                    </section>
-
-
-                    <!-- ==================================================
-                         FOOTER
-                         ================================================== -->
-
-                    <div class="order-details-footer">
-
-
-                      <!-- TOTAL -->
-
-                      <div class="details-total">
-
-                        <span>
-                          {{ 'orders.orderTotal' | translate }}
-                        </span>
-
-                        <strong>
-
-                          {{
-                            order.totalAmount
-                              | number:'1.2-2'
-                          }}
-
-                          {{ 'common.egp' | translate }}
-
-                        </strong>
-
-                      </div>
-
-
-                      <!-- CANCEL -->
-
-                      @if (
-                        order.status.toLowerCase() !==
-                        'cancelled'
-                      ) {
-
-                        <button
-                          mat-stroked-button
-                          class="cancel-btn"
-                          type="button"
-                          (click)="cancelOrder(order)"
-                        >
-
-                          <mat-icon>
-                            cancel
-                          </mat-icon>
-
-                          {{ 'orders.cancelOrder' | translate }}
-
-                        </button>
-
-                      }
-
-
-                      <!-- COMPLETE -->
-
-                      @if (
-                        order.status.toLowerCase() !==
-                        'confirmed'
-                      ) {
-
-                        <button
-                          mat-stroked-button
-                          class="complete-btn"
-                          type="button"
-                          (click)="completeOrder(order)"
-                        >
-
-                          <mat-icon>
-                            check_circle
-                          </mat-icon>
-
-                          {{ 'orders.completeOrder' | translate }}
-
-                        </button>
-
-                      }
-
-                    </div>
-
-                  </div>
-
-                </td>
-
-              </tr>
-
-            }
+            </div>
 
           }
 
-        </tbody>
+        </article>
 
-      </table>
+      }
+
+    </div>
 
 
-      <!-- ========================================================
-           PAGINATION
-           ======================================================== -->
+    <!-- ========================================================
+         PAGINATION
+         ======================================================== -->
 
-      <div class="orders-pagination">
+    <div class="orders-pagination">
 
-        <mat-paginator
-          [length]="totalOrders()"
-          [pageIndex]="pageIndex()"
-          [pageSize]="pageSize()"
-          [pageSizeOptions]="pageSizeOptions"
-          (page)="onPageChange($event)"
-        >
-        </mat-paginator>
-
-      </div>
+      <mat-paginator
+        [length]="totalOrders()"
+        [pageIndex]="pageIndex()"
+        [pageSize]="pageSize()"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="onPageChange($event)"
+      >
+      </mat-paginator>
 
     </div>
 

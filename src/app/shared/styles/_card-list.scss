@@ -1,0 +1,391 @@
+// ============================================================
+// SHARED CARD LIST DESIGN
+// ------------------------------------------------------------
+// Card-per-record layout used by the admin list pages
+// (same visual language as the orders page).
+// Usage (at the root of a component stylesheet):
+//
+//   @use '<relative-path>/shared/styles/card-list' as cards;
+//   @include cards.card-list;
+// ============================================================
+
+@use 'table';
+
+$tablet: 900px;
+$mobile: 700px;
+$small: 420px;
+
+
+@mixin card-list {
+
+  // ============================================================
+  // LIST
+  // ============================================================
+
+  .entity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .entity-list.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+
+
+  // ============================================================
+  // CARD
+  // ============================================================
+
+  .entity-card {
+    --card-accent: var(--color-accent);
+
+    position: relative;
+    overflow: hidden;
+
+    background: var(--color-surface);
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-sm);
+
+    transition:
+      border-color .2s ease,
+      box-shadow .2s ease;
+
+    &::before {
+      content: '';
+
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+      z-index: 1;
+
+      width: 4px;
+
+      background: var(--card-accent);
+      opacity: .85;
+    }
+
+    &:hover {
+      border-color: color-mix(in srgb, var(--color-accent) 35%, var(--color-border));
+      box-shadow: var(--shadow-md);
+    }
+  }
+
+  .entity-card-body {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 18px;
+
+    padding-block: 14px;
+    padding-inline: 24px 18px;
+  }
+
+
+  // ============================================================
+  // MEDIA
+  // ============================================================
+
+  .entity-media {
+    width: 56px;
+    height: 56px;
+
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+
+    overflow: hidden;
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+
+    background: var(--color-surface-soft);
+    color: var(--color-accent);
+
+    img {
+      width: 100%;
+      height: 100%;
+      display: block;
+
+      object-fit: cover;
+    }
+
+    mat-icon {
+      width: 24px;
+      height: 24px;
+
+      font-size: 24px;
+    }
+
+    &.contain img {
+      padding: 4px;
+      object-fit: contain;
+    }
+
+    &.round {
+      border-radius: 50%;
+    }
+  }
+
+
+  // ============================================================
+  // FIELDS
+  // ============================================================
+
+  .entity-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    align-items: center;
+    gap: 12px 20px;
+
+    min-width: 0;
+  }
+
+  .entity-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    min-width: 0;
+
+    &.full {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .field-label {
+    color: var(--color-text-light);
+
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .field-value {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    min-width: 0;
+
+    color: var(--color-text);
+
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+
+    mat-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+
+      color: var(--color-accent);
+
+      font-size: 16px;
+    }
+
+    &.title {
+      color: var(--color-primary);
+
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    &.muted {
+      color: var(--color-text-secondary);
+    }
+  }
+
+  .field-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    width: fit-content;
+    max-width: 100%;
+    padding: 5px 11px;
+
+    border-radius: 20px;
+
+    background: var(--color-surface-soft);
+    color: var(--color-primary);
+
+    font-size: 11px;
+    font-weight: 700;
+
+    mat-icon {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+
+      color: var(--color-accent);
+
+      font-size: 15px;
+    }
+  }
+
+
+  // ============================================================
+  // ACTIONS
+  // ============================================================
+
+  .entity-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    .edit-btn,
+    .edit-button {
+      @include table.action-btn(var(--color-accent));
+    }
+
+    .delete-btn,
+    .delete-button {
+      @include table.action-btn(var(--color-error));
+    }
+  }
+
+
+  // ============================================================
+  // EMPTY
+  // ============================================================
+
+  .entity-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    min-height: 180px;
+    padding: 32px;
+
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-lg);
+
+    background: var(--color-surface);
+
+    color: var(--color-text-secondary);
+
+    font-size: 13px;
+    text-align: center;
+
+    mat-icon {
+      width: 40px;
+      height: 40px;
+
+      color: var(--color-text-light);
+
+      font-size: 40px;
+    }
+  }
+
+
+  // ============================================================
+  // PAGINATION
+  // ============================================================
+
+  .list-pagination {
+    margin-top: 14px;
+
+    overflow: hidden;
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+
+    background: var(--color-surface);
+    box-shadow: var(--shadow-sm);
+  }
+
+  :host ::ng-deep .list-pagination {
+    @include table.paginator;
+
+    mat-paginator,
+    .mat-mdc-paginator {
+      border-top: 0;
+    }
+  }
+
+
+  // ============================================================
+  // RTL
+  // ============================================================
+
+  :host-context([dir='rtl']) {
+
+    .field-label {
+      letter-spacing: 0;
+    }
+  }
+
+
+  // ============================================================
+  // RESPONSIVE
+  // ============================================================
+
+  @media (max-width: $mobile) {
+
+    .entity-card-body {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: start;
+      gap: 12px 14px;
+
+      padding-block: 14px;
+      padding-inline: 18px 12px;
+    }
+
+    .entity-media {
+      width: 48px;
+      height: 48px;
+    }
+
+    .entity-fields {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    .entity-actions {
+      gap: 4px;
+    }
+
+    .entity-list.grid {
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+  }
+
+  @media (max-width: $small) {
+
+    .entity-card-body {
+      gap: 10px 12px;
+    }
+
+    .entity-media {
+      width: 42px;
+      height: 42px;
+
+      mat-icon {
+        width: 20px;
+        height: 20px;
+
+        font-size: 20px;
+      }
+    }
+
+    .field-value {
+      font-size: 12px;
+
+      &.title {
+        font-size: 13px;
+      }
+    }
+  }
+}

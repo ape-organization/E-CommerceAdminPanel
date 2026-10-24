@@ -71,10 +71,7 @@ export class UserManagementComponent implements OnInit {
       },
 
       error: error => {
-        console.error(
-          'Failed to load users:',
-          error
-        );
+    
       }
     });
 
@@ -154,10 +151,7 @@ export class UserManagementComponent implements OnInit {
             next: () => this.loadUsers(),
 
             error: error => {
-              console.error(
-                'Failed to delete user:',
-                error
-              );
+         
             }
           });
 

@@ -53,249 +53,125 @@
 
 
   <!-- =====================================================
-       TABLE
+       LIST
        ===================================================== -->
 
-  <div class="table-responsive">
+  <div class="entity-list">
 
-    <table
-      mat-table
-      [dataSource]="paginatedSubcategories()"
-    >
+    @for (subcategory of paginatedSubcategories(); track subcategory.id) {
 
+      <article class="entity-card">
 
-      <!-- =================================================
-           SUBCATEGORY
-           ================================================= -->
+        <div class="entity-card-body">
 
-      <ng-container matColumnDef="image">
+          <!-- ICON -->
+          <div class="entity-media">
 
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-        >
+            <mat-icon>account_tree</mat-icon>
 
-        
-
-        </th>
+          </div>
 
 
-        <td
-          mat-cell
-          *matCellDef="let subcategory"
-          class="category-name"
-        >
+          <!-- FIELDS -->
+          <div class="entity-fields">
 
-          <div class="category-name-wrapper">
+            <div class="entity-field">
 
-            <div class="category-icon">
+              <span class="field-label">
+                {{ 'subCategories.nameEn' | translate }}
+              </span>
 
-              <mat-icon>
-                account_tree
-              </mat-icon>
+              <span class="field-value title">
+                {{ subcategory.nameEn }}
+              </span>
 
             </div>
 
+            <div class="entity-field">
+
+              <span class="field-label">
+                {{ 'subCategories.nameAr' | translate }}
+              </span>
+
+              <span class="field-value title">
+                {{ subcategory.nameAr }}
+              </span>
+
+            </div>
+
+            <div class="entity-field">
+
+              <span class="field-label">
+                {{ 'subCategories.category' | translate }}
+              </span>
+
+              <span class="field-pill">
+
+                <mat-icon>category</mat-icon>
+
+                {{
+                  getCategoryName(
+                    subcategory.categoryId
+                  )
+                }}
+
+              </span>
+
+            </div>
 
           </div>
 
-        </td>
 
-      </ng-container>
-      
-      <ng-container matColumnDef="nameEn">
+          <!-- ACTIONS -->
+          <div class="entity-actions">
 
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-        >
+            <button
+              mat-icon-button
+              class="edit-btn"
+              type="button"
+              (click)="editSubcategory(subcategory)"
+              [attr.aria-label]="'common.edit' | translate">
 
-          {{ 'subCategories.nameEn' | translate }}
+              <mat-icon>edit</mat-icon>
 
-        </th>
+            </button>
 
+            <button
+              mat-icon-button
+              class="delete-btn"
+              type="button"
+              (click)="deleteSubcategory(subcategory.id)"
+              [attr.aria-label]="'common.delete' | translate">
 
-        <td
-          mat-cell
-          *matCellDef="let subcategory"
-          class="category-name"
-        >
+              <mat-icon>delete</mat-icon>
 
-          <div class="category-name-wrapper">
+            </button>
 
-
-
-            <span class="category-name-text">
-
-              {{ subcategory.nameEn }}
-
-            </span>
           </div>
 
-        </td>
+        </div>
 
-      </ng-container>
-      <ng-container matColumnDef="nameAr">
+      </article>
 
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-        >
+    } @empty {
 
-          {{ 'subCategories.nameAr' | translate }}
+      <div class="entity-empty">
 
-        </th>
+        <mat-icon>account_tree</mat-icon>
 
+        <span>
+          {{ 'common.noData' | translate }}
+        </span>
 
-        <td
-          mat-cell
-          *matCellDef="let subcategory"
-          class="category-name"
-        >
+      </div>
 
-          <div class="category-name-wrapper">
+    }
 
-          
- <span class="category-name-text">
-
-              {{ subcategory.nameAr }}
-
-            </span>
-          </div>
-
-        </td>
-
-      </ng-container>
+  </div>
 
 
-      <!-- =================================================
-           CATEGORY
-           ================================================= -->
-
-      <ng-container matColumnDef="category">
-
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-        >
-
-          {{ 'subCategories.category' | translate }}
-
-        </th>
-
-
-        <td
-          mat-cell
-          *matCellDef="let subcategory"
-          class="category-column"
-        >
-
-          <span class="parent-category">
-
-            <mat-icon>
-              category
-            </mat-icon>
-
-            {{
-              getCategoryName(
-                subcategory.categoryId
-              )
-            }}
-
-          </span>
-
-        </td>
-
-      </ng-container>
-
-
-      <!-- =================================================
-           ACTIONS
-           ================================================= -->
-
-      <ng-container matColumnDef="actions">
-
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          class="actions-header"
-        >
-
-          {{ 'common.actions' | translate }}
-
-        </th>
-
-
-        <td
-          mat-cell
-          *matCellDef="let subcategory"
-          class="actions-cell"
-        >
-
-          <!-- EDIT -->
-
-          <button
-            mat-icon-button
-            class="edit-btn"
-            type="button"
-            (click)="editSubcategory(subcategory)"
-            [attr.aria-label]="'common.edit' | translate"
-          >
-
-            <mat-icon>
-              edit
-            </mat-icon>
-
-          </button>
-
-
-          <!-- DELETE -->
-
-          <button
-            mat-icon-button
-            class="delete-btn"
-            type="button"
-            (click)="deleteSubcategory(subcategory.id)"
-            [attr.aria-label]="'common.delete' | translate"
-          >
-
-            <mat-icon>
-              delete
-            </mat-icon>
-
-          </button>
-
-        </td>
-
-      </ng-container>
-
-
-      <!-- =================================================
-           HEADER / ROWS
-           ================================================= -->
-
-      <tr
-        mat-header-row
-        *matHeaderRowDef="displayedColumns"
-      >
-      </tr>
-
-
-      <tr
-        mat-row
-        *matRowDef="
-          let row;
-          columns: displayedColumns;
-        "
-      >
-      </tr>
-
-    </table>
-
-
-    <!-- =================================================
-         PAGINATION
-         ================================================= -->
+  <!-- PAGINATION -->
+  <div class="list-pagination">
 
     <mat-paginator
       [length]="subcategories().length"
@@ -303,8 +179,7 @@
       [pageSize]="pageSize()"
       [pageSizeOptions]="[5, 10, 25, 50]"
       showFirstLastButtons
-      (page)="onPageChange($event)"
-    >
+      (page)="onPageChange($event)">
     </mat-paginator>
 
   </div>

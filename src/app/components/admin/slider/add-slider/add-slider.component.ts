@@ -121,7 +121,6 @@ export class AddSliderComponent
   // =========================================================
   isEditing=signal(false)
   ngOnInit(): void {
-console.log(this.data)
 this.isEditing.set(this.data?.add)
     if (
       !this.isEditing() &&
@@ -323,7 +322,6 @@ var image=environment.imageBaseUrl+this.data.slider.imageUrl
             )
 
           );
-console.log(response)
 
         if (!response) {
 
@@ -350,9 +348,7 @@ console.log(response)
             )
 
           );
-console.log(response)
-
-        if (!response) {
+if (!response) {
 
           throw new Error(
             'Slider creation failed.'
@@ -377,14 +373,7 @@ console.log(response)
 
 
     catch (error) {
-
-      console.error(
-        'Error saving image:',
-        error
-      );
-
-
-      this.errorMessage.set(
+this.errorMessage.set(
         error instanceof Error
           ? error.message
           : 'Something went wrong while saving the image.'

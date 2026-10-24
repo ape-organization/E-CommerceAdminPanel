@@ -38,232 +38,126 @@
   </div>
 
 
-  <!-- TABLE -->
-  <div class="table-responsive">
+  <!-- LIST -->
+  <div class="entity-list">
 
-    <table
-      mat-table
-      [dataSource]="dataSource()">
+    @for (brand of dataSource().data; track brand.id) {
 
-      <!-- ===================================================== -->
-      <!-- BRAND -->
-      <!-- ===================================================== -->
+      <article class="entity-card">
 
-      <ng-container matColumnDef="image">
+        <div class="entity-card-body">
 
-        <th
-          mat-header-cell
-          *matHeaderCellDef>
+          <!-- BRAND IMAGE -->
+          <div class="entity-media contain">
 
-       
+            <img
+              *ngIf="brand.imageUrl"
+              [src]="getImageUrl(brand.imageUrl)"
+              [alt]="
+                languageService.currentLanguage() === 'ar'
+                  ? brand.nameAr
+                  : brand.nameEn
+              "
+            />
 
-        </th>
+            <mat-icon *ngIf="!brand.imageUrl">
+              image
+            </mat-icon>
+
+          </div>
 
 
-        <td
-          mat-cell
-          *matCellDef="let brand">
+          <!-- NAMES -->
+          <div class="entity-fields">
 
-          <div class="brand-wrapper">
+            <div class="entity-field">
 
-            <!-- BRAND IMAGE -->
-            <div class="brand-image-wrapper">
+              <span class="field-label">
+                {{ 'brands.nameEn' | translate }}
+              </span>
 
-              <img
-                *ngIf="brand.imageUrl"
-                [src]="getImageUrl(brand.imageUrl)"
-                [alt]="
-                  languageService.currentLanguage() === 'ar'
-                    ? brand.nameAr
-                    : brand.nameEn
-                "
-                class="brand-image"
-              />
-
-              <mat-icon
-                *ngIf="!brand.imageUrl">
-
-                image
-
-              </mat-icon>
+              <span class="field-value title">
+                {{ brand.nameEn }}
+              </span>
 
             </div>
 
+            <div class="entity-field">
 
-                  </div>
+              <span class="field-label">
+                {{ 'brands.nameAr' | translate }}
+              </span>
 
-        </td>
+              <span class="field-value title">
+                {{ brand.nameAr }}
+              </span>
 
-      </ng-container>
-<ng-container matColumnDef="nameEn">
+            </div>
 
-        <th
-          mat-header-cell
-          *matHeaderCellDef>
-
-          {{ 'brands.nameEn' | translate }}
-
-        </th>
-
-
-        <td
-          mat-cell
-          *matCellDef="let brand">
-
-          <div class="brand-wrapper">
-
-         
-
-
-            <!-- BRAND NAME -->
-            <span class="brand-name">
-
-              {{
-              brand.nameEn
-              }}
-
-            </span>
           </div>
 
-        </td>
 
-      </ng-container>
-      <ng-container matColumnDef="nameAr">
+          <!-- ACTIONS -->
+          <div class="entity-actions">
 
-        <th
-          mat-header-cell
-          *matHeaderCellDef>
+            <!-- EDIT -->
+            <button
+              mat-icon-button
+              class="edit-btn"
+              type="button"
+              (click)="editBrand(brand)"
+              [attr.aria-label]="'common.edit' | translate">
 
-          {{ 'brands.nameAr' | translate }}
+              <mat-icon>
+                edit
+              </mat-icon>
 
-        </th>
-
-
-        <td
-          mat-cell
-          *matCellDef="let brand">
-
-          <div class="brand-wrapper">
+            </button>
 
 
+            <!-- DELETE -->
+            <button
+              mat-icon-button
+              class="delete-btn"
+              type="button"
+              (click)="deleteBrand(brand.id)"
+              [attr.aria-label]="'common.delete' | translate">
 
- <span class="brand-name">
+              <mat-icon>
+                delete
+              </mat-icon>
 
-              {{
-                brand.nameAr
-                 
-              }}
+            </button>
 
-            </span>
           </div>
 
-        </td>
+        </div>
 
-      </ng-container>
+      </article>
 
-      <!-- ===================================================== -->
-      <!-- ACTIONS -->
-      <!-- ===================================================== -->
+    } @empty {
 
-      <ng-container matColumnDef="actions">
-
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          class="actions-header">
-
-          {{ 'common.actions' | translate }}
-
-        </th>
-
-
-        <td
-          mat-cell
-          *matCellDef="let brand"
-          class="actions-cell">
-
-
-          <!-- EDIT -->
-          <button
-            mat-icon-button
-            class="edit-btn"
-            type="button"
-            (click)="editBrand(brand)"
-            [attr.aria-label]="'common.edit' | translate">
-
-            <mat-icon>
-              edit
-            </mat-icon>
-
-          </button>
-
-
-          <!-- DELETE -->
-          <button
-            mat-icon-button
-            class="delete-btn"
-            type="button"
-            (click)="deleteBrand(brand.id)"
-            [attr.aria-label]="'common.delete' | translate">
-
-            <mat-icon>
-              delete
-            </mat-icon>
-
-          </button>
-
-        </td>
-
-      </ng-container>
-
-
-      <!-- ===================================================== -->
-      <!-- HEADER ROW -->
-      <!-- ===================================================== -->
-
-      <tr
-        mat-header-row
-        *matHeaderRowDef="displayedColumns">
-      </tr>
-
-
-      <!-- ===================================================== -->
-      <!-- DATA ROW -->
-      <!-- ===================================================== -->
-
-      <tr
-        mat-row
-        *matRowDef="
-          let row;
-          columns: displayedColumns;
-        ">
-      </tr>
-
-
-      <!-- ===================================================== -->
       <!-- NO DATA -->
-      <!-- ===================================================== -->
+      <div class="entity-empty">
 
-      <tr
-        class="mat-row"
-        *matNoDataRow>
+        <mat-icon>verified</mat-icon>
 
-        <td
-          class="mat-cell no-data"
-          [attr.colspan]="displayedColumns.length">
-
+        <span>
           {{ 'common.noData' | translate }}
+        </span>
 
-        </td>
+      </div>
 
-      </tr>
+    }
 
-    </table>
+  </div>
 
 
-    <!-- ======================================================= -->
-    <!-- PAGINATION -->
-    <!-- ======================================================= -->
+  <!-- ======================================================= -->
+  <!-- PAGINATION -->
+  <!-- ======================================================= -->
+
+  <div class="list-pagination">
 
     <mat-paginator
       [length]="brands().length"

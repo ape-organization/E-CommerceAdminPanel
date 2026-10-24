@@ -437,14 +437,7 @@ if (imageUrl) {
 
 
     catch (error) {
-
-      console.error(
-        'Error saving brand:',
-        error
-      );
-
-
-      this.errorMessage.set(
+ this.errorMessage.set(
         'brands.saveError'
       );
 

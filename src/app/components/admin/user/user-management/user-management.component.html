@@ -37,74 +37,57 @@
   </div>
 
 
-  <!-- Users Table -->
-  <div class="table-responsive">
+  <!-- Users List -->
+  <div class="entity-list">
 
-    <table
-      mat-table
-      [dataSource]="dataSource()"
-    >
+    @for (user of dataSource().data; track user.id) {
 
-      <!-- Username -->
-      <ng-container matColumnDef="username">
+      <article class="entity-card">
 
-        <th mat-header-cell *matHeaderCellDef>
-          {{ 'users.user' | translate }}
-        </th>
+        <div class="entity-card-body">
 
-        <td mat-cell *matCellDef="let user">
+          <!-- Avatar -->
+          <div class="entity-media round">
+            <mat-icon>person</mat-icon>
+          </div>
 
-          <div class="user-info">
 
-            <div class="user-avatar">
-              <mat-icon>person</mat-icon>
+          <!-- Fields -->
+          <div class="entity-fields">
+
+            <div class="entity-field">
+
+              <span class="field-label">
+                {{ 'users.user' | translate }}
+              </span>
+
+              <span class="field-value title">
+                {{ user.name }}
+              </span>
+
             </div>
 
-            <span class="user-name">
-              {{ user.name }}
-            </span>
+            <div class="entity-field">
+
+              <span class="field-label">
+                {{ 'users.email' | translate }}
+              </span>
+
+              <span class="field-value muted">
+
+                <mat-icon>email</mat-icon>
+
+                {{ user.email }}
+
+              </span>
+
+            </div>
 
           </div>
 
-        </td>
 
-      </ng-container>
-
-
-      <!-- Email -->
-      <ng-container matColumnDef="email">
-
-        <th mat-header-cell *matHeaderCellDef>
-          {{ 'users.email' | translate }}
-        </th>
-
-        <td mat-cell *matCellDef="let user">
-
-          <div class="email-cell">
-
-            <mat-icon>email</mat-icon>
-
-            <span>
-              {{ user.email }}
-            </span>
-
-          </div>
-
-        </td>
-
-      </ng-container>
-
-
-      <!-- Actions -->
-      <ng-container matColumnDef="actions">
-
-        <th mat-header-cell *matHeaderCellDef>
-          {{ 'common.actions' | translate }}
-        </th>
-
-        <td mat-cell *matCellDef="let user">
-
-          <div class="action-buttons">
+          <!-- Actions -->
+          <div class="entity-actions">
 
             <button
               mat-icon-button
@@ -128,26 +111,23 @@
 
           </div>
 
-        </td>
+        </div>
 
-      </ng-container>
+      </article>
 
+    } @empty {
 
-      <!-- Rows -->
-      <tr
-        mat-header-row
-        *matHeaderRowDef="displayedColumns"
-      ></tr>
+      <div class="entity-empty">
 
-      <tr
-        mat-row
-        *matRowDef="
-          let row;
-          columns: displayedColumns
-        "
-      ></tr>
+        <mat-icon>people</mat-icon>
 
-    </table>
+        <span>
+          {{ 'common.noData' | translate }}
+        </span>
+
+      </div>
+
+    }
 
   </div>
 

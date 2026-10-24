@@ -32,109 +32,75 @@
   </header>
 
 
-  <!-- TABLE -->
-  <div class="table-responsive">
+  <!-- LIST -->
+  <div class="entity-list grid">
 
-    <table
-      mat-table
-      [dataSource]="paginatedCategories()">
+    @for (slider of paginatedCategories(); track $index) {
+
+      <article class="entity-card slider-card">
+
+        <!-- IMAGE -->
+        <div class="slider-media">
+
+          @if (slider.imageUrl) {
+
+            <img [src]="getImageUrl(slider.imageUrl)">
+
+          } @else {
+
+            <mat-icon>home</mat-icon>
+
+          }
+
+        </div>
 
 
-      <!-- SLIDER -->
-      <ng-container matColumnDef="name">
+        <div class="slider-footer">
 
-        <th mat-header-cell *matHeaderCellDef>
-          {{ 'sliders.slider' | translate }}
-        </th>
+          <span class="field-label">
+            {{ 'sliders.slider' | translate }}
+          </span>
 
-        <td
-          mat-cell
-          *matCellDef="let slider"
-          class="category-name">
+          <!-- ACTIONS -->
+          <div class="entity-actions">
 
-          <div class="category-name-wrapper">
+            <button
+              mat-icon-button
+              class="edit-btn"
+              type="button"
+              (click)="editSlider(slider)"
+              [attr.aria-label]="'common.edit' | translate">
 
-            <div class="category-image-wrapper">
+              <mat-icon>edit</mat-icon>
 
-              @if (slider.imageUrl) {
-
-                <img
-                  class="category-image"
-                  [src]="getImageUrl(slider.imageUrl)"
-                  >
-
-              } @else {
-
-                <mat-icon class="category-image-placeholder">
-                  home
-                </mat-icon>
-
-              }
-
-            </div>
-
-          
+            </button>
 
           </div>
 
-        </td>
+        </div>
 
-      </ng-container>
+      </article>
 
+    } @empty {
 
+      <div class="entity-empty">
 
-      <!-- ACTIONS -->
-      <ng-container matColumnDef="actions">
+        <mat-icon>home</mat-icon>
 
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          class="actions-header">
+        <span>
+          {{ 'common.noData' | translate }}
+        </span>
 
-          {{ 'common.actions' | translate }}
+      </div>
 
-        </th>
+    }
 
-        <td
-          mat-cell
-          *matCellDef="let slider"
-          class="actions-cell">
-
-          <button
-            mat-icon-button
-            class="edit-btn"
-            type="button"
-            (click)="editSlider(slider)">
-
-            <mat-icon>edit</mat-icon>
-
-          </button>
-
-        
-
-        </td>
-
-      </ng-container>
+  </div>
 
 
-      <!-- ROWS -->
-      <tr
-        mat-header-row
-        *matHeaderRowDef="displayedColumns">
-      </tr>
+  <!-- PAGINATION -->
+  <div class="list-pagination">
 
-      <tr
-        mat-row
-        *matRowDef="
-          let row;
-          columns: displayedColumns;
-        ">
-      </tr>
-
-    </table>
-
-
-    <!-- PAGINATION -->
     <mat-paginator
       [length]="sliders().length"
       [pageIndex]="pageIndex()"

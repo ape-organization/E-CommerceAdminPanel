@@ -238,7 +238,6 @@ export class Orders implements OnInit {
       .subscribe({
 
         next: (response) => {
-console.log(response)
           this.orders.set(
             response.items ?? []
           );
@@ -263,14 +262,7 @@ console.log(response)
 
 
         error: (error) => {
-
-          console.error(
-            'Load orders error:',
-            error
-          );
-
-
-          this.orders.set([]);
+ this.orders.set([]);
 
           this.hasNextPage.set(false);
 
@@ -356,14 +348,7 @@ console.log(response)
 
 
         error: (error) => {
-
-          console.error(
-            'Load more orders error:',
-            error
-          );
-
-
-          this.loadingMore.set(false);
+ this.loadingMore.set(false);
 
 
           this.errorMessage.set(
@@ -607,14 +592,7 @@ console.log(response)
       .subscribe({
 
         error: (error) => {
-
-          console.error(
-            'Update order status error:',
-            error
-          );
-
-
-          this.orders.update(
+this.orders.update(
             orders =>
               orders.map(
                 currentOrder =>
@@ -698,14 +676,7 @@ console.log(response)
 
 
             error: (error) => {
-
-              console.error(
-                'Cancel order error:',
-                error
-              );
-
-
-              this.errorMessage.set(
+        this.errorMessage.set(
                 'Failed to cancel order.'
               );
 
@@ -777,14 +748,7 @@ console.log(response)
 
 
             error: (error) => {
-
-              console.error(
-                'Confirmed order error:',
-                error
-              );
-
-
-              this.errorMessage.set(
+ this.errorMessage.set(
                 'Failed to Confirmed order.'
               );
 

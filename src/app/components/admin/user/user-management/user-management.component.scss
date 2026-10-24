@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/card-list' as cards;
+
 /* ============================================================
    USER MANAGEMENT
    ============================================================ */
@@ -118,213 +120,10 @@
 
 
 /* ============================================================
-   TABLE
+   LIST
    ============================================================ */
 
-.table-responsive {
-  width: 100%;
-
-  overflow: hidden;
-
-  background: var(--color-surface);
-
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-
-  box-shadow: var(--shadow-md);
-}
-
-table {
-  width: 100%;
-}
-
-
-/* ============================================================
-   MATERIAL TABLE HEADER
-   ============================================================ */
-
-::ng-deep .mat-mdc-header-row {
-  height: 52px;
-  background: var(--color-surface-soft);
-}
-
-::ng-deep .mat-mdc-header-cell {
-  padding: 0 20px;
-
-  background: var(--color-surface-soft);
-
-  color: var(--color-text-secondary) !important;
-
-  font-size: 0.72rem;
-  font-weight: 700;
-
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-
-  border-bottom: 1px solid var(--color-border);
-}
-
-::ng-deep .mat-mdc-header-cell:first-child,
-::ng-deep .mat-mdc-cell:first-child {
-  padding-left: 24px;
-}
-
-::ng-deep .mat-mdc-header-cell:last-child,
-::ng-deep .mat-mdc-cell:last-child {
-  padding-right: 24px;
-}
-
-
-/* ============================================================
-   TABLE ROW
-   ============================================================ */
-
-::ng-deep .mat-mdc-row {
-  min-height: 68px;
-
-  background: var(--color-surface);
-
-  transition: background-color 0.2s ease;
-}
-
-::ng-deep .mat-mdc-row:hover {
-  background: var(--color-surface-soft);
-}
-
-::ng-deep .mat-mdc-cell {
-  padding: 12px 20px;
-
-  color: var(--color-text);
-
-  font-size: 0.85rem;
-
-  border-bottom: 1px solid var(--color-border-light);
-}
-
-::ng-deep .mat-mdc-row:last-child .mat-mdc-cell {
-  border-bottom: none;
-}
-
-
-/* ============================================================
-   USER
-   ============================================================ */
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-
-  min-width: 180px;
-}
-
-.user-avatar {
-  width: 38px;
-  height: 38px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  flex-shrink: 0;
-
-  border: 1px solid var(--color-border);
-
-  border-radius: 50%;
-
-  background: var(--color-surface-soft);
-  color: var(--color-primary);
-}
-
-.user-avatar mat-icon {
-  width: 19px;
-  height: 19px;
-  font-size: 19px;
-}
-
-.user-name {
-  color: var(--color-primary);
-
-  font-size: 0.85rem;
-  font-weight: 600;
-
-  white-space: nowrap;
-}
-
-
-/* ============================================================
-   EMAIL
-   ============================================================ */
-
-.email-cell {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  color: var(--color-text-secondary);
-
-  font-size: 0.82rem;
-}
-
-.email-cell mat-icon {
-  width: 18px;
-  height: 18px;
-
-  flex-shrink: 0;
-
-  font-size: 18px;
-
-  color: var(--color-accent);
-}
-
-
-/* ============================================================
-   ACTIONS
-   ============================================================ */
-
-.action-buttons {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.edit-button,
-.delete-button {
-  width: 38px;
-  height: 38px;
-
-  transition:
-    background-color 0.2s ease,
-    transform 0.2s ease;
-}
-
-.edit-button {
-  color: var(--color-success);
-}
-
-.delete-button {
-  color: var(--color-error);
-}
-
-.edit-button:hover {
-  background: color-mix(
-    in srgb,
-    var(--color-success) 10%,
-    transparent
-  );
-
-  transform: translateY(-1px);
-}
-
-.delete-button:hover {
-  background: color-mix(
-    in srgb,
-    var(--color-error) 10%,
-    transparent
-  );
-
-  transform: translateY(-1px);
-}
+@include cards.card-list;
 
 
 /* ============================================================
@@ -367,50 +166,6 @@ table {
     width: 100%;
   }
 
-  .table-responsive {
-    overflow-x: auto;
-
-    border-radius: var(--radius-md);
-
-    -webkit-overflow-scrolling: touch;
-  }
-
-  table {
-    min-width: 620px;
-  }
-
-  ::ng-deep .mat-mdc-header-cell {
-    padding: 0 16px;
-    font-size: 0.68rem;
-  }
-
-  ::ng-deep .mat-mdc-cell {
-    padding: 10px 16px;
-    font-size: 0.80rem;
-  }
-
-  ::ng-deep .mat-mdc-header-cell:first-child,
-  ::ng-deep .mat-mdc-cell:first-child {
-    padding-left: 18px;
-  }
-
-  ::ng-deep .mat-mdc-header-cell:last-child,
-  ::ng-deep .mat-mdc-cell:last-child {
-    padding-right: 18px;
-  }
-
-  .user-avatar {
-    width: 34px;
-    height: 34px;
-  }
-
-  .user-name {
-    font-size: 0.80rem;
-  }
-
-  .email-cell {
-    font-size: 0.76rem;
-  }
 }
 
 
@@ -441,7 +196,4 @@ table {
     font-size: 0.67rem;
   }
 
-  .table-responsive {
-    border-radius: var(--radius-sm);
-  }
 }

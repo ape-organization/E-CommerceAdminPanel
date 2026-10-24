@@ -640,15 +640,7 @@ export class ProductManagementComponent implements OnInit {
             Array.isArray(response)
               ? response
               : [];
-
-
-          console.log(
-            'Loaded products:',
-            items.length
-          );
-
-
-          this.products.set(
+ this.products.set(
             items
           );
 
@@ -663,14 +655,7 @@ export class ProductManagementComponent implements OnInit {
 
 
         error: error => {
-
-          console.error(
-            'Error loading products:',
-            error
-          );
-
-
-          this.products.set([]);
+ this.products.set([]);
 
 
           this.errorMessage.set(
@@ -1001,14 +986,7 @@ export class ProductManagementComponent implements OnInit {
 
 
             error: error => {
-
-              console.error(
-                'Error deleting product:',
-                error
-              );
-
-
-              this.errorMessage.set(
+this.errorMessage.set(
                 'Failed to delete product.'
               );
 

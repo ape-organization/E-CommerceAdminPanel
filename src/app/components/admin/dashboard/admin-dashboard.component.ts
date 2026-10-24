@@ -125,7 +125,6 @@ this.loadTotalCost();
 
   this.SmsService.getTotalCost().subscribe({
     next: stats => {
-      console.log(stats)
       if(stats.success)
       {
       this.totalCost.set(stats.data.totalSmsPartCount*.60);
@@ -202,7 +201,6 @@ this.loadTotalCost();
   });
    this.visitorService.getMonthlyVisitors().subscribe({
     next: (res:any) => {
-      console.log(res)
       this.visitors.set(res.visitors);
 
       requestCompleted();
@@ -234,13 +232,7 @@ get currentMonthName(): string {
   // ============================================================
 
   private handleError(error: any): void {
-
-    console.error(
-      'Dashboard error:',
-      error
-    );
-
-    if (!this.errorMessage()) {
+if (!this.errorMessage()) {
 
       this.errorMessage.set(
         error?.error?.message ??

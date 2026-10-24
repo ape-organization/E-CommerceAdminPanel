@@ -112,7 +112,6 @@ export class SliderManagementComponent implements OnInit {
       .subscribe({
 
         next: sliders => {
-console.log(sliders)
           this.sliders.set(
             Array.isArray(sliders)
               ? sliders
@@ -124,13 +123,7 @@ console.log(sliders)
         },
 
         error: error => {
-
-          console.error(
-            'Error loading sliders:',
-            error
-          );
-
-        }
+ }
 
       });
   }
