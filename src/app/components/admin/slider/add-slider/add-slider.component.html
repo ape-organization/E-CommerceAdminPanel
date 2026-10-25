@@ -84,7 +84,7 @@
                 [src]="imagePreview()"
                 [alt]="
                   sliderForm.get('name')?.value ||
-                  ('slider.sliderImage' | translate)
+                  ('sliders.sliderImage' | translate)
                 "
                 class="category-image-preview"
               />
@@ -149,7 +149,7 @@
             </mat-icon>
 
             <span>
-              {{ errorMessage() }}
+              {{ errorMessage() | translate }}
             </span>
 
           </div>

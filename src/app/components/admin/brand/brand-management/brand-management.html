@@ -50,7 +50,7 @@
           <!-- BRAND IMAGE -->
           <div class="entity-media contain">
 
-            <img
+            <img loading="lazy" decoding="async"
               *ngIf="brand.imageUrl"
               [src]="getImageUrl(brand.imageUrl)"
               [alt]="
@@ -160,6 +160,7 @@
   <div class="list-pagination">
 
     <mat-paginator
+      [selectConfig]="{ panelClass: 'paginator-size-panel' }"
       [length]="brands().length"
       [pageSize]="pageSize()"
       [pageIndex]="pageIndex()"

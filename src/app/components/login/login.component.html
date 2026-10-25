@@ -1,5 +1,5 @@
 
-<div class="login-container">
+<div class="login-container" [dir]="direction()">
 
   <!-- Background Decoration -->
   <div class="background-glow glow-one"></div>
@@ -21,7 +21,7 @@
 
       <div class="brand-icon">
        
-<img src="../../../assets/images/logoo.png" />
+<img src="assets/images/logoo.png" alt="Logo" />
 
       
       </div>
@@ -31,7 +31,7 @@
       </span> -->
 
       <span class="admin-label">
-        ADMIN PORTAL
+        {{ 'login.adminPortal' | translate }}
       </span>
 
     </div>
@@ -55,7 +55,7 @@
         >
 
           <mat-label>
-            Email Address
+            {{ 'login.email' | translate }}
           </mat-label>
 
           <mat-icon matPrefix>
@@ -74,7 +74,7 @@
               loginForm.get('email')?.hasError('required')
             "
           >
-            Email is required
+            {{ 'login.emailRequired' | translate }}
           </mat-error>
 
           <mat-error
@@ -82,7 +82,7 @@
               loginForm.get('email')?.hasError('email')
             "
           >
-            Invalid email format
+            {{ 'login.invalidEmail' | translate }}
           </mat-error>
 
         </mat-form-field>
@@ -95,7 +95,7 @@
         >
 
           <mat-label>
-            Password
+            {{ 'login.password' | translate }}
           </mat-label>
 
           <mat-icon matPrefix>
@@ -114,6 +114,7 @@
             type="button"
             (click)="hidePassword = !hidePassword"
             class="password-toggle"
+            [attr.aria-label]="(hidePassword ? 'users.showPassword' : 'users.hidePassword') | translate"
           >
 
             <mat-icon>
@@ -127,7 +128,7 @@
               loginForm.get('password')?.hasError('required')
             "
           >
-            Password is required
+            {{ 'login.passwordRequired' | translate }}
           </mat-error>
 
         </mat-form-field>
@@ -144,7 +145,7 @@
           </mat-icon>
 
           <span>
-            {{ errorMessage() }}
+            {{ errorMessage()! | translate }}
           </span>
 
         </div>
@@ -165,7 +166,7 @@
           </mat-icon>
 
           <span>
-            {{ isLoading() ? 'Signing In...' : 'SIGN IN' }}
+            {{ (isLoading() ? 'login.signingIn' : 'login.signIn') | translate }}
           </span>
 
         </button>
@@ -178,7 +179,7 @@
     <!-- Footer -->
     <div class="login-footer">
       <span>✦</span>
-      <span>Secure Admin Access</span>
+      <span>{{ 'login.secureAccess' | translate }}</span>
       <span>✦</span>
     </div>
 

@@ -54,8 +54,11 @@ import {
 } from '../../services/auth.service';
 
 import {
-  TranslatePipe,
-  TranslateService
+  LanguageService
+} from '../../services/language.service';
+
+import {
+  TranslatePipe
 } from '@ngx-translate/core';
 
 
@@ -94,8 +97,8 @@ export class BaseLayout {
   readonly authService =
     inject(AuthService);
 
-  private readonly translate =
-    inject(TranslateService);
+  private readonly languageService =
+    inject(LanguageService);
 
 
   /* =========================================================
@@ -108,8 +111,12 @@ export class BaseLayout {
   readonly isLoggedIn =
     this.authService.isLoggedIn;
 
+  /*
+   * Single source of truth for the language, shared with the
+   * dashboard, brand pages, etc. (LanguageService).
+   */
   readonly currentLanguage =
-    signal<'en' | 'ar'>('en');
+    this.languageService.currentLanguage;
 
 
   readonly isMobile =
@@ -126,86 +133,16 @@ export class BaseLayout {
 
 
   /* =========================================================
-     CONSTRUCTOR
-     ========================================================= */
-
-  constructor() {
-
-    const savedLanguage =
-      localStorage.getItem('language');
-
-    const language: 'en' | 'ar' =
-      savedLanguage === 'ar'
-        ? 'ar'
-        : 'en';
-
-
-    this.currentLanguage.set(language);
-
-    this.translate.use(language);
-
-    this.setDocumentLanguage(language);
-  }
-
-
-  /* =========================================================
      LANGUAGE
      ========================================================= */
 
   toggleLanguage(): void {
 
-    const language: 'en' | 'ar' =
-      this.currentLanguage() === 'en'
-        ? 'ar'
-        : 'en';
-
-
     /*
-     * Update signal first.
-     *
-     * The [dir] binding on the template will immediately
-     * update the sidenav container.
+     * LanguageService updates the signal, translations,
+     * localStorage and the <html> lang/dir attributes.
      */
-    this.currentLanguage.set(language);
-
-
-    /*
-     * Change translations.
-     */
-    this.translate.use(language);
-
-
-    /*
-     * Save language.
-     */
-    localStorage.setItem(
-      'language',
-      language
-    );
-
-
-    /*
-     * Update document language.
-     */
-    this.setDocumentLanguage(language);
-  }
-
-
-  /* =========================================================
-     DOCUMENT LANGUAGE
-     ========================================================= */
-
-  private setDocumentLanguage(
-    language: 'en' | 'ar'
-  ): void {
-
-    document.documentElement.lang =
-      language;
-
-    document.documentElement.dir =
-      language === 'ar'
-        ? 'rtl'
-        : 'ltr';
+    this.languageService.toggleLanguage();
   }
 
 

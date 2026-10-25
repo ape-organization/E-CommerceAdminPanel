@@ -222,7 +222,7 @@ export class AddCategoryComponent
     ) {
 
       this.errorMessage.set(
-        'Please select a valid image file.'
+        'common.errors.invalidImage'
       );
 
       input.value = '';
@@ -245,7 +245,7 @@ export class AddCategoryComponent
     ) {
 
       this.errorMessage.set(
-        'Image size must be less than 5 MB.'
+        'common.errors.imageTooLarge'
       );
 
       input.value = '';
@@ -288,7 +288,7 @@ export class AddCategoryComponent
     reader.onerror = () => {
 
       this.errorMessage.set(
-        'Failed to load the selected image.'
+        'common.errors.imageReadFailed'
       );
 
     };
@@ -465,7 +465,7 @@ export class AddCategoryComponent
 
 
     catch (error) {
- this.errorMessage.set('Something went wrong while saving the category.'
+ this.errorMessage.set('categories.errors.saveFailed'
 
       );
 

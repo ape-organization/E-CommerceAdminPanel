@@ -1,0 +1,25 @@
+@if (visible()) {
+
+  <div
+    class="loader-overlay"
+    role="status"
+    aria-live="polite">
+
+    <div class="loader-dots" aria-hidden="true">
+
+      @for (dot of dots; track dot) {
+        <span
+          class="dot"
+          [style.animation-delay.ms]="dot * 140">
+        </span>
+      }
+
+    </div>
+
+    <span class="visually-hidden">
+      {{ 'common.loading' | translate }}
+    </span>
+
+  </div>
+
+}

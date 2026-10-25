@@ -253,6 +253,85 @@ $small: 420px;
 
 
   // ============================================================
+  // TABLE (desktop alternative to the card list)
+  // ============================================================
+
+  .entity-table-wrap {
+    overflow-x: auto;
+
+    background: var(--color-surface);
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-sm);
+  }
+
+  .entity-table {
+    width: 100%;
+
+    border-collapse: separate;
+    border-spacing: 0;
+
+    font-size: 13px;
+
+    th,
+    td {
+      padding: 12px 16px;
+
+      text-align: start;
+      vertical-align: middle;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+
+      background: var(--color-surface-soft);
+      color: var(--color-text-secondary);
+
+      border-bottom: 1px solid var(--color-border);
+
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    tbody td {
+      color: var(--color-text);
+
+      border-bottom: 1px solid var(--color-border-light);
+    }
+
+    tbody tr {
+      transition: background-color .15s ease;
+
+      &:last-child td {
+        border-bottom: 0;
+      }
+
+      &:hover td {
+        background: color-mix(in srgb, var(--color-surface-soft) 55%, var(--color-surface));
+      }
+    }
+
+    .actions-col {
+      width: 1%;
+
+      text-align: end;
+      white-space: nowrap;
+
+      .entity-actions {
+        justify-content: flex-end;
+      }
+    }
+  }
+
+
+  // ============================================================
   // EMPTY
   // ============================================================
 
@@ -284,6 +363,15 @@ $small: 420px;
 
       font-size: 40px;
     }
+  }
+
+
+  // inline error banner shown above a list
+  .entity-empty.list-error {
+    min-height: 0;
+    margin-bottom: 12px;
+
+    color: var(--color-error);
   }
 
 

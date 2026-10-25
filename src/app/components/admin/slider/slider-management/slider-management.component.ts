@@ -242,7 +242,7 @@ export class SliderManagementComponent implements OnInit {
   ): string {
 
     if (!imageUrl) {
-      return 'assets/images/product-placeholder.png';
+      return 'assets/images/placeholder.svg';
     }
 
     if (

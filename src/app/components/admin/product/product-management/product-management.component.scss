@@ -515,41 +515,6 @@
 
 
 // ============================================================
-// LOADING
-// ============================================================
-
-.loading-container {
-  min-height: 300px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  gap: 12px;
-
-  background: var(--color-surface);
-
-  border: 1px solid var(--color-border);
-
-  border-radius: var(--radius-lg);
-
-  box-shadow: var(--shadow-sm);
-
-  color: var(--color-text-secondary);
-
-  font-size: 13px;
-}
-
-.loading-container {
-  mat-spinner {
-    --mdc-circular-progress-active-indicator-color:
-      var(--color-accent);
-  }
-}
-
-
-// ============================================================
 // EMPTY STATE
 // ============================================================
 
@@ -862,6 +827,157 @@
   color: var(--color-text-light);
 
   font-size: 11px;
+}
+
+
+// ============================================================
+// LAPTOP TABLE  (table >= 1024px, cards below)
+// ============================================================
+
+.products-table {
+  display: none;
+}
+
+// fixed column widths so the table always fits (no sideways scroll);
+// the product column takes whatever is left
+.products-table .entity-table {
+  table-layout: fixed;
+
+  th,
+  td {
+    padding: 14px 12px;
+  }
+
+  th:first-child,
+  td:first-child {
+    padding-inline-start: 18px;
+  }
+
+  th:nth-child(2) { width: 112px; }   // actual price
+  th:nth-child(3) { width: 112px; }   // price
+  th:nth-child(4) { width: 86px; }    // discount
+  th:nth-child(5) { width: 118px; }   // stock
+  th:nth-child(6) { width: 19%; }     // classification
+  th:nth-child(7) { width: 104px; }   // actions
+
+  // wide screens: spread the spare width over all columns
+  // instead of leaving a gap after the product name
+  @media (min-width: 1600px) {
+    th:nth-child(2) { width: 10%; }
+    th:nth-child(3) { width: 10%; }
+    th:nth-child(4) { width: 8%; }
+    th:nth-child(5) { width: 11%; }
+    th:nth-child(6) { width: 24%; }
+  }
+
+  // smaller laptops: tighter columns so the product name keeps room
+  @media (max-width: 1439px) {
+    th,
+    td {
+      padding-inline: 9px;
+    }
+
+    thead th {
+      white-space: normal;
+    }
+
+    th:nth-child(2) { width: 96px; }
+    th:nth-child(3) { width: 100px; }
+    th:nth-child(4) { width: 74px; }
+    th:nth-child(5) { width: 110px; }
+    th:nth-child(6) { width: 17%; }
+    th:nth-child(7) { width: 92px; }
+
+    .price-cell {
+      font-size: 12px !important;
+    }
+  }
+}
+
+.product-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  min-width: 0;
+
+  .product-heading {
+    min-width: 0;
+  }
+
+  // long names: max 2 lines, no single-word orphans
+  .product-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    overflow: hidden;
+
+    font-size: 14px;
+    overflow-wrap: normal;
+    text-wrap: balance;
+  }
+
+  .product-subtitle {
+    font-size: 12px;
+  }
+}
+
+.table-media {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.table-brand {
+  color: var(--color-accent);
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.products-table {
+  .stock-status {
+    white-space: nowrap;
+  }
+
+  .classification {
+    max-width: none;
+  }
+}
+
+.products-table tbody tr {
+  &.low-stock-row td:first-child {
+    box-shadow: inset 3px 0 0 var(--color-warning);
+  }
+
+  &.out-of-stock-row td:first-child {
+    box-shadow: inset 3px 0 0 var(--color-error);
+  }
+}
+
+:host-context([dir='rtl']) .products-table tbody tr {
+  &.low-stock-row td:first-child {
+    box-shadow: inset -3px 0 0 var(--color-warning);
+  }
+
+  &.out-of-stock-row td:first-child {
+    box-shadow: inset -3px 0 0 var(--color-error);
+  }
+}
+
+// table only where 7 columns fit next to the sidebar (laptops 1280+);
+// narrower screens keep the card layout
+@media (min-width: 1280px) {
+
+  .products-table {
+    display: block;
+  }
+
+  .products-cards {
+    display: none;
+  }
+
 }
 
 

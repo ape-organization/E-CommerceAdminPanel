@@ -170,7 +170,7 @@
       </mat-icon>
 
       <span>
-        {{ errorMessage() }}
+        {{ errorMessage() | translate }}
       </span>
 
       <button
@@ -188,25 +188,7 @@
   }
 
 
-  <!-- ========================================================
-       LOADING
-       ======================================================== -->
-
-  @if (loading()) {
-
-    <div class="loading-container">
-
-      <mat-spinner
-        diameter="45"
-      ></mat-spinner>
-
-      <p>
-        {{ 'orders.loading' | translate }}
-      </p>
-
-    </div>
-
-  }
+  <!-- LOADING: shown by the global <app-loader> -->
 
 
   <!-- ========================================================
@@ -357,7 +339,7 @@
 
               <span class="field-value">
 
-                <mat-icon>calendar_today</mat-icon>
+                <!-- <mat-icon>calendar_today</mat-icon> -->
 
                 {{
                   order.orderDate
@@ -379,7 +361,7 @@
 
               <span class="field-value">
 
-                <mat-icon>inventory_2</mat-icon>
+                <!-- mat-icon>inventory_2</mat-icon> -->
 
                 {{ getItemsCount(order) }}
 
@@ -619,7 +601,7 @@
 
                             @if (item.imageUrl) {
 
-                              <img
+                              <img loading="lazy" decoding="async"
                                 [src]="
                                   getImageUrl(
                                     item.imageUrl
@@ -810,6 +792,7 @@
     <div class="list-pagination">
 
       <mat-paginator
+        [selectConfig]="{ panelClass: 'paginator-size-panel' }"
         [length]="totalOrders()"
         [pageIndex]="pageIndex()"
         [pageSize]="pageSize()"

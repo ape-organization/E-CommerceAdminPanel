@@ -2,7 +2,8 @@ import {
   Component,
   Inject,
   OnInit,
-  inject
+  inject,
+  signal
 } from '@angular/core';
 
 import {
@@ -81,7 +82,8 @@ export class AddUserComponent implements OnInit {
   hidePassword = true;
 
 
-  errorMessage = '';
+  // signal so the zoneless app re-renders when the request fails
+  readonly errorMessage = signal('');
 
 
   constructor(
@@ -173,10 +175,32 @@ export class AddUserComponent implements OnInit {
      * =========================================
      */
 
+    /*
+     * getRawValue() also includes the disabled "role" control
+     * (.value silently drops disabled controls).
+     */
+
+    const formValue =
+      this.userForm.getRawValue();
+
+
+    /*
+     * When editing, the password field is not shown -
+     * never send an empty password to the backend.
+     */
+
+    if (this.editUser) {
+      delete formValue.password;
+    }
+
+
     const userData = {
       ...this.editUser,
-      ...this.userForm.value
+      ...formValue
     };
+
+
+    this.errorMessage.set('');
 
 
     /*
@@ -205,10 +229,16 @@ export class AddUserComponent implements OnInit {
 
       next: response => {
 
-        if (!response) {
+        /*
+         * updateUser returns no body (void), so only treat an
+         * empty response as a failure when adding.
+         */
 
-          this.errorMessage =
-            'Something went wrong.';
+        if (this.data.add && !response) {
+
+          this.errorMessage.set(
+            'common.somethingWentWrong'
+          );
 
           return;
         }
@@ -220,9 +250,10 @@ export class AddUserComponent implements OnInit {
       },
 
 
-      error: error => {
- this.errorMessage =
-          'Something went wrong.';
+      error: () => {
+        this.errorMessage.set(
+          'common.somethingWentWrong'
+        );
       }
 
     });

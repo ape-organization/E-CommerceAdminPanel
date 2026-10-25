@@ -37,10 +37,19 @@
   </div>
 
 
+  <!-- Error -->
+  @if (errorMessage()) {
+    <div class="entity-empty list-error">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ errorMessage()! | translate }}</span>
+    </div>
+  }
+
+
   <!-- Users List -->
   <div class="entity-list">
 
-    @for (user of dataSource().data; track user.id) {
+    @for (user of users(); track user.id) {
 
       <article class="entity-card">
 

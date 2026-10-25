@@ -1,8 +1,11 @@
 import {
   HttpErrorResponse,
+  HttpEvent,
+  HttpHandlerFn,
   HttpInterceptorFn,
   HttpContextToken,
-  HttpRequest
+  HttpRequest,
+  HttpResponse
 } from '@angular/common/http';
 
 import {
@@ -537,6 +540,174 @@ function invalidateCache(
 
 
 // ============================================================
+// 401 -> REFRESH TOKEN -> RETRY
+// ------------------------------------------------------------
+// Shared by the cached (GET) path and the normal path, so every
+// request gets the same token-refresh behaviour.
+// ============================================================
+
+function handleAuthError(
+  error: HttpErrorResponse,
+  request: HttpRequest<unknown>,
+  next: HttpHandlerFn,
+  authService: AuthService
+): Observable<HttpEvent<unknown>> {
+
+  console.error(
+    'HTTP ERROR:',
+    request.url,
+    error.status
+  );
+
+
+  // ==========================================================
+  // NOT UNAUTHORIZED
+  // ==========================================================
+
+  if (
+    error.status !== 401
+  ) {
+
+    return throwError(
+      () => error
+    );
+
+  }
+
+
+  // ==========================================================
+  // GET REFRESH TOKEN
+  // ==========================================================
+
+  const refreshToken =
+    authService.getRefreshToken();
+
+
+  // ==========================================================
+  // NO REFRESH TOKEN
+  // ==========================================================
+
+  if (
+    !refreshToken
+  ) {
+
+    console.warn(
+      'No refresh token available.'
+    );
+
+
+    authService.logout();
+
+
+    return throwError(
+      () => error
+    );
+
+  }
+
+
+  // ==========================================================
+  // REFRESH ACCESS TOKEN
+  // ==========================================================
+
+  return authService
+    .refreshToken()
+    .pipe(
+
+      // ======================================================
+      // REFRESH SUCCESS
+      // ======================================================
+
+      switchMap(
+        () => {
+
+          /*
+           * AuthService has already saved
+           * the new access token.
+           */
+
+          const newToken =
+            authService.getToken();
+
+
+          // ==================================================
+          // NO NEW TOKEN
+          // ==================================================
+
+          if (
+            !newToken
+          ) {
+
+            authService.logout();
+
+
+            return throwError(
+              () =>
+                new Error(
+                  'Token refresh succeeded but no access token was found.'
+                )
+            );
+
+          }
+
+
+          // ==================================================
+          // RETRY ORIGINAL REQUEST
+          // ==================================================
+
+          const retryRequest =
+            request.clone({
+
+              setHeaders: {
+
+                Authorization:
+                  `Bearer ${newToken}`
+
+              }
+
+            });
+
+
+          return next(
+            retryRequest
+          );
+
+        }
+      ),
+
+
+      // ======================================================
+      // REFRESH FAILED
+      // ======================================================
+
+      catchError(
+        refreshError => {
+
+          console.error(
+            'Unable to refresh token:',
+            refreshError
+          );
+
+
+          /*
+           * AuthService.refreshToken()
+           * already calls logout() when refresh fails.
+           */
+
+          return throwError(
+            () =>
+              refreshError
+          );
+
+        }
+      )
+
+    );
+
+}
+
+
+// ============================================================
 // AUTH INTERCEPTOR
 // ============================================================
 
@@ -557,10 +728,6 @@ export const authInterceptor: HttpInterceptorFn = (
   // PUBLIC AUTH REQUEST
   // ==========================================================
 
-  const publicAuthRequest =
-    isPublicAuthRequest(req);
-
-
   /*
    * IMPORTANT
    *
@@ -579,7 +746,7 @@ export const authInterceptor: HttpInterceptorFn = (
    */
 
   if (
-    publicAuthRequest
+    isPublicAuthRequest(req)
   ) {
 
     return next(req);
@@ -588,38 +755,22 @@ export const authInterceptor: HttpInterceptorFn = (
 
 
   // ==========================================================
-  // GET ACCESS TOKEN
+  // ADD ACCESS TOKEN
   // ==========================================================
 
   const token =
     authService.getToken();
 
 
-  // ==========================================================
-  // ADD ACCESS TOKEN
-  // ==========================================================
-
-  let request =
-    req;
-
-
-  if (
+  const request =
     token
-  ) {
-
-    request =
-      req.clone({
-
-        setHeaders: {
-
-          Authorization:
-            `Bearer ${token}`
-
-        }
-
-      });
-
-  }
+      ? req.clone({
+          setHeaders: {
+            Authorization:
+              `Bearer ${token}`
+          }
+        })
+      : req;
 
 
   // ==========================================================
@@ -666,7 +817,8 @@ export const authInterceptor: HttpInterceptorFn = (
       Date.now() <
       cached.expiresAt
     ) {
- return of(
+
+      return of(
         cached.response
       );
 
@@ -701,7 +853,8 @@ export const authInterceptor: HttpInterceptorFn = (
     if (
       activeRequest
     ) {
-return activeRequest;
+
+      return activeRequest;
 
     }
 
@@ -714,17 +867,41 @@ return activeRequest;
       next(request).pipe(
 
         // ====================================================
-        // CACHE RESPONSE
+        // 401 -> REFRESH & RETRY (same as normal requests)
+        // ====================================================
+
+        catchError(
+          (error: HttpErrorResponse) =>
+            handleAuthError(
+              error,
+              request,
+              next,
+              authService
+            )
+        ),
+
+
+        // ====================================================
+        // CACHE RESPONSE (only the final HttpResponse)
         // ====================================================
 
         tap(
-          response => {
+          event => {
+
+            if (
+              !(event instanceof HttpResponse)
+            ) {
+
+              return;
+
+            }
+
 
             cache.set(
               cacheKey,
               {
 
-                response,
+                response: event,
 
                 expiresAt:
                   Date.now() +
@@ -737,7 +914,8 @@ return activeRequest;
             cacheVersion.update(
               value => value + 1
             );
-}
+
+          }
         ),
 
 
@@ -791,19 +969,36 @@ return activeRequest;
   return next(request).pipe(
 
     // ========================================================
+    // HANDLE ERRORS (401 -> refresh & retry)
+    // ========================================================
+
+    catchError(
+      (error: HttpErrorResponse) =>
+        handleAuthError(
+          error,
+          request,
+          next,
+          authService
+        )
+    ),
+
+
+    // ========================================================
     // HANDLE RESPONSE
     // ========================================================
 
+    /*
+     * Runs AFTER catchError so a mutation that succeeds on
+     * its retry (after a token refresh) also clears the cache.
+     */
+
     tap({
 
-      next: () => {
-
-        /*
-         * Invalidate cache after successful mutation.
-         */
+      next: event => {
 
         if (
-          isMutation
+          isMutation &&
+          event instanceof HttpResponse
         ) {
 
           invalidateCache(
@@ -814,171 +1009,7 @@ return activeRequest;
 
       }
 
-    }),
-
-
-    // ========================================================
-    // HANDLE ERRORS
-    // ========================================================
-
-    catchError(
-      (
-        error: HttpErrorResponse
-      ) => {
-
-        console.error(
-          'HTTP ERROR:',
-          request.url,
-          error.status
-        );
-
-
-        // ====================================================
-        // NOT UNAUTHORIZED
-        // ====================================================
-
-        if (
-          error.status !== 401
-        ) {
-
-          return throwError(
-            () => error
-          );
-
-        }
-
-
-        // ====================================================
-        // GET REFRESH TOKEN
-        // ====================================================
-
-        const refreshToken =
-          authService.getRefreshToken();
-
-
-        // ====================================================
-        // NO REFRESH TOKEN
-        // ====================================================
-
-        if (
-          !refreshToken
-        ) {
-
-          console.warn(
-            'No refresh token available.'
-          );
-
-
-          authService.logout();
-
-
-          return throwError(
-            () => error
-          );
-
-        }
-
-
-        // ====================================================
-        // REFRESH ACCESS TOKEN
-        // ====================================================
-
-        return authService
-          .refreshToken()
-          .pipe(
-
-            // ==================================================
-            // REFRESH SUCCESS
-            // ==================================================
-
-            switchMap(
-              () => {
-
-                /*
-                 * AuthService has already saved
-                 * the new access token.
-                 */
-
-                const newToken =
-                  authService.getToken();
-
-
-                // ==============================================
-                // NO NEW TOKEN
-                // ==============================================
-
-                if (
-                  !newToken
-                ) {
-
-                  authService.logout();
-
-
-                  return throwError(
-                    () =>
-                      new Error(
-                        'Token refresh succeeded but no access token was found.'
-                      )
-                  );
-
-                }
-
-                // ==============================================
-                // RETRY ORIGINAL REQUEST
-                // ==============================================
-
-                const retryRequest =
-                  request.clone({
-
-                    setHeaders: {
-
-                      Authorization:
-                        `Bearer ${newToken}`
-
-                    }
-
-                  });
-
-
-                return next(
-                  retryRequest
-                );
-
-              }
-            ),
-
-
-            // ==================================================
-            // REFRESH FAILED
-            // ==================================================
-
-            catchError(
-              refreshError => {
-
-                console.error(
-                  'Unable to refresh token:',
-                  refreshError
-                );
-
-
-                /*
-                 * AuthService.refreshToken()
-                 * already calls logout() when refresh fails.
-                 */
-
-                return throwError(
-                  () =>
-                    refreshError
-                );
-
-              }
-            )
-
-          );
-
-      }
-
-    )
+    })
 
   );
 

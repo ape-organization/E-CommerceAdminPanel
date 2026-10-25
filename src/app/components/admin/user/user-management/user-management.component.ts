@@ -6,7 +6,6 @@ import {
 } from '@angular/core';
 
 import { MatDialog } from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
 
 import { SharedModule } from '../../../../shared/shared.module';
 import { UserService } from '../../../../services/user.service';
@@ -14,7 +13,7 @@ import { User } from '../../../../models/user.model';
 
 import { AddUserComponent } from '../add-user/add-user.component';
 import { ConfirmDeleteComponent } from '../../../../shared/confirm-delete/confirm-delete.component';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 
 @Component({
@@ -28,21 +27,21 @@ export class UserManagementComponent implements OnInit {
 
   private readonly userService = inject(UserService);
   private readonly dialog = inject(MatDialog);
+  private readonly translate = inject(TranslateService);
 
 
   // ============================================================
   // STATE
   // ============================================================
 
-  readonly dataSource = signal(
-    new MatTableDataSource<User>()
-  );
+  /*
+   * A plain array signal: setting a NEW array is what tells the
+   * (zoneless) app to re-render. Re-setting the same
+   * MatTableDataSource instance was ignored by the signal.
+   */
+  readonly users = signal<User[]>([]);
 
-  readonly displayedColumns = [
-    'username',
-    'email',
-    'actions'
-  ];
+  readonly errorMessage = signal<string | null>(null);
 
 
   // ============================================================
@@ -62,16 +61,12 @@ export class UserManagementComponent implements OnInit {
 
     this.userService.getUsers().subscribe({
       next: users => {
-
-        const dataSource = this.dataSource();
-
-        dataSource.data = users;
-
-        this.dataSource.set(dataSource);
+        this.errorMessage.set(null);
+        this.users.set(users ?? []);
       },
 
-      error: error => {
-    
+      error: () => {
+        this.errorMessage.set('common.somethingWentWrong');
       }
     });
 
@@ -136,7 +131,7 @@ export class UserManagementComponent implements OnInit {
 
     this.dialog
       .open(ConfirmDeleteComponent, {
-        data: 'Are you sure you want to delete this item?'
+        data: this.translate.instant('users.deleteConfirmation')
       })
       .afterClosed()
       .subscribe(result => {
@@ -150,8 +145,8 @@ export class UserManagementComponent implements OnInit {
           .subscribe({
             next: () => this.loadUsers(),
 
-            error: error => {
-         
+            error: () => {
+              this.errorMessage.set('common.somethingWentWrong');
             }
           });
 

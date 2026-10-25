@@ -175,7 +175,7 @@ var image=environment.imageBaseUrl+this.data.slider.imageUrl
     ) {
 
       this.errorMessage.set(
-        'Please select a valid image file.'
+        'common.errors.invalidImage'
       );
 
       input.value = '';
@@ -196,7 +196,7 @@ var image=environment.imageBaseUrl+this.data.slider.imageUrl
     if (file.size > maxSize) {
 
       this.errorMessage.set(
-        'Image size must be less than 5 MB.'
+        'common.errors.imageTooLarge'
       );
 
       input.value = '';
@@ -235,7 +235,7 @@ var image=environment.imageBaseUrl+this.data.slider.imageUrl
     reader.onerror = () => {
 
       this.errorMessage.set(
-        'Failed to load the selected image.'
+        'common.errors.imageReadFailed'
       );
 
     };

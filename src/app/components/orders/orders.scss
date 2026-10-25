@@ -225,7 +225,6 @@
    LOADING / EMPTY
    ========================================================== */
 
-.loading-container,
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -240,14 +239,6 @@
   text-align: center;
 }
 
-.loading-container {
-  gap: 14px;
-}
-
-.loading-container p {
-  margin: 0;
-  color: var(--color-text-secondary);
-}
 
 
 /* Empty */
@@ -1102,6 +1093,8 @@
   .summary-total {
     padding-top: 12px;
     border-top: 1px solid var(--color-border-light);
+    justify-content: center;
+    align-items: center;
   }
 
   .customer-avatar {
@@ -1175,6 +1168,8 @@
 
   .field-value {
     font-size: 12px;
+    justify-content: center;
+    align-items: center;
   }
 
   .total-value {

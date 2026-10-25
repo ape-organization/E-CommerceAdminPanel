@@ -1,6 +1,42 @@
 
 {
+  "login": {
+    "errors": {
+      "failed": "فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.",
+      "adminRequired": "تم رفض الوصول. يلزم صلاحية المسؤول.",
+      "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة"
+    },
+    "secureAccess": "دخول آمن للإدارة",
+    "signingIn": "جاري تسجيل الدخول...",
+    "signIn": "تسجيل الدخول",
+    "passwordRequired": "كلمة المرور مطلوبة",
+    "password": "كلمة المرور",
+    "invalidEmail": "صيغة البريد الإلكتروني غير صحيحة",
+    "emailRequired": "البريد الإلكتروني مطلوب",
+    "email": "البريد الإلكتروني",
+    "adminPortal": "بوابة الإدارة"
+  },
   "common": {
+    "paginator": {
+      "range": "{{start}} – {{end}} من {{total}}",
+      "lastPage": "الصفحة الأخيرة",
+      "firstPage": "الصفحة الأولى",
+      "previousPage": "الصفحة السابقة",
+      "nextPage": "الصفحة التالية",
+      "itemsPerPage": "عدد العناصر في الصفحة:"
+    },
+    "errors": {
+      "imageReadFailed": "تعذر تحميل الصورة المحددة.",
+      "imageTooLarge": "يجب ألا يتجاوز حجم الصورة 5 ميجابايت.",
+      "invalidImage": "يرجى اختيار ملف صورة صالح."
+    },
+    "client-found": "تم العثور على العميل",
+    "remove": "إزالة",
+    "dismissError": "إغلاق",
+    "clearSearch": "مسح البحث",
+    "changeLanguage": "تغيير اللغة",
+    "somethingWentWrong": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "loading": "جاري التحميل...",
     "governorate":"المحافظه",
         "saveChanges":"احفظ التغييرات",
 "noData":"لا توجد بيانات",
@@ -48,6 +84,12 @@
   },
 
    "dashboard": {
+    "errors": {
+      "visitors": "تعذر تحميل عدد الزوار.",
+      "totalStats": "تعذر تحميل الإحصائيات الإجمالية.",
+      "monthStats": "تعذر تحميل إحصائيات الشهر الحالي.",
+      "smsCost": "تعذر تحميل تكلفة الرسائل."
+    },
       "monthlyVisitors": "Monthly Visitors",
     "count":"Count",
     "totalVisitorsMonthly":"Total monthly Visitors ",
@@ -86,6 +128,8 @@
   }
 ,
   "brands": {
+    "updateFailed": "تعذر تحديث العلامة التجارية.",
+    "createFailed": "تعذر إنشاء العلامة التجارية.",
    
     "management": "إدارة العلامات التجارية",
     "description": "إدارة العلامات التجارية لمستحضرات التجميل",
@@ -122,6 +166,11 @@
   }, 
 
   "categories": {
+    "errors": {
+      "saveFailed": "حدث خطأ أثناء حفظ الفئة."
+    },
+    "enterBrandName": "أدخل الاسم",
+    "categoryImage": "صورة الفئة",
         "deleteConfirmation":  " هل أنت متأكد أنك تريد حذف هذه العلامة التجارية؟ مسح الفئه يعني مسح جميع الفئات الفرعيه والمنتجات التي تحتويها."
 ,
     "management": "إدارة الفئات",
@@ -154,6 +203,13 @@
   },
 
   "subCategories": {
+    "errors": {
+      "deleteFailed": "تعذر حذف الفئة الفرعية.",
+      "updateFailed": "تعذر تحديث الفئة الفرعية.",
+      "createFailed": "تعذر إنشاء الفئة الفرعية.",
+      "loadFailed": "تعذر تحميل الفئات الفرعية."
+    },
+    "enterBrandName": "أدخل الاسم",
             "deleteConfirmation":  " هل أنت متأكد أنك تريد حذف هذه الفئه الفرعيه؟ مسح الفئه الفرعيه يعني مسح جميع المنتجات التي تحتويها."
 ,
      "nameEn":"الاسم باللغه الانجليزيه",
@@ -184,6 +240,33 @@
   },
 
   "products": {
+    "errors": {
+      "deleteFailed": "تعذر حذف المنتج.",
+      "loadFailed": "تعذر تحميل المنتجات.",
+      "updateFailed": "تعذر تحديث المنتج.",
+      "missingId": "معرّف المنتج مفقود.",
+      "createFailed": "تعذر إنشاء المنتج.",
+      "actualPriceTooHigh": "يجب أن يكون السعر الفعلي أقل من سعر البيع بعد الخصم.",
+      "nameRequired": "اسم المنتج مطلوب.",
+      "imageType": "يُسمح فقط بصور PNG و JPG و JPEG و WEBP.",
+      "loadSubCategories": "تعذر تحميل الفئات الفرعية.",
+      "loadCategories": "تعذر تحميل الفئات.",
+      "loadBrands": "تعذر تحميل العلامات التجارية.",
+      "checkName": "تعذر التحقق من اسم المنتج. يرجى المحاولة مرة أخرى.",
+      "nameExists": "يوجد منتج بهذا الاسم بالفعل."
+    },
+    "multipleSubcategoriesHint": "يمكنك اختيار أكثر من فئة فرعية",
+    "stockQuantityRequired": "كمية المخزون مطلوبة",
+    "stockQuantityInvalid": "يرجى إدخال كمية صالحة",
+    "selectSubCategory": "اختر الفئات الفرعية",
+    "priceInvalid": "يرجى إدخال سعر صالح",
+    "noSubCategoriesAvailable": "لا توجد فئات فرعية متاحة لهذه الفئة",
+    "noProductsMatchSearch": "لا توجد منتجات تطابق بحثك.",
+    "nameArRequired": "الاسم بالعربية مطلوب",
+    "loadingSubCategories": "جاري تحميل الفئات الفرعية...",
+    "finalPrice": "السعر النهائي",
+    "editProductSubtitle": "قم بتحديث تفاصيل المنتج أدناه",
+    "deleteProduct": "حذف المنتج",
         "selected":"اختار",
     "addProductSubtitle":"اضف المنتج مع كل بياناته ",
     "nameEnRequired":"الاسم الانجليزي مطلوب ",
@@ -308,6 +391,8 @@
     "addProductAction": "إضافة المنتج"
   },
 "sliders": {
+    "changeImage": "تغيير الصورة",
+    "sliderImage": "صورة الشريحة",
     "slider": "الصور",
     "management": "ادارة الصور الاساسيه",
     "description": "ادر السلايدرو اضف الصور له ",
@@ -318,6 +403,9 @@
     
   },
   "users": {
+    "updateUserDescription": "تحديث معلومات حساب المستخدم",
+    "roleRequired": "الدور مطلوب",
+    "deleteConfirmation": "هل أنت متأكد أنك تريد حذف هذا المستخدم؟",
     "role":"الدور",
 
     "name":"الاسم",
@@ -360,6 +448,14 @@
   },
 
   "orders": {
+    "errors": {
+      "completeFailed": "تعذر إتمام الطلب.",
+      "cancelFailed": "تعذر إلغاء الطلب.",
+      "loadMoreFailed": "تعذر تحميل المزيد من الطلبات.",
+      "loadFailed": "تعذر تحميل الطلبات."
+    },
+    "confirmComplete": "هل أنت متأكد أنك تريد إتمام الطلب رقم {{id}}؟",
+    "confirmCancel": "هل أنت متأكد أنك تريد إلغاء الطلب رقم {{id}}؟",
       "filters": {
       "orderId": "رقم الطلب",
       "orderIdPlaceholder": "أدخل رقم الطلب",
@@ -381,6 +477,7 @@
     "loading": "جاري تحميل الطلبات...",
 
     "empty": {
+      "noFilterResults": "لا توجد طلبات تطابق عوامل التصفية المحددة.",
       "title": "لم يتم العثور على طلبات",
       "description": "لا توجد طلبات متاحة حتى الآن."
     },

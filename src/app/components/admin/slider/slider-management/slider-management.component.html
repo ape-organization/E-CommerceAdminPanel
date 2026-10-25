@@ -44,7 +44,7 @@
 
           @if (slider.imageUrl) {
 
-            <img [src]="getImageUrl(slider.imageUrl)">
+            <img loading="lazy" decoding="async" [src]="getImageUrl(slider.imageUrl)">
 
           } @else {
 
@@ -102,6 +102,7 @@
   <div class="list-pagination">
 
     <mat-paginator
+      [selectConfig]="{ panelClass: 'paginator-size-panel' }"
       [length]="sliders().length"
       [pageIndex]="pageIndex()"
       [pageSize]="pageSize()"

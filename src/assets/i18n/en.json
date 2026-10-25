@@ -1,6 +1,41 @@
 
 {
+  "login": {
+    "errors": {
+      "failed": "Login failed. Please try again.",
+      "adminRequired": "Access denied. Admin role required.",
+      "invalidCredentials": "Invalid email or password"
+    },
+    "secureAccess": "Secure Admin Access",
+    "signingIn": "Signing In...",
+    "signIn": "SIGN IN",
+    "passwordRequired": "Password is required",
+    "password": "Password",
+    "invalidEmail": "Invalid email format",
+    "emailRequired": "Email is required",
+    "email": "Email Address",
+    "adminPortal": "ADMIN PORTAL"
+  },
   "common": {
+    "paginator": {
+      "range": "{{start}} – {{end}} of {{total}}",
+      "lastPage": "Last page",
+      "firstPage": "First page",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "itemsPerPage": "Items per page:"
+    },
+    "errors": {
+      "imageReadFailed": "Failed to load the selected image.",
+      "imageTooLarge": "Image size must not exceed 5 MB.",
+      "invalidImage": "Please select a valid image file."
+    },
+    "remove": "Remove",
+    "dismissError": "Dismiss",
+    "clearSearch": "Clear search",
+    "changeLanguage": "Change language",
+    "somethingWentWrong": "Something went wrong. Please try again.",
+    "loading": "Loading...",
     "governorate":"Governorate",
     "saveChanges":"Save Changes",
       "allCategories": "All Categories",
@@ -48,6 +83,12 @@
   },
 
    "dashboard": {
+    "errors": {
+      "visitors": "Failed to load visitors.",
+      "totalStats": "Failed to load total statistics.",
+      "monthStats": "Failed to load current month statistics.",
+      "smsCost": "Failed to load the SMS cost."
+    },
       "monthlyVisitors": "Monthly Visitors",
     "count":"Count",
     "totalVisitorsMonthly":"Total monthly Visitors ",
@@ -87,6 +128,8 @@
   },
 
   "brands": {
+    "updateFailed": "Failed to update brand.",
+    "createFailed": "Failed to create brand.",
     "management": "BRAND MANAGEMENT",
     "description": "Manage your cosmetic brands",
 
@@ -123,6 +166,10 @@
   },  
 
   "categories": {
+    "errors": {
+      "saveFailed": "Something went wrong while saving the category."
+    },
+    "categoryImage": "Category image",
          "deleteConfirmation": "Are you sure you want to delete this category? deleting category means deleting all subcategories and products under it."
 
 ,    "management": "Category Management",
@@ -158,6 +205,12 @@
   },
 
   "subCategories": {
+    "errors": {
+      "deleteFailed": "Failed to delete subcategory.",
+      "updateFailed": "Failed to update subcategory.",
+      "createFailed": "Failed to create subcategory.",
+      "loadFailed": "Failed to load subcategories."
+    },
              "deleteConfirmation": "Are you sure you want to delete this sub category? deleting sub category means deleting all  products under it."
 ,
 "nameEn":"English name ",
@@ -190,6 +243,32 @@
   },
 
   "products": {
+    "errors": {
+      "deleteFailed": "Failed to delete product.",
+      "loadFailed": "Failed to load products.",
+      "updateFailed": "Failed to update product.",
+      "missingId": "Product ID is missing.",
+      "createFailed": "Failed to create product.",
+      "actualPriceTooHigh": "Actual price must be less than the selling price after discount.",
+      "nameRequired": "Product name is required.",
+      "imageType": "Only PNG, JPG, JPEG and WEBP images are allowed.",
+      "loadSubCategories": "Failed to load subcategories.",
+      "loadCategories": "Failed to load categories.",
+      "loadBrands": "Failed to load brands.",
+      "checkName": "Could not check the product name. Please try again.",
+      "nameExists": "A product with this name already exists."
+    },
+    "stockQuantityRequired": "Stock quantity is required",
+    "stockQuantityInvalid": "Please enter a valid quantity",
+    "selectSubCategory": "Select subcategories",
+    "priceInvalid": "Please enter a valid price",
+    "noSubCategoriesAvailable": "No subcategories available for this category",
+    "noProductsMatchSearch": "No products match your search.",
+    "nameArRequired": "Arabic name is required",
+    "loadingSubCategories": "Loading subcategories...",
+    "finalPrice": "Final price",
+    "editProductSubtitle": "Update the product details below",
+    "deleteProduct": "Delete product",
     "addProductSubtitle":"Add Product with all its info needed to illustrate it",
     "selected":"selected",
     "noProductsFound":"No Products Found",
@@ -218,7 +297,7 @@
 "category":"Category",
 "descriptionPlaceholderEn":"English description",
 "descriptionPlaceholderAr":"Arabic description",
-"multipleSubcategoriesHint":"Multiple Subcategories Hint",
+"multipleSubcategoriesHint":"You can select more than one subcategory",
     "loading": "Loading products...",
     "noProducts": "No Products Found",
     "noProductsMatch": "No products match your search.",
@@ -307,6 +386,9 @@
   },
 
   "users": {
+    "updateUserDescription": "Update the user's account information",
+    "roleRequired": "Role is required",
+    "deleteConfirmation": "Are you sure you want to delete this user?",
     "createUserDescription": "Manage users and their account information",
     "management": "User Management",
     "description": "Manage users and their account information",
@@ -346,6 +428,8 @@
     "deleteTooltip": "Delete User"
   },
  "sliders": {
+    "changeImage": "Change image",
+    "sliderImage": "Slider image",
     "slider": "Images",
     "management": "Slider Management",
     "description": "Manage slider and its images ",
@@ -357,12 +441,21 @@
     
   },
   "orders": {
+    "errors": {
+      "completeFailed": "Failed to complete order.",
+      "cancelFailed": "Failed to cancel order.",
+      "loadMoreFailed": "Failed to load more orders.",
+      "loadFailed": "Failed to load orders."
+    },
+    "confirmComplete": "Are you sure you want to complete order #{{id}}?",
+    "confirmCancel": "Are you sure you want to cancel order #{{id}}?",
     "title": "Orders",
     "subtitle": "Manage and monitor all customer orders",
 
     "loading": "Loading orders...",
 
     "empty": {
+      "noFilterResults": "No orders match the selected filters.",
       "title": "No Orders Found",
       "description": "There are no orders available yet."
     },

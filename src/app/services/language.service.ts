@@ -25,10 +25,10 @@ export class LanguageService {
     private readonly directionality: Directionality
   ) {
 
-    const savedLanguage =
-      localStorage.getItem('language') as 'en' | 'ar' | null;
-
-    const language = savedLanguage ?? 'en';
+    const language: 'en' | 'ar' =
+      localStorage.getItem('language') === 'ar'
+        ? 'ar'
+        : 'en';
 
     this.setLanguage(language);
   }

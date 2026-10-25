@@ -46,7 +46,7 @@
 
             @if (category.imageUrl) {
 
-              <img
+              <img loading="lazy" decoding="async"
                 [src]="getImageUrl(category.imageUrl)"
                 [alt]="category.nameEn">
 
@@ -141,6 +141,7 @@
   <div class="list-pagination">
 
     <mat-paginator
+      [selectConfig]="{ panelClass: 'paginator-size-panel' }"
       [length]="categories().length"
       [pageIndex]="pageIndex()"
       [pageSize]="pageSize()"

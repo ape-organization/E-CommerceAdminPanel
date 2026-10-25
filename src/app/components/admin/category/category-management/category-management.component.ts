@@ -292,7 +292,7 @@ export class CategoryManagementComponent implements OnInit {
   ): string {
 
     if (!imageUrl) {
-      return 'assets/images/product-placeholder.png';
+      return 'assets/images/placeholder.svg';
     }
 
     if (

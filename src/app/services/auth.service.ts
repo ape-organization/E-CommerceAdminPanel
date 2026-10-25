@@ -126,12 +126,6 @@ export class AuthService {
 
         tap(response => {
 
-          console.log(
-            'LOGIN RESPONSE:',
-            response
-          );
-
-
           // ====================================================
           // LOGIN FAILED
           // ====================================================
@@ -434,12 +428,6 @@ export class AuthService {
 
           tap(response => {
 
-            console.log(
-              'REFRESH RESPONSE:',
-              response
-            );
-
-
             /*
              * Backend returns:
              *
@@ -638,9 +626,6 @@ export class AuthService {
         payload.role ??
         payload[
           'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
-        ] ??
-        payload[
-          'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'
         ] ??
         null
       );

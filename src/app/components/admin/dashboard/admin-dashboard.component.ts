@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import {
   Component,
   OnInit,
+  computed,
   inject,
   signal
 } from '@angular/core';
@@ -13,8 +14,15 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { OrderService } from '../../../services/order.service';
 import { LanguageService } from '../../../services/language.service';
-import { WebsiteVisitService } from '../../../services/website-visit.service';
+import {
+  MonthlyVisitors,
+  WebsiteVisitService
+} from '../../../services/website-visit.service';
 import { SMSService } from '../../../services/otp.service';
+
+
+// Price of one SMS part, used for the SMS cost card.
+const SMS_PART_PRICE = 0.60;
 
 
 @Component({
@@ -105,45 +113,68 @@ visitors=signal(0);
   // ============================================================
 
   ngOnInit(): void {
-this.loadTotalCost();
+
+    this.errorMessage.set('');
+
+    this.loadTotalCost();
+
     this.loadDashboard();
 
   }
- loadTotalCost(): void {
-  this.isLoading.set(true);
-  this.errorMessage.set('');
 
-  let completed = 0;
 
-  const requestCompleted = () => {
-    completed++;
+  // ============================================================
+  // PENDING REQUESTS
+  // ------------------------------------------------------------
+  // One shared counter for all 4 dashboard requests, so the
+  // loading state ends only when the LAST one finishes.
+  // ============================================================
 
-    if (completed === 2) {
+  private pendingRequests = 0;
+
+  private requestStarted(): void {
+    this.pendingRequests++;
+    this.isLoading.set(true);
+  }
+
+  private requestCompleted(): void {
+    this.pendingRequests = Math.max(0, this.pendingRequests - 1);
+
+    if (this.pendingRequests === 0) {
       this.isLoading.set(false);
     }
-  };
+  }
+
+
+  // ============================================================
+  // SMS COST
+  // ============================================================
+
+ loadTotalCost(): void {
+
+  this.requestStarted();
 
   this.SmsService.getTotalCost().subscribe({
     next: stats => {
-      if(stats.success)
-      {
-      this.totalCost.set(stats.data.totalSmsPartCount*.60);
-      this.totalMsg.set(stats.data.totalSmsPartCount)
-      requestCompleted();
+      if (stats?.success) {
+        const parts = Number(stats.data?.totalSmsPartCount) || 0;
 
+        this.totalCost.set(parts * SMS_PART_PRICE);
+        this.totalMsg.set(parts);
       }
+
+      this.requestCompleted();
     },
 
     error: () => {
       this.errorMessage.set(
-        'Failed to load current month sms cost.'
+        'dashboard.errors.smsCost'
       );
 
-      requestCompleted();
+      this.requestCompleted();
     }
   });
 
- 
 }
 
   // ============================================================
@@ -151,18 +182,12 @@ this.loadTotalCost();
   // ============================================================
 
  loadDashboard(): void {
-  this.isLoading.set(true);
-  this.errorMessage.set('');
 
-  let completed = 0;
+  const requestCompleted = () => this.requestCompleted();
 
-  const requestCompleted = () => {
-    completed++;
-
-    if (completed === 2) {
-      this.isLoading.set(false);
-    }
-  };
+  this.requestStarted();
+  this.requestStarted();
+  this.requestStarted();
 
   this.orderService.getCurrentMonthStats().subscribe({
     next: stats => {
@@ -175,7 +200,7 @@ this.loadTotalCost();
 
     error: () => {
       this.errorMessage.set(
-        'Failed to load current month statistics.'
+        'dashboard.errors.monthStats'
       );
 
       requestCompleted();
@@ -193,54 +218,72 @@ this.loadTotalCost();
 
     error: () => {
       this.errorMessage.set(
-        'Failed to load total statistics.'
+        'dashboard.errors.totalStats'
       );
 
       requestCompleted();
     }
   });
    this.visitorService.getMonthlyVisitors().subscribe({
-    next: (res:any) => {
-      this.visitors.set(res.visitors);
+    next: (res: MonthlyVisitors[] | MonthlyVisitors | null) => {
+      this.visitors.set(this.getCurrentMonthVisitors(res));
 
       requestCompleted();
     },
 
     error: () => {
       this.errorMessage.set(
-        'Failed to load total visitors.'
+        'dashboard.errors.visitors'
       );
 
       requestCompleted();
     }
   });
 }
-// transalte month 
-private readonly languageService=inject(LanguageService)
-get currentMonthName(): string {
-  const language = this.languageService.currentLanguage();
-
-  return new Intl.DateTimeFormat(
-    language === 'ar' ? 'ar-EG' : 'en-US',
-    {
-      month: 'long'
-    }
-  ).format(new Date());
-}
   // ============================================================
-  // ERROR HANDLER
+  // CURRENT MONTH VISITORS
+  // ------------------------------------------------------------
+  // /WebsiteVisits/monthly returns one entry per month
+  // ([{ year, month, visitors }]). Pick the current month.
+  // A single object is also accepted, in case the API changes.
   // ============================================================
 
-  private handleError(error: any): void {
-if (!this.errorMessage()) {
+  private getCurrentMonthVisitors(
+    res: MonthlyVisitors[] | MonthlyVisitors | null
+  ): number {
 
-      this.errorMessage.set(
-        error?.error?.message ??
-        'Unable to load dashboard data.'
+    if (Array.isArray(res)) {
+
+      const current = res.find(
+        entry =>
+          Number(entry.year) === this.currentYear &&
+          Number(entry.month) === this.currentMonth
       );
 
+      return Number(current?.visitors) || 0;
     }
 
+    return Number(res?.visitors) || 0;
   }
+
+
+  // ============================================================
+  // MONTH NAME (follows the language switch)
+  // ============================================================
+
+  private readonly languageService =
+    inject(LanguageService);
+
+  readonly currentMonthName =
+    computed(() =>
+      new Intl.DateTimeFormat(
+        this.languageService.currentLanguage() === 'ar'
+          ? 'ar-EG'
+          : 'en-US',
+        {
+          month: 'long'
+        }
+      ).format(new Date())
+    );
 
 }

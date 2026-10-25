@@ -62,13 +62,13 @@
 
       <input
         type="text"
-        [ngModel]="searchTerm()"
+        [ngModel]="searchInput()"
         (ngModelChange)="onSearch($event)"
         [placeholder]="'products.searchPlaceholder' | translate"
         [attr.aria-label]="'products.searchProducts' | translate"
       />
 
-      @if (searchTerm()) {
+      @if (searchInput()) {
 
         <button
           type="button"
@@ -210,7 +210,7 @@
       </mat-icon>
 
       <span>
-        {{ errorMessage() }}
+        {{ errorMessage() | translate }}
       </span>
 
       <button
@@ -230,23 +230,7 @@
   }
 
 
-  <!-- ====================================================== -->
-  <!-- LOADING -->
-  <!-- ====================================================== -->
-
-  @if (isLoading()) {
-
-    <div class="loading-container">
-
-      <mat-spinner diameter="40"></mat-spinner>
-
-      <span>
-        {{ 'products.loadingProducts' | translate }}
-      </span>
-
-    </div>
-
-  }
+  <!-- LOADING: shown by the global <app-loader> -->
 
 
   <!-- ====================================================== -->
@@ -341,7 +325,115 @@
     filteredProducts().length > 0
   ) {
 
-    <div class="entity-list">
+    <!-- ==================================================== -->
+    <!-- DESKTOP TABLE -->
+    <!-- ==================================================== -->
+
+    <div class="entity-table-wrap products-table">
+
+      <table class="entity-table">
+
+        <thead>
+          <tr>
+            <th>{{ 'nav.products' | translate }}</th>
+            <th>{{ 'products.actualPrice' | translate }}</th>
+            <th>{{ 'products.price' | translate }}</th>
+            <th>{{ 'products.discount' | translate }}</th>
+            <th>{{ 'products.stock' | translate }}</th>
+            <th>{{ 'products.classification' | translate }}</th>
+            <th class="actions-col"></th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          @for (product of paginatedProducts(); track product.id) {
+
+            <tr
+              [class.low-stock-row]="
+                product.isInStock &&
+                product.stockQuantity <= 5 &&
+                product.stockQuantity > 0
+              "
+              [class.out-of-stock-row]="!product.isInStock">
+
+              <td>
+                <div class="product-cell">
+
+                  <div class="entity-media table-media">
+                    @if (product.imageUrl) {
+                      <img loading="lazy" decoding="async"
+                        [src]="getImageUrl(product.imageUrl)"
+                        [alt]="product.nameEn" />
+                    } @else {
+                      <mat-icon>image</mat-icon>
+                    }
+                  </div>
+
+                  <div class="product-heading">
+                    <strong class="product-title">{{ product.nameEn }}</strong>
+                    <span class="product-subtitle">{{ product.nameAr }}</span>
+                    <span class="table-brand">
+                      {{ product.brand?.nameEn || ('products.noBrand' | translate) }}
+                    </span>
+                  </div>
+
+                </div>
+              </td>
+
+              <td>
+                <span class="price-cell normal-price">
+                  {{ product.actualPrice | number:'1.2-2' }}
+                  {{ 'common.egp' | translate }}
+                </span>
+              </td>
+
+              <td>
+                <ng-container
+                  [ngTemplateOutlet]="sellingPriceTpl"
+                  [ngTemplateOutletContext]="{ $implicit: product }" />
+              </td>
+
+              <td>
+                <ng-container
+                  [ngTemplateOutlet]="discountTpl"
+                  [ngTemplateOutletContext]="{ $implicit: product }" />
+              </td>
+
+              <td>
+                <ng-container
+                  [ngTemplateOutlet]="stockTpl"
+                  [ngTemplateOutletContext]="{ $implicit: product }" />
+              </td>
+
+              <td>
+                <ng-container
+                  [ngTemplateOutlet]="classificationTpl"
+                  [ngTemplateOutletContext]="{ $implicit: product }" />
+              </td>
+
+              <td class="actions-col">
+                <ng-container
+                  [ngTemplateOutlet]="actionsTpl"
+                  [ngTemplateOutletContext]="{ $implicit: product }" />
+              </td>
+
+            </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+
+    <!-- ==================================================== -->
+    <!-- MOBILE / TABLET CARDS -->
+    <!-- ==================================================== -->
+
+    <div class="entity-list products-cards">
 
       @for (product of paginatedProducts(); track product.id) {
 
@@ -366,7 +458,7 @@
 
               @if (product.imageUrl) {
 
-                <img
+                <img loading="lazy" decoding="async"
                   [src]="getImageUrl(product.imageUrl)"
                   [alt]="product.nameEn" />
 
@@ -413,39 +505,9 @@
             <!-- ACTIONS -->
             <!-- ================================================== -->
 
-            <div class="entity-actions">
-
-              <button
-                mat-icon-button
-                class="edit-btn"
-                type="button"
-                [attr.aria-label]="
-                  'products.editProduct' | translate
-                "
-                (click)="editProduct(product)">
-
-                <mat-icon>
-                  edit
-                </mat-icon>
-
-              </button>
-
-              <button
-                mat-icon-button
-                class="delete-btn"
-                type="button"
-                [attr.aria-label]="
-                  'products.deleteProduct' | translate
-                "
-                (click)="deleteProduct(product.id)">
-
-                <mat-icon>
-                  delete
-                </mat-icon>
-
-              </button>
-
-            </div>
+            <ng-container
+              [ngTemplateOutlet]="actionsTpl"
+              [ngTemplateOutletContext]="{ $implicit: product }" />
 
 
             <!-- ================================================== -->
@@ -485,46 +547,9 @@
                   {{ 'products.price' | translate }}
                 </span>
 
-                <span class="field-value price-cell">
-
-                  @if ((product.discountPercentage ?? 0) > 0) {
-
-                    <span class="price-wrapper">
-
-                      <span class="old-price">
-
-                        {{ product.price | number:'1.2-2' }}
-
-                        {{ 'common.egp' | translate }}
-
-                      </span>
-
-                      <span class="discounted-price">
-
-                        {{
-                          getDiscountedPrice(product)
-                            | number:'1.2-2'
-                        }}
-
-                        {{ 'common.egp' | translate }}
-
-                      </span>
-
-                    </span>
-
-                  } @else {
-
-                    <span class="normal-price">
-
-                      {{ product.price | number:'1.2-2' }}
-
-                      {{ 'common.egp' | translate }}
-
-                    </span>
-
-                  }
-
-                </span>
+                <ng-container
+                  [ngTemplateOutlet]="sellingPriceTpl"
+                  [ngTemplateOutletContext]="{ $implicit: product }" />
 
               </div>
 
@@ -537,20 +562,9 @@
                   {{ 'products.discount' | translate }}
                 </span>
 
-                <span
-                  class="discount-badge"
-                  [class.no-discount]="
-                    !product.discountPercentage ||
-                    product.discountPercentage <= 0
-                  ">
-
-                  {{
-                    (product.discountPercentage ?? 0) > 0
-                      ? product.discountPercentage + '%'
-                      : '___'
-                  }}
-
-                </span>
+                <ng-container
+                  [ngTemplateOutlet]="discountTpl"
+                  [ngTemplateOutletContext]="{ $implicit: product }" />
 
               </div>
 
@@ -563,49 +577,9 @@
                   {{ 'products.stock' | translate }}
                 </span>
 
-                <div class="stock-cell">
-
-                  <span
-                    class="stock-quantity"
-                    [class.low-stock]="
-                      product.isInStock &&
-                      product.stockQuantity <= 5 &&
-                      product.stockQuantity > 0
-                    "
-                    [class.no-stock]="
-                      !product.isInStock
-                    ">
-
-                    {{ product.stockQuantity }}
-
-                  </span>
-
-                  <span
-                    class="stock-status"
-                    [class.in-stock]="
-                      product.isInStock
-                    "
-                    [class.out-of-stock]="
-                      !product.isInStock
-                    ">
-
-                    <mat-icon>
-                      {{
-                        product.isInStock
-                          ? 'check_circle'
-                          : 'cancel'
-                      }}
-                    </mat-icon>
-
-                    {{
-                      product.isInStock
-                        ? ('products.inStock' | translate)
-                        : ('products.outOfStock' | translate)
-                    }}
-
-                  </span>
-
-                </div>
+                <ng-container
+                  [ngTemplateOutlet]="stockTpl"
+                  [ngTemplateOutletContext]="{ $implicit: product }" />
 
               </div>
 
@@ -618,31 +592,9 @@
                   {{ 'products.classification' | translate }}
                 </span>
 
-                <div class="classification">
-
-                  @for (
-                    subCategory of product.subCategories;
-                    track subCategory.id
-                  ) {
-
-                    <span class="category-chip">
-                      {{ subCategory.nameEn }}
-                    </span>
-
-                  }
-
-                  @if (
-                    !product.subCategories ||
-                    product.subCategories.length === 0
-                  ) {
-
-                    <span class="no-category">
-                      {{ 'products.noClassification' | translate }}
-                    </span>
-
-                  }
-
-                </div>
+                <ng-container
+                  [ngTemplateOutlet]="classificationTpl"
+                  [ngTemplateOutletContext]="{ $implicit: product }" />
 
               </div>
 
@@ -664,6 +616,7 @@
     <div class="list-pagination">
 
       <mat-paginator
+        [selectConfig]="{ panelClass: 'paginator-size-panel' }"
         [length]="filteredProducts().length"
         [pageSize]="pageSize()"
         [pageIndex]="pageIndex()"
@@ -675,5 +628,144 @@
     </div>
 
   }
+
+
+  <!-- ====================================================== -->
+  <!-- SHARED CELL TEMPLATES (table + cards) -->
+  <!-- ====================================================== -->
+
+  <ng-template #actionsTpl let-product>
+
+    <div class="entity-actions">
+
+      <button
+        mat-icon-button
+        class="edit-btn"
+        type="button"
+        [attr.aria-label]="'products.editProduct' | translate"
+        (click)="editProduct(product)">
+        <mat-icon>edit</mat-icon>
+      </button>
+
+      <button
+        mat-icon-button
+        class="delete-btn"
+        type="button"
+        [attr.aria-label]="'products.deleteProduct' | translate"
+        (click)="deleteProduct(product.id)">
+        <mat-icon>delete</mat-icon>
+      </button>
+
+    </div>
+
+  </ng-template>
+
+
+  <ng-template #sellingPriceTpl let-product>
+
+    <span class="field-value price-cell">
+
+      @if ((product.discountPercentage ?? 0) > 0) {
+
+        <span class="price-wrapper">
+
+          <span class="old-price">
+            {{ product.price | number:'1.2-2' }}
+            {{ 'common.egp' | translate }}
+          </span>
+
+          <span class="discounted-price">
+            {{ getDiscountedPrice(product) | number:'1.2-2' }}
+            {{ 'common.egp' | translate }}
+          </span>
+
+        </span>
+
+      } @else {
+
+        <span class="normal-price">
+          {{ product.price | number:'1.2-2' }}
+          {{ 'common.egp' | translate }}
+        </span>
+
+      }
+
+    </span>
+
+  </ng-template>
+
+
+  <ng-template #discountTpl let-product>
+
+    <span
+      class="discount-badge"
+      [class.no-discount]="
+        !product.discountPercentage ||
+        product.discountPercentage <= 0
+      ">
+      {{
+        (product.discountPercentage ?? 0) > 0
+          ? product.discountPercentage + '%'
+          : '___'
+      }}
+    </span>
+
+  </ng-template>
+
+
+  <ng-template #stockTpl let-product>
+
+    <div class="stock-cell">
+
+      <span
+        class="stock-quantity"
+        [class.low-stock]="
+          product.isInStock &&
+          product.stockQuantity <= 5 &&
+          product.stockQuantity > 0
+        "
+        [class.no-stock]="!product.isInStock">
+        {{ product.stockQuantity }}
+      </span>
+
+      <span
+        class="stock-status"
+        [class.in-stock]="product.isInStock"
+        [class.out-of-stock]="!product.isInStock">
+
+        <mat-icon>
+          {{ product.isInStock ? 'check_circle' : 'cancel' }}
+        </mat-icon>
+
+        {{
+          product.isInStock
+            ? ('products.inStock' | translate)
+            : ('products.outOfStock' | translate)
+        }}
+
+      </span>
+
+    </div>
+
+  </ng-template>
+
+
+  <ng-template #classificationTpl let-product>
+
+    <div class="classification">
+
+      @for (subCategory of product.subCategories; track subCategory.id) {
+        <span class="category-chip">{{ subCategory.nameEn }}</span>
+      }
+
+      @if (!product.subCategories || product.subCategories.length === 0) {
+        <span class="no-category">
+          {{ 'products.noClassification' | translate }}
+        </span>
+      }
+
+    </div>
+
+  </ng-template>
 
 </div>

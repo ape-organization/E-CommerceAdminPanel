@@ -388,7 +388,7 @@ this.brands.set([]);
 
     if (!imageUrl) {
 
-      return 'assets/images/product-placeholder.png';
+      return 'assets/images/placeholder.svg';
 
     }
 

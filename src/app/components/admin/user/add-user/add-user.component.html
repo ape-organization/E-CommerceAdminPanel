@@ -367,7 +367,7 @@
       <!-- SERVER ERROR -->
       <!-- ========================================= -->
 
-      @if (errorMessage) {
+      @if (errorMessage()) {
 
         <div class="error-message">
 
@@ -376,7 +376,7 @@
           </mat-icon>
 
           <span>
-            {{ errorMessage }}
+            {{ errorMessage() | translate }}
           </span>
 
         </div>

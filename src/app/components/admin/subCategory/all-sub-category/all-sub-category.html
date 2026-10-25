@@ -53,6 +53,18 @@
 
 
   <!-- =====================================================
+       ERROR
+       ===================================================== -->
+
+  @if (errorMessage()) {
+    <div class="entity-empty list-error">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ errorMessage()! | translate }}</span>
+    </div>
+  }
+
+
+  <!-- =====================================================
        LIST
        ===================================================== -->
 
@@ -174,6 +186,7 @@
   <div class="list-pagination">
 
     <mat-paginator
+      [selectConfig]="{ panelClass: 'paginator-size-panel' }"
       [length]="subcategories().length"
       [pageIndex]="pageIndex()"
       [pageSize]="pageSize()"

@@ -22,6 +22,12 @@ import { routes } from './app.routes';
 
 import { authInterceptor } from './interceptors/auth.interceptor';
 
+import { loadingInterceptor } from './interceptors/loading.interceptor';
+
+import { MatPaginatorIntl } from '@angular/material/paginator';
+
+import { TranslatedPaginatorIntl } from './shared/paginator-intl';
+
 
 export const appConfig: ApplicationConfig = {
 
@@ -33,11 +39,17 @@ export const appConfig: ApplicationConfig = {
 
     provideHttpClient(
       withInterceptors([
+        loadingInterceptor,
         authInterceptor
       ])
     ),
 
     provideAnimationsAsync(),
+
+    {
+      provide: MatPaginatorIntl,
+      useClass: TranslatedPaginatorIntl
+    },
 
     provideTranslateService({
 

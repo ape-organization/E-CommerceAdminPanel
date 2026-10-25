@@ -17,7 +17,7 @@
       </h1>
 
       <p>
-        {{ currentMonthName }}
+        {{ currentMonthName() }}
         {{ currentYear }}
       </p>
 
@@ -48,7 +48,7 @@
       </mat-icon>
 
       <span>
-        {{ errorMessage() }}
+        {{ errorMessage() | translate }}
       </span>
 
     </div>
@@ -80,7 +80,7 @@
           </h2>
 
           <span>
-            {{ currentMonthName }} {{ currentYear }}
+            {{ currentMonthName() }} {{ currentYear }}
           </span>
 
         </div>
@@ -199,7 +199,7 @@
           </h2>
 
           <span>
-            {{ currentMonthName }} {{ currentYear }}
+            {{ currentMonthName() }} {{ currentYear }}
           </span>
 
         </div>

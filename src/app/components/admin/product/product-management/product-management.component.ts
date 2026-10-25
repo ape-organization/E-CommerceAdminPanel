@@ -34,10 +34,6 @@ import {
 } from '@angular/material/paginator';
 
 import {
-  MatProgressSpinnerModule
-} from '@angular/material/progress-spinner';
-
-import {
   MatTableModule
 } from '@angular/material/table';
 
@@ -71,6 +67,10 @@ import {
 } from '@ngx-translate/core';
 
 
+// Delay before the local product search is applied.
+const SEARCH_DEBOUNCE_MS = 200;
+
+
 @Component({
   selector: 'app-product-management',
   standalone: true,
@@ -83,7 +83,6 @@ import {
     MatDialogModule,
     MatIconModule,
     MatPaginatorModule,
-    MatProgressSpinnerModule,
     MatTableModule,
     MatTooltipModule
   ],
@@ -126,8 +125,17 @@ export class ProductManagementComponent implements OnInit {
     signal<Product[]>([]);
 
 
+  /*
+   * searchInput = what is in the box (updates on every key).
+   * searchTerm  = what the list is filtered by (debounced).
+   */
+  readonly searchInput =
+    signal('');
+
   readonly searchTerm =
     signal('');
+
+  private searchTimer?: ReturnType<typeof setTimeout>;
 
 
   readonly isLoading =
@@ -659,7 +667,7 @@ export class ProductManagementComponent implements OnInit {
 
 
           this.errorMessage.set(
-            'Failed to load products.'
+            'products.errors.loadFailed'
           );
 
 
@@ -705,13 +713,24 @@ export class ProductManagementComponent implements OnInit {
     value: string
   ): void {
 
-    this.searchTerm.set(
-      value.trim()
-    );
+    this.searchInput.set(value);
 
 
-    // Always return to page 1
-    this.pageIndex.set(0);
+    // Filter once the user pauses typing (avoids re-filtering
+    // the whole product list on every key press).
+    clearTimeout(this.searchTimer);
+
+    this.searchTimer = setTimeout(() => {
+
+      this.searchTerm.set(
+        value.trim()
+      );
+
+
+      // Always return to page 1
+      this.pageIndex.set(0);
+
+    }, SEARCH_DEBOUNCE_MS);
 
   }
 
@@ -806,6 +825,10 @@ export class ProductManagementComponent implements OnInit {
   // ==========================================================
 
   clearSearch(): void {
+
+    clearTimeout(this.searchTimer);
+
+    this.searchInput.set('');
 
     this.searchTerm.set('');
 
@@ -927,6 +950,10 @@ export class ProductManagementComponent implements OnInit {
 
 
     // Reset search
+    clearTimeout(this.searchTimer);
+
+    this.searchInput.set('');
+
     this.searchTerm.set('');
 
 
@@ -987,7 +1014,7 @@ export class ProductManagementComponent implements OnInit {
 
             error: error => {
 this.errorMessage.set(
-                'Failed to delete product.'
+                'products.errors.deleteFailed'
               );
 
             }
@@ -1010,7 +1037,7 @@ this.errorMessage.set(
     if (!imageUrl) {
 
       return (
-        'assets/images/product-placeholder.png'
+        'assets/images/placeholder.svg'
       );
 
     }

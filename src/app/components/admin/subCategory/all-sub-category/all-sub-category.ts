@@ -186,7 +186,7 @@ export class AllSubCategory implements OnInit {
  this.subcategories.set([]);
 
           this.errorMessage.set(
-            'Failed to load subcategories.'
+            'subCategories.errors.loadFailed'
           );
 
         }
@@ -342,7 +342,7 @@ export class AllSubCategory implements OnInit {
 
         error: error => {
 this.errorMessage.set(
-            'Failed to create subcategory.'
+            'subCategories.errors.createFailed'
           );
 
         }
@@ -394,7 +394,7 @@ this.errorMessage.set(
 
         error: error => {
 this.errorMessage.set(
-            'Failed to update subcategory.'
+            'subCategories.errors.updateFailed'
           );
 
         }
@@ -448,7 +448,7 @@ this.errorMessage.set(
 
             error: error => {
  this.errorMessage.set(
-                'Failed to delete subcategory.'
+                'subCategories.errors.deleteFailed'
               );
 
             }

@@ -332,7 +332,7 @@ export class AddProductComponent implements OnInit {
         error: (error) => {
 
          this.errorMessage.set(
-            'Error loading brands'
+            'products.errors.loadBrands'
           );
 
           this.brands.set([]);
@@ -394,7 +394,7 @@ export class AddProductComponent implements OnInit {
         error: (error) => {
 
            this.errorMessage.set(
-            'Error loading categories')
+            'products.errors.loadCategories')
 
           this.categories.set([]);
 
@@ -514,7 +514,7 @@ export class AddProductComponent implements OnInit {
         error: (error) => {
 
           this.errorMessage.set(
-            'Error loading subcategories')
+            'products.errors.loadSubCategories')
 
           this.filteredSubCategories.set([]);
 
@@ -980,7 +980,7 @@ export class AddProductComponent implements OnInit {
     ) {
 
       this.errorMessage.set(
-        'Only PNG, JPG, JPEG and WEBP images are allowed.'
+        'products.errors.imageType'
       );
 
       input.value = '';
@@ -998,7 +998,7 @@ export class AddProductComponent implements OnInit {
     ) {
 
       this.errorMessage.set(
-        'Image size must not exceed 5MB.'
+        'common.errors.imageTooLarge'
       );
 
       input.value = '';
@@ -1115,7 +1115,7 @@ const discount =
     ) {
 
       this.errorMessage.set(
-        'Product name is required.'
+        'products.errors.nameRequired'
       );
 
       return;
@@ -1124,7 +1124,7 @@ const discount =
 if (actualPrice > discountedPrice) {
 
   this.errorMessage.set(
-    'Actual price must be less than the selling price after discount.'
+    'products.errors.actualPriceTooHigh'
   );
 
   return;
@@ -1133,16 +1133,44 @@ if (actualPrice > discountedPrice) {
     this.isSubmitting.set(true);
 
 
+    /*
+     * Editing without renaming: the product's own name is
+     * "taken" by itself, so the duplicate check is skipped.
+     */
+
+    const originalNameEn =
+      String(this.data?.product?.nameEn ?? '')
+        .trim()
+        .toLowerCase();
+
+
+    if (
+      this.isEditing() &&
+      productNameEn.toLowerCase() === originalNameEn
+    ) {
+
+      this.updateProduct();
+
+      return;
+    }
+
+
     this.productService
       .checkProductExists(
         productNameEn
       )
       .subscribe({
 
-        next: (exists: boolean) => {
-          if (!exists  ) {
+        /*
+         * NOTE: the existing contract is kept as-is -
+         * /Products/check-name returns TRUE when the name
+         * is AVAILABLE (false = already used).
+         */
+
+        next: (isAvailable: boolean) => {
+          if (!isAvailable) {
             this.errorMessage.set(
-              'A product with this name already exists.'
+              'products.errors.nameExists'
             );
 
             this.isSubmitting.set(false);
@@ -1163,20 +1191,14 @@ if (actualPrice > discountedPrice) {
 
         },
 
-        error: (error) => {
+        // Do NOT save when the duplicate check could not run.
+        error: () => {
 
           this.errorMessage.set(
-            'Error checking product')
+            'products.errors.checkName'
+          );
 
-          if (this.isEditing()) {
-
-            this.updateProduct();
-
-          } else {
-
-            this.createProduct();
-
-          }
+          this.isSubmitting.set(false);
 
         }
 
@@ -1211,7 +1233,7 @@ if (actualPrice > discountedPrice) {
         error: (error) => {
 
           this.errorMessage.set(
-            'Error creating product')
+            'products.errors.createFailed')
 
         
 
@@ -1235,7 +1257,7 @@ if (actualPrice > discountedPrice) {
     if (!productId) {
 
       this.errorMessage.set(
-        'Product ID is missing.'
+        'products.errors.missingId'
       );
 
       this.isSubmitting.set(false);
@@ -1268,7 +1290,7 @@ if (actualPrice > discountedPrice) {
         error: (error) => {
 
            this.errorMessage.set(
-            'Error updating product')
+            'products.errors.updateFailed')
 
 
           this.isSubmitting.set(false);

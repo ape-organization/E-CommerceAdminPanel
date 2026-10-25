@@ -17,7 +17,7 @@ import {
   PageEvent
 } from '@angular/material/paginator';
 
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { MatDialog } from '@angular/material/dialog';
 
@@ -77,6 +77,10 @@ export class Orders implements OnInit {
 
   private readonly dialog =
     inject(MatDialog);
+
+
+  private readonly translate =
+    inject(TranslateService);
 
 
   // ==========================================================
@@ -270,7 +274,7 @@ export class Orders implements OnInit {
 
 
           this.errorMessage.set(
-            'Failed to load orders.'
+            'orders.errors.loadFailed'
           );
 
         }
@@ -352,7 +356,7 @@ export class Orders implements OnInit {
 
 
           this.errorMessage.set(
-            'Failed to load more orders.'
+            'orders.errors.loadMoreFailed'
           );
 
         }
@@ -549,75 +553,6 @@ export class Orders implements OnInit {
 
 
   // ==========================================================
-  // UPDATE STATUS
-  // ==========================================================
-
-  updateStatus(
-    order: Order,
-    status: string
-  ): void {
-
-    if (
-      !status ||
-      status === order.status
-    ) {
-
-      return;
-
-    }
-
-
-    const previousStatus =
-      order.status;
-
-
-    this.orders.update(
-      orders =>
-        orders.map(
-          currentOrder =>
-            currentOrder.id === order.id
-              ? {
-                  ...currentOrder,
-                  status
-                }
-              : currentOrder
-        )
-    );
-
-
-    this.orderService
-      .cancelOrder(
-        order.id
-      )
-      .subscribe({
-
-        error: (error) => {
-this.orders.update(
-            orders =>
-              orders.map(
-                currentOrder =>
-                  currentOrder.id === order.id
-                    ? {
-                        ...currentOrder,
-                        status: previousStatus
-                      }
-                    : currentOrder
-              )
-          );
-
-
-          this.errorMessage.set(
-            'Failed to update order status.'
-          );
-
-        }
-
-      });
-
-  }
-
-
-  // ==========================================================
   // CANCEL ORDER
   // ==========================================================
 
@@ -640,7 +575,7 @@ this.orders.update(
         ConfirmDeleteComponent,
         {
           data:
-            `Are you sure you want to cancel Order #${order.id}?`
+            this.translate.instant('orders.confirmCancel', { id: order.id })
         }
       )
       .afterClosed()
@@ -677,7 +612,7 @@ this.orders.update(
 
             error: (error) => {
         this.errorMessage.set(
-                'Failed to cancel order.'
+                'orders.errors.cancelFailed'
               );
 
             }
@@ -712,7 +647,7 @@ this.orders.update(
         ConfirmDeleteComponent,
         {
           data:
-            `Are you sure you want to complete Order #${order.id}?`
+            this.translate.instant('orders.confirmComplete', { id: order.id })
         }
       )
       .afterClosed()
@@ -749,7 +684,7 @@ this.orders.update(
 
             error: (error) => {
  this.errorMessage.set(
-                'Failed to Confirmed order.'
+                'orders.errors.completeFailed'
               );
 
             }

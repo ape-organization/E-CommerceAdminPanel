@@ -618,6 +618,33 @@ html[dir="rtl"] .form-select {
 }
 
 
+/* items-per-page dropdown panel (rendered in the overlay) */
+
+.mat-mdc-select-panel.paginator-size-panel {
+
+  --mat-select-panel-background-color:
+    whitesmoke;
+
+  --mat-option-label-text-color:
+    black;
+
+  --mat-option-hover-state-layer-color:
+    rgba(255, 255, 255, .14);
+
+  --mat-option-focus-state-layer-color:
+    rgba(255, 255, 255, .18);
+
+  --mat-option-selected-state-layer-color:
+    rgba(0, 0, 0, .18);
+
+  --mat-option-selected-state-label-text-color:
+    var(--color-accent);
+
+  background:
+    whitesmoke !important;
+}
+
+
 /* =========================================================
    10. COMMON LINKS
    ========================================================= */
